@@ -13,15 +13,18 @@
 #import "ConstantFile.h"
 #import "TableViewCell.h"
 #import "DataConnection.h"
+#import "VSProgressHud.h"
 
 
 @interface AddNewDeptController ()
 {
     NSMutableArray *fieldsArr;
-    NSMutableArray *dataArr;
-    NSString *ufname, *ulname, *uemail;
+    NSMutableArray *dataArray;
+    NSString *ufname, *ulname, *uemail, *mobilestr;
     UITextField *selectedTF;
+    NSDictionary *lableDict;
     NSMutableData *downloadData;
+    DataConnection *dataCon;
 }
 @end
 
@@ -34,11 +37,11 @@
     [self createFieldsInfo];
     [Form createFormWithList:self forAction:@"dept" fieldsInfo:fieldsArr];
     
-    dataArr = [[NSMutableArray alloc] init];
-    for (int i=0; i<5; i++) {
-        NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:@"Dept Name",@"namelbl",@"Admin Name",@"adminlbl",@"Admin Email",@"emaillbl",@"Admin Mobile",@"mobilelbl", nil];
-        [dataArr addObject:dict];
-    }
+    dataArray = [[NSMutableArray alloc] init];
+    
+    lableDict = [[NSDictionary alloc] initWithObjectsAndKeys:@"Department",@"deptlbl",@"Admin Name",@"namelbl",@"Admin Email",@"emaillbl", nil];
+    
+    [self fetchDepartmentList];
 }
 
 -(void)createFieldsInfo
@@ -58,7 +61,7 @@
 #pragma mark - UITableViewDelegate & Datasource
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [dataArr count];
+    return [dataArray count];
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -70,55 +73,149 @@
     if (cell==nil) {
         cell=(TableViewCell *)[[TableViewCell alloc] init];
     }
-    
-   // [cell createCellForViewController:self forList:@"user" heightOfRow:[self tableView:tableView heightForRowAtIndexPath:indexPath] withData:dataArr];
+    NSDictionary *dataDict = [dataArray objectAtIndex:indexPath.row];
+    [cell createCellForViewController:self forList:@"dept" heightOfRow:[self tableView:tableView heightForRowAtIndexPath:indexPath] withData:dataDict andFieldName:lableDict];
     
     cell.backgroundColor = [UIColor clearColor];
     return cell;
+    
 }
 -(void)fetchDepartmentList{
-    NSString *urlstr = baseURL;
-    NSString *myUrlString = [NSString stringWithFormat:@"%@Department/GetDepartment",urlstr];
+    [VSProgressHud presentIndicator:self];
     
-    DataConnection *dataCon = [[DataConnection alloc] initWithUrlStringFromData:myUrlString withJsonString:@"" delegate:self];
+    NSString *urlstr = baseURL;
+    NSString *myUrlString = [NSString stringWithFormat:@"%@Department/GetAllRecord",urlstr];
+    
+    if ([CommonClass connectedToInternet]) {
+        dataCon = [[DataConnection alloc] initGetDataWithUrlString:myUrlString withJsonString:@"" delegate:self];
+    }else{
+        [CommonClass showAlert:self messageString:@"No Internet Connection" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
+    }
     
     [dataCon setAccessibilityLabel:@"fetch"];
-    NSLog(@"my logurl %@ connection %@",myUrlString, dataCon);
+    
 }
 -(void)handleAddNewAction{
+    [VSProgressHud presentIndicator:self];
+    
     [selectedTF resignFirstResponder];
     if ([CommonClass connectedToInternet]) {
         NSMutableDictionary *dict=[[NSMutableDictionary alloc]init];
-        [dict setValue:ufname forKey:@"DepartmentId"];
+        [dict setValue:@"" forKey:@"DepartmentId"];
         [dict setValue:ufname forKey:@"DepartmentName"];
         [dict setValue:ulname forKey:@"DepartmentAdmin"];
         [dict setValue:uemail forKey:@"DepartmentAdminEmail"];
-        [dict setValue:@"noimage" forKey:@"DepartmentAdminMobile"];
+        [dict setValue:mobilestr forKey:@"DepartmentAdminMobile"];
         
         //Building json string for login request.
         NSString *jsonString = [CommonClass convertingToJsonFormat:dict];
         NSString *urlstr = baseURL;
         NSString *myUrlString = [NSString stringWithFormat:@"%@Department/CreateNewDepartment",urlstr];
         
-        DataConnection *dataCon = [[DataConnection alloc] initWithUrlStringFromData:myUrlString withJsonString:jsonString delegate:self];
+        dataCon = [[DataConnection alloc] initWithUrlStringFromData:myUrlString withJsonString:jsonString delegate:self];
         
         NSLog(@"my logurl %@ and data %@ connection %@",myUrlString,jsonString, dataCon);
     }else{
         [CommonClass showAlert:self messageString:@"No Internet Connection" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
     }
-    NSLog(@"test");
+    
 }
 
 -(void)dataLoadingFinished:(NSMutableData*)data{
     NSString *responseString =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     NSLog(@"login data is...%@",responseString);
-    NSDictionary *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
-    if ([[responseDict valueForKey:@"UserId"] length]!=0) {
-        [[NSUserDefaults standardUserDefaults] setValue:[responseDict valueForKey:@"UserId"] forKey:@"userToken"];
-        [[NSUserDefaults standardUserDefaults] setValue:[responseDict valueForKey:@"FirstName"] forKey:@"userName"];
-        //        AdminViewController *admin=[[AdminViewController alloc] init];
-        //        [self.navigationController pushViewController:admin animated:YES];
+    
+    UIView *formV = [self.view viewWithTag:5001];
+    [formV removeFromSuperview];
+    UIView *tableV = [self.view viewWithTag:1001];
+    [tableV removeFromSuperview];
+    [Form createFormWithList:self forAction:@"user" fieldsInfo:fieldsArr];
+    
+    if (![[dataCon accessibilityLabel] isEqualToString:@"fetch"]) {
+        NSString *responseString =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+//        NSDictionary *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
+//        [dataArray removeAllObjects];
+//        [dataArray addObjectsFromArray:[responseDict valueForKey:@"UserList"]];
+        
+//        for (UIView *tableV in [self.view subviews]) {
+//
+//            if ([tableV isKindOfClass:[UITableView class]]) {
+//                UITableView *listTable = (UITableView*)tableV;
+//                NSLog(@"table %@",listTable);
+//                [listTable reloadData];
+//            }
+//        }
+       // if ([responseString isEqualToString:@"Record Created successfully"]) {
+            [self fetchDepartmentList];
+       // }
+        
+        
+    }else{
+        NSArray *departmentArray = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
+        [dataArray removeAllObjects];
+        [dataArray addObjectsFromArray:departmentArray];
+        
+        for (UIView *tableV in [self.view subviews]) {
+            
+            if ([tableV isKindOfClass:[UITableView class]]) {
+                UITableView *listTable = (UITableView*)tableV;
+                NSLog(@"table %@",listTable);
+                [listTable reloadData];
+            }
+        }
     }
+    [VSProgressHud removeIndicator:self];
+}
+
+#pragma mark - UITextField Delegate
+- (void)textFieldDidBeginEditing:(UITextField *)textField
+{
+    [textField setTextColor:[UIColor whiteColor]];
+    selectedTF = textField;
+    if (textField.tag==104) {
+        [textField setKeyboardType:UIKeyboardTypeNumberPad];
+    }else if (textField.tag==103) {
+        [textField setKeyboardType:UIKeyboardTypeEmailAddress];
+    }
+}
+- (void)textFieldDidEndEditing:(UITextField *)textField
+{
+    if (textField.tag==101) {
+        ufname = textField.text;
+    }else if (textField.tag==102){
+        ulname = textField.text;
+    }else if (textField.tag==103){
+        if ([self validateEmailWithString:textField.text]) {
+            uemail = textField.text;
+        }else{
+            textField.text=@"";
+            [CommonClass showAlert:self messageString:@"Invalid Email" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
+        }
+        
+    }else if (textField.tag==104){
+        mobilestr = textField.text;
+    }
+}
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    selectedTF = nil;
+    [textField resignFirstResponder];
+    return YES;
+}
+
+/* Method: validateEmailWithString
+ * Purpose: validate Email
+ * Input Params: user entered text in Email/UserName field
+ * Output: If valid email return YES, if not return NO.
+ */
+- (BOOL)validateEmailWithString:(NSString*)checkString
+{
+    BOOL stricterFilter = NO;
+    NSString *stricterFilterString = @"[A-Z0-9a-z\\._%+-]+@([A-Za-z0-9-]+\\.)+[A-Za-z]{2,4}";
+    NSString *laxString = @".+@([A-Za-z0-9-]+\\.)+[A-Za-z]{2}[A-Za-z]*";
+    NSString *emailRegex = stricterFilter ? stricterFilterString : laxString;
+    NSPredicate *emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegex];
+    return [emailTest evaluateWithObject:checkString];
 }
 
 - (void)didReceiveMemoryWarning {

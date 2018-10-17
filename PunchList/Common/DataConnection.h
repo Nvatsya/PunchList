@@ -28,6 +28,7 @@
 
 -(id)initWithUrlStringFromData:(NSString*)myUrlString  withJsonString:(NSString*)jsonString  delegate:(id<connectionProtocolDelegate>)myDelegate;
 
+-(id)initGetDataWithUrlString:(NSString*)myUrlString  withJsonString:(NSString*)jsonString  delegate:(id<connectionProtocolDelegate>)myDelegate;
 @end
 
 @protocol connectionProtocolDelegate

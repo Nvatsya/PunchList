@@ -13,15 +13,17 @@
 #import "ConstantFile.h"
 #import "TableViewCell.h"
 #import "DataConnection.h"
-
+#import "VSProgressHud.h"
 
 @interface AddNewProjController ()
 {
     NSMutableArray *fieldsArr;
-    NSMutableArray *dataArr;
+    NSMutableArray *dataArray;
     NSString *ufname, *ulname, *uemail;
     UITextField *selectedTF;
     NSMutableData *downloadData;
+    DataConnection *dataCon;
+    NSDictionary *lableDict;
 }
 @end
 
@@ -34,11 +36,12 @@
     [self createFieldsInfo];
     [Form createFormWithList:self forAction:@"proj" fieldsInfo:fieldsArr];
     
-    dataArr = [[NSMutableArray alloc] init];
-    for (int i=0; i<5; i++) {
-        NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:@"Project Name",@"namelbl",@"Project Code",@"statuslbl", nil];
-        [dataArr addObject:dict];
-    }
+    dataArray = [[NSMutableArray alloc] init];
+    
+    lableDict = [[NSDictionary alloc] initWithObjectsAndKeys:@"Project Name",@"namelbl",@"Project Code",@"statuslbl", nil];
+    
+    [self fetchProjectList];
+    
 }
 -(void)createFieldsInfo
 {
@@ -54,7 +57,7 @@
 #pragma mark - UITableViewDelegate & Datasource
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [dataArr count];
+    return [dataArray count];
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -67,19 +70,39 @@
         cell=(TableViewCell *)[[TableViewCell alloc] init];
     }
     
-   // [cell createCellForViewController:self forList:@"user" heightOfRow:[self tableView:tableView heightForRowAtIndexPath:indexPath] withData:dataArr andFieldName:labelArray];
-   // [cell createCellForViewController:self forList:@"user" heightOfRow:[self tableView:tableView heightForRowAtIndexPath:indexPath] withData:dataArr];
+    NSDictionary *dataDict = [dataArray objectAtIndex:indexPath.row];
+    [cell createCellForViewController:self forList:@"project" heightOfRow:[self tableView:tableView heightForRowAtIndexPath:indexPath] withData:dataDict andFieldName:lableDict];
+    
     
     cell.backgroundColor = [UIColor clearColor];
     return cell;
 }
+
+-(void)fetchProjectList{
+    [VSProgressHud presentIndicator:self];
+    
+    NSString *urlstr = baseURL;
+    NSString *myUrlString = [NSString stringWithFormat:@"%@Project/GetAllRecord",urlstr];
+    
+    if ([CommonClass connectedToInternet]) {
+        dataCon = [[DataConnection alloc] initGetDataWithUrlString:myUrlString withJsonString:@"" delegate:self];
+    }else{
+        [CommonClass showAlert:self messageString:@"No Internet Connection" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
+    }
+    
+    [dataCon setAccessibilityLabel:@"fetch"];
+    
+}
+
 -(void)handleAddNewAction
 {
+    [VSProgressHud presentIndicator:self];
+    
     [selectedTF resignFirstResponder];
     if ([CommonClass connectedToInternet]) {
         NSMutableDictionary *dict=[[NSMutableDictionary alloc]init];
         [dict setValue:ufname forKey:@"ProjectName"];
-        [dict setValue:@"nopasss" forKey:@"ProjectCode"];
+        [dict setValue:ulname forKey:@"ProjectCode"];
         [dict setValue:@"UserId" forKey:@"ProjectId"];
         
         
@@ -88,7 +111,7 @@
         NSString *urlstr = baseURL;
         NSString *myUrlString = [NSString stringWithFormat:@"%@Project/CreateNewProject",urlstr];
         
-        DataConnection *dataCon = [[DataConnection alloc] initWithUrlStringFromData:myUrlString withJsonString:jsonString delegate:self];
+        dataCon = [[DataConnection alloc] initWithUrlStringFromData:myUrlString withJsonString:jsonString delegate:self];
         
         NSLog(@"my logurl %@ and data %@ connection %@",myUrlString,jsonString, dataCon);
     }else{
@@ -97,17 +120,76 @@
     NSLog(@"test");
 }
 
--(void)dataLoadingFinished:(NSMutableData*)data
-{
-    NSString *responseString =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    NSLog(@"login data is...%@",responseString);
-    NSDictionary *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
-    if ([[responseDict valueForKey:@"UserId"] length]!=0) {
-        [[NSUserDefaults standardUserDefaults] setValue:[responseDict valueForKey:@"UserId"] forKey:@"userToken"];
-        [[NSUserDefaults standardUserDefaults] setValue:[responseDict valueForKey:@"FirstName"] forKey:@"userName"];
-        //        AdminViewController *admin=[[AdminViewController alloc] init];
-        //        [self.navigationController pushViewController:admin animated:YES];
+-(void)dataLoadingFinished:(NSMutableData*)data{
+        NSString *responseString =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        NSLog(@"login data is...%@",responseString);
+    
+    UIView *formV = [self.view viewWithTag:5001];
+    [formV removeFromSuperview];
+    UIView *tableV = [self.view viewWithTag:1001];
+    [tableV removeFromSuperview];
+    [Form createFormWithList:self forAction:@"user" fieldsInfo:fieldsArr];
+    
+    if (![[dataCon accessibilityLabel] isEqualToString:@"fetch"]) {
+//        NSDictionary *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
+//
+//        if ([[responseDict valueForKey:@"UserList"] count]!=0) {
+//            [dataArray removeAllObjects];
+//            [dataArray addObjectsFromArray:[responseDict valueForKey:@"UserList"]];
+//
+//            for (UIView *tableV in [self.view subviews]) {
+//
+//                if ([tableV isKindOfClass:[UITableView class]]) {
+//                    UITableView *listTable = (UITableView*)tableV;
+//                    NSLog(@"table %@",listTable);
+//                    [listTable reloadData];
+//                }
+//            }
+//        }
+        [self fetchProjectList];
+    }else{
+        NSArray *projListArray = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
+        
+        if ([projListArray count]!=0) {
+            [dataArray removeAllObjects];
+            [dataArray addObjectsFromArray:projListArray];
+            
+            for (UIView *tableV in [self.view subviews]) {
+                
+                if ([tableV isKindOfClass:[UITableView class]]) {
+                    UITableView *listTable = (UITableView*)tableV;
+                    NSLog(@"table %@",listTable);
+                    [listTable reloadData];
+                }
+            }
+        }
     }
+    
+    [VSProgressHud removeIndicator:self];
+    ufname=@"";
+    ulname=@"";
+    uemail=@"";
+}
+
+#pragma mark - UITextField Delegate
+- (void)textFieldDidBeginEditing:(UITextField *)textField
+{
+    [textField setTextColor:[UIColor whiteColor]];
+    selectedTF = textField;
+}
+- (void)textFieldDidEndEditing:(UITextField *)textField
+{
+    if (textField.tag==101) {
+        ufname = textField.text;
+    }else if (textField.tag==102){
+        ulname = textField.text;
+    }
+}
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    selectedTF = nil;
+    [textField resignFirstResponder];
+    return YES;
 }
 
 - (void)didReceiveMemoryWarning {

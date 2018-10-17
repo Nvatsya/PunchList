@@ -15,6 +15,7 @@
 #import "AddNewProjController.h"
 #import "AddNewStatusController.h"
 #import "AboutViewController.h"
+#import "CommonClass.h"
 
 @interface AdminViewController ()
 {
@@ -115,7 +116,7 @@
     [tap.view setBackgroundColor:[UIColor colorWithRed:4.0/255 green:187.0/255 blue:176.0/255 alpha:1]];
     NSLog(@"tapview tag %ld",[tap.view tag]);
     if ([tap.view tag]==1) {
-        NSLog(@"tapview tag %ld",[tap.view tag]);
+        [CommonClass showAlert:self messageString:@"Will be designed as per Admin's feedback including Logout option" withTitle:@"" OKbutton:@"" cancelButton:@"OK"];
     }else if ([tap.view tag]==2){
         AddNewUserController *newUserVC = [[AddNewUserController alloc] init];
         [self.navigationController pushViewController:newUserVC animated:YES];

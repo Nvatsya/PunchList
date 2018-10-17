@@ -49,7 +49,7 @@
             NSURL *url = [NSURL URLWithString:myUrlString];
             NSMutableURLRequest *urlRequest = [[NSMutableURLRequest alloc]initWithURL:url];
             [urlRequest setHTTPBody:[jsonString dataUsingEncoding:NSUTF8StringEncoding]];
-            [urlRequest setHTTPMethod:@"GET"];
+            [urlRequest setHTTPMethod:@"POST"];
             [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Accept"];
             [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
             [urlRequest setValue:[NSString stringWithFormat:@"%lu", (unsigned long)[[jsonString dataUsingEncoding:NSUTF8StringEncoding] length]] forHTTPHeaderField:@"Content-Length"];
@@ -70,6 +70,42 @@
                                                                }];
             [dataTask resume];
        // }
+        
+    }
+    return self;
+}
+
+-(id)initGetDataWithUrlString:(NSString*)myUrlString  withJsonString:(NSString*)jsonString  delegate:(id<connectionProtocolDelegate>)myDelegate
+{
+    if (self = [super init]) {
+        self.delegate=myDelegate;
+        // if ([self connectedToInternet]) {
+        NSURLSessionConfiguration *defaultCon = [NSURLSessionConfiguration defaultSessionConfiguration];
+        defaultCon.timeoutIntervalForResource = 60.00;
+        NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration:defaultCon delegate:nil delegateQueue:[NSOperationQueue mainQueue]];
+        NSURL *url = [NSURL URLWithString:myUrlString];
+        NSMutableURLRequest *urlRequest = [[NSMutableURLRequest alloc]initWithURL:url];
+       // [urlRequest setHTTPBody:[jsonString dataUsingEncoding:NSUTF8StringEncoding]];
+        [urlRequest setHTTPMethod:@"GET"];
+        [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+       // [urlRequest setValue:[NSString stringWithFormat:@"%lu", (unsigned long)[[jsonString dataUsingEncoding:NSUTF8StringEncoding] length]] forHTTPHeaderField:@"Content-Length"];
+        NSURLSessionDataTask * dataTask =[defaultSession dataTaskWithRequest:urlRequest
+                                                           completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                                                               NSLog(@"response is..%@",response);
+                                                               NSLog(@"error is..%@",error);
+                                                               NSLog(@"error is..%@",error.userInfo);
+                                                               if(error == nil)
+                                                               {
+                                                                   self.downloadData = [NSMutableData data];
+                                                                   [self.downloadData appendData:data];
+                                                                   [self.delegate dataLoadingFinished:self.downloadData];
+                                                               }else
+                                                               {
+                                                                   // [self.delegate urlConnectionError:error];
+                                                               }
+                                                           }];
+        [dataTask resume];
+        // }
         
     }
     return self;

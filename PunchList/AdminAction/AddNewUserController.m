@@ -13,6 +13,7 @@
 #import "ConstantFile.h"
 #import "TableViewCell.h"
 #import "DataConnection.h"
+#import "VSProgressHud.h"
 
 @interface AddNewUserController () <UITableViewDelegate, UITableViewDataSource>
 {
@@ -22,6 +23,7 @@
     UITextField *selectedTF;
     NSMutableData *downloadData;
     NSDictionary *lableDict;
+    DataConnection *dataCon;
 }
 @end
 
@@ -41,6 +43,10 @@
     [self fetchUserList];
 }
 
+-(void)viewDidDisappear:(BOOL)animated
+{
+    [dataArray removeAllObjects];
+}
 -(void)createFieldsInfo
 {
     NSDictionary *field1Dict = [[NSDictionary alloc] initWithObjectsAndKeys:@"First name",@"Placeholder",@"",@"Value",@"",@"leftview",@"",@"rightview",@"101",@"tagval",@"YES",@"isRequired", nil];
@@ -75,22 +81,25 @@
 }
 -(void)fetchUserList{
     
-    NSMutableDictionary *dict=[[NSMutableDictionary alloc]init];
-    [dict setValue:@"123" forKey:@"id"];
-    NSString *jsonString = [CommonClass convertingToJsonFormat:dict];
-    
+    [VSProgressHud presentIndicator:self];
+
+    NSString *jsonString = @"";
     NSString *urlstr = baseURL;
-    NSString *myUrlString = [NSString stringWithFormat:@"%@Department/GetUser",urlstr];
+    NSString *myUrlString = [NSString stringWithFormat:@"%@User/GetAllRecord",urlstr];
+    if ([CommonClass connectedToInternet]) {
+        dataCon = [[DataConnection alloc] initGetDataWithUrlString:myUrlString withJsonString:jsonString delegate:self];
+        [dataCon setAccessibilityLabel:@"fetch"];
+    }else{
+        [CommonClass showAlert:self messageString:@"No Internet Connection" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
+    }
     
-    DataConnection *dataCon = [[DataConnection alloc] initWithUrlStringFromData:myUrlString withJsonString:jsonString delegate:self];
-    
-    [dataCon setAccessibilityLabel:@"fetch"];
-    NSLog(@"my logurl %@ connection %@",myUrlString, dataCon);
 }
 -(void)handleAddNewAction
 {
     [selectedTF resignFirstResponder];
     if ([CommonClass connectedToInternet]) {
+        [VSProgressHud presentIndicator:self];
+        
         if ((ufname.length>0)&&(uemail.length>0)) {
             NSMutableDictionary *dict=[[NSMutableDictionary alloc]init];
             [dict setValue:ufname forKey:@"FirstName"];
@@ -107,7 +116,7 @@
             NSString *urlstr = baseURL;
             NSString *myUrlString = [NSString stringWithFormat:@"%@User/SaveNewUser",urlstr];
             
-            DataConnection *dataCon = [[DataConnection alloc] initWithUrlStringFromData:myUrlString withJsonString:jsonString delegate:self];
+            dataCon = [[DataConnection alloc] initWithUrlStringFromData:myUrlString withJsonString:jsonString delegate:self];
             
             NSLog(@"my logurl %@ and data %@ connection %@",myUrlString,jsonString, dataCon);
             
@@ -118,34 +127,55 @@
     }else{
         [CommonClass showAlert:self messageString:@"No Internet Connection" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
     }
-    NSLog(@"test");
+
 }
 
 -(void)dataLoadingFinished:(NSMutableData*)data
 {
-    NSString *responseString =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    NSLog(@"login data is...%@",responseString);
-    NSDictionary *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
+//    NSString *responseString =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+//    NSLog(@"login data is...%@",responseString);
+    
     UIView *formV = [self.view viewWithTag:5001];
     [formV removeFromSuperview];
     UIView *tableV = [self.view viewWithTag:1001];
     [tableV removeFromSuperview];
     [Form createFormWithList:self forAction:@"user" fieldsInfo:fieldsArr];
     
-    if ([[responseDict valueForKey:@"UserList"] count]!=0) {
-        [dataArray removeAllObjects];
-        [dataArray addObjectsFromArray:[responseDict valueForKey:@"UserList"]];
-
-        for (UIView *tableV in [self.view subviews]) {
-          
-            if ([tableV isKindOfClass:[UITableView class]]) {
-                UITableView *listTable = (UITableView*)tableV;
-                NSLog(@"table %@",listTable);
-                [listTable reloadData];
+    if (![[dataCon accessibilityLabel] isEqualToString:@"fetch"]) {
+        NSDictionary *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
+        
+        if ([[responseDict valueForKey:@"UserList"] count]!=0) {
+            [dataArray removeAllObjects];
+            [dataArray addObjectsFromArray:[responseDict valueForKey:@"UserList"]];
+            
+            for (UIView *tableV in [self.view subviews]) {
+                
+                if ([tableV isKindOfClass:[UITableView class]]) {
+                    UITableView *listTable = (UITableView*)tableV;
+                    NSLog(@"table %@",listTable);
+                    [listTable reloadData];
+                }
+            }
+        }
+    }else{
+        NSArray *userListArray = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
+        
+        if ([userListArray count]!=0) {
+            [dataArray removeAllObjects];
+            [dataArray addObjectsFromArray:userListArray];
+            
+            for (UIView *tableV in [self.view subviews]) {
+                
+                if ([tableV isKindOfClass:[UITableView class]]) {
+                    UITableView *listTable = (UITableView*)tableV;
+                    NSLog(@"table %@",listTable);
+                    [listTable reloadData];
+                }
             }
         }
     }
     
+    [VSProgressHud removeIndicator:self];
     ufname=@"";
     ulname=@"";
     uemail=@"";
@@ -194,6 +224,8 @@
     NSPredicate *emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegex];
     return [emailTest evaluateWithObject:checkString];
 }
+
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
