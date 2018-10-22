@@ -15,6 +15,10 @@
 #import "ConstantFile.h"
 #import "AdminViewController.h"
 #import "Common/VSProgressHud.h"
+#import "DataConnection.h"
+#import "Base64.h"
+#import "ProjListViewController.h"
+
 
 
 @interface LoginViewController ()
@@ -37,6 +41,7 @@
     [self createLoginUI];
     spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     
+   // [self uploadTestImage];
 }
 
 -(void)createLoginUI
@@ -134,10 +139,61 @@
     if (username.length!=0 && password.length!=0) {
         [self callLoginMethod];
     }else{
+//        ProjListViewController *projVC=[[ProjListViewController alloc] init];
+//        [self.navigationController pushViewController:projVC animated:YES];
+        
         [CommonClass showAlert:self messageString:@"All Fields are mandatory" withTitle:@"" OKbutton:@"" cancelButton:@"OK"];
     }
 }
 
+-(void)uploadTestImage
+{
+    //NSString *urlstr = @"http://punch.gjitsolution.in/api/Image/UploadImage";
+    NSString *urlstr = @"http://punch.gjitsolution.in/api/Image/GetImage";
+    
+    NSString *pathStr1 = [[NSBundle mainBundle] pathForResource:@"test1" ofType:@"jpg"];
+    NSString *pathStr2 = [[NSBundle mainBundle] pathForResource:@"test2" ofType:@"jpg"];
+    NSData *imgData1 = [NSData dataWithContentsOfFile:pathStr1];
+    NSString *image64Str1=[Base64 encode:imgData1];
+    
+    NSData *imgData2 = [NSData dataWithContentsOfFile:pathStr2];
+    NSString *image64Str2=[Base64 encode:imgData2];
+    
+    NSMutableArray *dataArr = [[NSMutableArray alloc] init];
+    
+    NSDictionary *jsonDictionary1 = [[NSDictionary alloc] initWithObjectsAndKeys:image64Str1,@"ImgStr",@"misthi_100",@"Id", nil];
+    NSDictionary *jsonDictionary2 = [[NSDictionary alloc] initWithObjectsAndKeys:image64Str2,@"ImgStr",@"Pari_100",@"Id", nil];
+    [dataArr addObject:jsonDictionary1];
+    [dataArr addObject:jsonDictionary2];
+
+    
+    NSError *error = nil;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dataArr options:0 error:&error];
+
+    NSURLSessionConfiguration *defaultCon = [NSURLSessionConfiguration defaultSessionConfiguration];
+    defaultCon.timeoutIntervalForResource = 60.00;
+    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration:defaultCon delegate:nil delegateQueue:[NSOperationQueue mainQueue]];
+    NSURL *url = [NSURL URLWithString:urlstr];
+    NSMutableURLRequest *urlRequest = [[NSMutableURLRequest alloc]initWithURL:url];
+    [urlRequest setHTTPMethod:@"POST"];
+    [urlRequest setValue:@"Content-Type" forHTTPHeaderField:@"application/json"];
+    [urlRequest setHTTPBody:jsonData];
+    
+    //Building json string for upload request.
+    NSData *jsonData2 = [NSJSONSerialization dataWithJSONObject:dataArr options:NSJSONWritingPrettyPrinted error:&error];
+    NSString *jsonString = [[NSString alloc] initWithData:jsonData2 encoding:NSUTF8StringEncoding];
+    NSLog(@"jsonData as string:\n%@", jsonString);
+    //NSString *jsonString = [CommonClass convertingToJsonFormat:dataArr];
+
+    DataConnection *dataCon = [[DataConnection alloc] initWithUrlStringFromData:urlstr withJsonString:jsonString delegate:self];
+
+
+}
+-(void)dataLoadingFinished:(NSMutableData*)data
+{
+        NSString *responseString =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        NSLog(@"login data is...%@",responseString);
+}
 #pragma mark - Login method
 -(void)showLoadingActivity :(UIViewController *)VC needToShow:(BOOL)isNeeded
 {
@@ -187,7 +243,7 @@
                                                            {
                                                                self->downloadData = [NSMutableData data];
                                                                [self->downloadData appendData:data];
-                                                               [self dataLoadingFinished:self-> downloadData];
+                                                               [self loginDataLoadingFinished:self-> downloadData];
                                                            }else
                                                            {
                                                                NSLog(@"error is..%@",error.userInfo);
@@ -199,15 +255,8 @@
 }
 
 
-
--(void)callLoginMethod1
-{
-   
-}
-
-
 #pragma mark connection delegate methods
--(void)dataLoadingFinished:(NSMutableData*)data
+-(void)loginDataLoadingFinished:(NSMutableData*)data
 {
     NSString *responseString =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     NSLog(@"login data is...%@",responseString);
@@ -215,8 +264,14 @@
     if ([[responseDict valueForKey:@"UserId"] length]!=0) {
         [[NSUserDefaults standardUserDefaults] setValue:[responseDict valueForKey:@"UserId"] forKey:@"userToken"];
         [[NSUserDefaults standardUserDefaults] setValue:[responseDict valueForKey:@"FirstName"] forKey:@"userName"];
-        AdminViewController *admin=[[AdminViewController alloc] init];
-        [self.navigationController pushViewController:admin animated:YES];
+        if ([[responseDict valueForKey:@"UserType"] isEqualToString:@"Admin"]) {
+            AdminViewController *admin=[[AdminViewController alloc] init];
+            [self.navigationController pushViewController:admin animated:YES];
+        }else{
+            ProjListViewController *projVC=[[ProjListViewController alloc] init];
+            [self.navigationController pushViewController:projVC animated:YES];
+        }
+        
     }
 }
 

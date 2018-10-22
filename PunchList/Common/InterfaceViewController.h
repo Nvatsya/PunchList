@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-@interface InterfaceViewController : NSObject
+@interface InterfaceViewController : NSObject <UITableViewDelegate, UITableViewDataSource>
 
 +(void)createUserInterface :(UIViewController *)VC;
 +(void)createInterfaceForAdminAction :(UIViewController *)VC forScreen:(NSString*)title;
++(void)createListView :(UIViewController*)VC;
 @end

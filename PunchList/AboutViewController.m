@@ -27,7 +27,6 @@
 {
     UIView *fieldBgView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width/14, self.view.frame.size.height/6.8, self.view.frame.size.width-(self.view.frame.size.width/8),(self.view.frame.size.height -(self.view.frame.size.height/6.4) ))];
     fieldBgView.tag = 5001;
-    [fieldBgView setBackgroundColor:[UIColor yellowColor]];
     [self.view addSubview:fieldBgView];
     
     UIWebView *webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, fieldBgView.frame.size.width, fieldBgView.frame.size.height)];

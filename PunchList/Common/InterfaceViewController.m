@@ -8,6 +8,9 @@
 
 #import "InterfaceViewController.h"
 #import "AdminViewController.h"
+#import "CommonClass.h"
+#import "ConstantFile.h"
+
 @interface InterfaceViewController ()
 {
     
@@ -46,7 +49,12 @@
         NSLog(@"Current Date: %@", [[[formatter stringFromDate:[NSDate date]] componentsSeparatedByString:@" "] lastObject]);
         if ([[[[formatter stringFromDate:[NSDate date]] componentsSeparatedByString:@" "] lastObject] isEqualToString:@"PM"])
         {
-            screenTitle.text = @"Good Evening";
+            if ([[[[formatter stringFromDate:[NSDate date]] componentsSeparatedByString:@":"] firstObject] integerValue]<4) {
+                screenTitle.text = @"Good Afternoon";
+            }else{
+                screenTitle.text = @"Good Evening";
+            }
+            
         }
     }
     UILabel *borderTitle = [[UILabel alloc] init];
@@ -75,4 +83,26 @@
     VC.title = title;
 }
 
++(void)createListView :(UIViewController*)VC
+{
+    UILabel *instructionLabel = [[UILabel alloc] initWithFrame:CGRectMake(VC.view.frame.size.width/24, VC.view.frame.size.height/10.5, VC.view.frame.size.width-(VC.view.frame.size.width/12), 25)];
+    instructionLabel.text = @"Swipe cell left to get Punch options";
+    [instructionLabel setTextColor:[CommonClass getColorFromColorCode:themeColor]];
+    [instructionLabel setTextAlignment:NSTextAlignmentCenter];
+    [VC.view addSubview:instructionLabel];
+    
+    UIView *fieldBgView = [[UIView alloc] initWithFrame:CGRectMake(VC.view.frame.size.width/20, VC.view.frame.size.height/7.5, VC.view.frame.size.width-(VC.view.frame.size.width/10),(VC.view.frame.size.height - (VC.view.frame.size.height/7.5)))];
+    fieldBgView.tag = 5001;
+    
+    UITableView *table = [[UITableView alloc] init];
+    table.frame = CGRectMake(0, 0, fieldBgView.frame.size.width, fieldBgView.frame.size.height-20);
+    table.delegate = VC;
+    table.dataSource = VC;
+    [table setTag:1001];
+    [table setBackgroundColor:[UIColor clearColor]];
+    [table setSeparatorStyle:UITableViewCellSeparatorStyleNone];
+    
+    [fieldBgView addSubview:table];
+    [VC.view addSubview:fieldBgView];
+}
 @end

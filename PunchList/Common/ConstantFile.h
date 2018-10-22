@@ -11,4 +11,5 @@
 
 #define baseURL @"http://punch.gjitsolution.in/api/"
 #define themeColor @"#04BBB0"
+#define createColor @"#0288d1"
 #endif /* ConstantFile_h */

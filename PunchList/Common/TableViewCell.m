@@ -145,7 +145,57 @@
         [self.contentView addSubview:datalbl1];
         
     }
+        
+}
+
+-(void)createCellForProjectList :(UIViewController*)VC onTable:(UITableView*)table forList:(NSString*)listname heightOfRow:(float)height withData:(NSDictionary*)dataDict forLables:(NSDictionary *)labelDict
+{
+    UIView *contentBG = [[UIView alloc]initWithFrame:CGRectMake(0, 0, table.frame.size.width, height)];
     
     
+    UILabel *namelbl = [[UILabel alloc] init];
+    namelbl.frame = CGRectMake(5, 10, 130, 22);
+    namelbl.text = [NSString stringWithFormat:@"%@",[labelDict valueForKey:@"ProjectName"]];
+    namelbl.textColor = [UIColor grayColor];
+    UILabel *datalbl = [[UILabel alloc] init];
+    datalbl.frame = CGRectMake(namelbl.frame.size.width+10, namelbl.frame.origin.y, table.frame.size.width-(namelbl.frame.size.width+16), 22);
+    datalbl.text = [NSString stringWithFormat:@"%@",[dataDict valueForKey:@"ProjectName"]];
+    datalbl.textColor = [UIColor whiteColor];
+    
+    UILabel *namelbl1 = [[UILabel alloc] init];
+    namelbl1.frame = CGRectMake(5, (namelbl.frame.origin.y+namelbl.frame.size.height), 130, 22);
+    namelbl1.text = [NSString stringWithFormat:@"%@",[labelDict valueForKey:@"ProjectCode"]];
+    namelbl1.textColor = [UIColor grayColor];
+    UILabel *datalbl1 = [[UILabel alloc] init];
+    datalbl1.frame = CGRectMake(namelbl1.frame.size.width+10, namelbl1.frame.origin.y, table.frame.size.width-(namelbl1.frame.size.width+16), 22);
+    datalbl1.text = [NSString stringWithFormat:@"%@",[dataDict valueForKey:@"ProjectCode"]];
+    datalbl1.textColor = [UIColor whiteColor];
+    
+    UILabel *namelbl2 = [[UILabel alloc] init];
+    namelbl2.frame = CGRectMake(5, (namelbl1.frame.origin.y+namelbl1.frame.size.height), 130, 22);
+    namelbl2.text = [NSString stringWithFormat:@"%@",[labelDict valueForKey:@"PunchIssues"]];
+    namelbl2.textColor = [UIColor grayColor];
+    UILabel *datalbl2 = [[UILabel alloc] init];
+    datalbl2.frame = CGRectMake(namelbl2.frame.size.width+10, namelbl2.frame.origin.y, table.frame.size.width-(namelbl2.frame.size.width+16), 22);
+    datalbl2.text = [NSString stringWithFormat:@"%lu",[[dataDict valueForKey:@"PunchIssues"] count]];
+    datalbl2.textColor = [UIColor whiteColor];
+    
+    [contentBG addSubview:namelbl];
+    [contentBG addSubview:datalbl];
+    [contentBG addSubview:namelbl1];
+    [contentBG addSubview:datalbl1];
+    [contentBG addSubview:namelbl2];
+    [contentBG addSubview:datalbl2];
+    
+    [self.contentView addSubview:contentBG];
+    
+    
+    CALayer* borderLayer = [contentBG layer];
+    CALayer *bottomBorder = [CALayer layer];
+    bottomBorder.borderColor = [UIColor darkGrayColor].CGColor;
+    bottomBorder.borderWidth = 1;
+    bottomBorder.opacity = 0.50;
+    bottomBorder.frame = CGRectMake(0, borderLayer.frame.size.height-1, borderLayer.frame.size.width, 1);
+    [borderLayer addSublayer:bottomBorder];
 }
 @end
