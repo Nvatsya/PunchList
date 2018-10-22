@@ -247,6 +247,7 @@
                                                            }else
                                                            {
                                                                NSLog(@"error is..%@",error.userInfo);
+                                                               [CommonClass showAlert:self messageString:@"Authentication failed" withTitle:@"" OKbutton:@"" cancelButton:@"OK"];
                                                            }
                                                            
                                                            [VSProgressHud removeIndicator:self];

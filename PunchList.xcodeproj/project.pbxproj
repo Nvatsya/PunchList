@@ -19,19 +19,15 @@
 		181386E12132CF20000D7803 /* AboutViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 181386E02132CF20000D7803 /* AboutViewController.m */; };
 		18BA2FF721244BDD00984E84 /* DataConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 18BA2FF621244BDD00984E84 /* DataConnection.m */; };
 		18BA2FF821244BDD00984E84 /* DataConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 18BA2FF621244BDD00984E84 /* DataConnection.m */; };
-		18BA2FF921244BDD00984E84 /* DataConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 18BA2FF621244BDD00984E84 /* DataConnection.m */; };
 		18BA2FFE2124565E00984E84 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 18BA2FFD2124565E00984E84 /* Reachability.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		18BA2FFF2124565E00984E84 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 18BA2FFD2124565E00984E84 /* Reachability.m */; };
-		18BA30002124565E00984E84 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 18BA2FFD2124565E00984E84 /* Reachability.m */; };
 		18BA30032124739900984E84 /* AdminViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18BA30022124739900984E84 /* AdminViewController.m */; };
 		18BA30042124739900984E84 /* AdminViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18BA30022124739900984E84 /* AdminViewController.m */; };
-		18BA30052124739900984E84 /* AdminViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18BA30022124739900984E84 /* AdminViewController.m */; };
 		18BA30072124899000984E84 /* Applogo.png in Resources */ = {isa = PBXBuildFile; fileRef = 18BA30062124899000984E84 /* Applogo.png */; };
 		18BA30082124899000984E84 /* Applogo.png in Resources */ = {isa = PBXBuildFile; fileRef = 18BA30062124899000984E84 /* Applogo.png */; };
 		18BA30092124899000984E84 /* Applogo.png in Resources */ = {isa = PBXBuildFile; fileRef = 18BA30062124899000984E84 /* Applogo.png */; };
 		18BA300C21248A6D00984E84 /* InterfaceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18BA300B21248A6D00984E84 /* InterfaceViewController.m */; };
 		18BA300D21248A6D00984E84 /* InterfaceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18BA300B21248A6D00984E84 /* InterfaceViewController.m */; };
-		18BA300E21248A6D00984E84 /* InterfaceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18BA300B21248A6D00984E84 /* InterfaceViewController.m */; };
 		18BA305F2126CB0000984E84 /* dashboard.png in Resources */ = {isa = PBXBuildFile; fileRef = 18BA30572126CAFF00984E84 /* dashboard.png */; };
 		18BA30602126CB0000984E84 /* newUser.png in Resources */ = {isa = PBXBuildFile; fileRef = 18BA30582126CAFF00984E84 /* newUser.png */; };
 		18BA30612126CB0000984E84 /* newProject.png in Resources */ = {isa = PBXBuildFile; fileRef = 18BA30592126CB0000984E84 /* newProject.png */; };
@@ -49,7 +45,6 @@
 		18DE3968212035A000B03685 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 18DE3966212035A000B03685 /* LaunchScreen.storyboard */; };
 		18DE396B212035A000B03685 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 18DE396A212035A000B03685 /* main.m */; };
 		18DE3975212035A000B03685 /* PunchListTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 18DE3974212035A000B03685 /* PunchListTests.m */; };
-		18DE3980212035A000B03685 /* PunchListUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 18DE397F212035A000B03685 /* PunchListUITests.m */; };
 		18DE399221203E7D00B03685 /* headerBG.png in Resources */ = {isa = PBXBuildFile; fileRef = 18DE398E21203E7D00B03685 /* headerBG.png */; };
 		18DE399321203E7D00B03685 /* user.png in Resources */ = {isa = PBXBuildFile; fileRef = 18DE398F21203E7D00B03685 /* user.png */; };
 		18DE399421203E7D00B03685 /* password.png in Resources */ = {isa = PBXBuildFile; fileRef = 18DE399021203E7D00B03685 /* password.png */; };
@@ -542,11 +537,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				18DE3980212035A000B03685 /* PunchListUITests.m in Sources */,
-				18BA30052124739900984E84 /* AdminViewController.m in Sources */,
-				18BA30002124565E00984E84 /* Reachability.m in Sources */,
-				18BA300E21248A6D00984E84 /* InterfaceViewController.m in Sources */,
-				18BA2FF921244BDD00984E84 /* DataConnection.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
