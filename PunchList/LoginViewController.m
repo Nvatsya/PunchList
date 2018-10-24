@@ -20,7 +20,6 @@
 #import "ProjListViewController.h"
 
 
-
 @interface LoginViewController ()
 {
     UIButton *button;
@@ -139,10 +138,11 @@
     if (username.length!=0 && password.length!=0) {
         [self callLoginMethod];
     }else{
-//        ProjListViewController *projVC=[[ProjListViewController alloc] init];
-//        [self.navigationController pushViewController:projVC animated:YES];
         
-        [CommonClass showAlert:self messageString:@"All Fields are mandatory" withTitle:@"" OKbutton:@"" cancelButton:@"OK"];
+        ProjListViewController *projVC=[[ProjListViewController alloc] init];
+        [self.navigationController pushViewController:projVC animated:YES];
+        
+   //   [CommonClass showAlert:self messageString:@"All Fields are mandatory" withTitle:@"" OKbutton:@"" cancelButton:@"OK"];
     }
 }
 

@@ -109,10 +109,10 @@
 - (nullable NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewRowAction *editAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:@"Update\nPunch" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath) {
-        [self editPunchDetails:indexPath.row];
+        [self updatePunchDetails:indexPath.row];
     }];
     UITableViewRowAction *addAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:@"Create\nPunch" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath) {
-        [self addPunchDetails:indexPath.row];
+        [self updatePunchDetails:indexPath.row];
     }];
     
     editAction.backgroundColor = [CommonClass getColorFromColorCode:themeColor];
@@ -125,9 +125,11 @@
     }
     return nil;
 }
-- (void)editPunchDetails:(NSInteger)rowItem {
+- (void)updatePunchDetails:(NSInteger)rowItem {
     NSLog(@"Edit action clicked %@",[dataArray objectAtIndex:rowItem]);
-
+    PunchViewController *punch = [[PunchViewController alloc] init];
+    punch.detailDict = [dataArray objectAtIndex:rowItem];
+    [self.navigationController pushViewController:punch animated:YES];
 }
 - (void)addPunchDetails:(NSInteger)rowItem {
     NSLog(@"add action clicked %@",[dataArray objectAtIndex:rowItem]);
