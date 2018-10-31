@@ -63,6 +63,7 @@
     if (okTitle.length>0) {
         UIAlertAction *ok = [UIAlertAction actionWithTitle:okTitle style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action)
                              {
+                                // [self.navigationController ];
                                  //BUTTON OK CLICK EVENT
                              }];
         [alert addAction:cancel];

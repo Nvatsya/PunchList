@@ -34,9 +34,13 @@
     [InterfaceViewController createInterfaceForAdminAction:self forScreen:@"My Projects"];
     [InterfaceViewController createListView:self];
     
-    [self fetchProjectList];
+    
 }
 
+-(void)viewWillAppear:(BOOL)animated
+{
+    [self fetchProjectList];
+}
 #pragma mark - LoadProjectList by calling API
 -(void)fetchProjectList{
     [VSProgressHud presentIndicator:self];
@@ -119,7 +123,7 @@
     addAction.backgroundColor = [CommonClass getColorFromColorCode:createColor];
     
     if ([[[dataArray objectAtIndex:indexPath.row] valueForKey:@"PunchIssues"] count]>0) {
-        return @[editAction, addAction];
+        return @[editAction];
     }else{
         return @[addAction];
     }

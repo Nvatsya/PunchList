@@ -36,6 +36,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     //[UIViewController prefersStatusBarHidden];
+    appDel = (AppDelegate*)[UIApplication sharedApplication].delegate;
     [self.navigationController setNavigationBarHidden:YES];
     [self createLoginUI];
     spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
@@ -76,7 +77,7 @@
     
     //Put password field - starts
     UITextField *passwordTF = [[UITextField alloc] init];
-    passwordTF.frame = CGRectMake(self.view.frame.size.width/14, usernameTF.frame.size.height+usernameTF.frame.origin.y+20, self.view.frame.size.width-(self.view.frame.size.width/8), 40);
+    passwordTF.frame = CGRectMake(self.view.frame.size.width/14, usernameTF.frame.size.height+usernameTF.frame.origin.y+30, self.view.frame.size.width-(self.view.frame.size.width/8), 40);
     passwordTF.tag = 102;
     passwordTF.delegate = self;
     passwordTF.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"Password" attributes:@{NSForegroundColorAttributeName: color}];
@@ -100,22 +101,22 @@
     //Put password field - End
     
     UIButton *forgetBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    forgetBtn.frame = CGRectMake(self.view.frame.size.width-(self.view.frame.size.width/2.3), self.view.frame.size.height/1.7, 140, 30);
+    forgetBtn.frame = CGRectMake(appDel.isIphone?(self.view.frame.size.width-(self.view.frame.size.width/2.3)):(self.view.frame.size.width-(self.view.frame.size.width/4)), passwordTF.frame.origin.y+passwordTF.frame.size.height+40, 140, 30);
     [forgetBtn setTitle:@"Forgot Password?" forState:UIControlStateNormal] ;
     [forgetBtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
-    forgetBtn.titleLabel.font = [UIFont systemFontOfSize:8];
-    forgetBtn.titleLabel.font = [UIFont fontWithName:@"AvenirLTM" size:8];
+    forgetBtn.titleLabel.font = [UIFont systemFontOfSize:appDel.isIphone?8:16];
+    forgetBtn.titleLabel.font = [UIFont fontWithName:@"AvenirLTM" size:appDel.isIphone?8:16];
     [forgetBtn addTarget:self action:@selector(handleForgotAction) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:forgetBtn];
     
     UIButton *loginBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    loginBtn.frame = CGRectMake(0, self.view.frame.size.height-160, self.view.frame.size.width-40, 50);
+    loginBtn.frame = CGRectMake(0, self.view.frame.size.height-160, self.view.frame.size.width-40, self.view.frame.size.height/14);
     [loginBtn setCenter: CGPointMake(self.view.center.x, loginBtn.center.y)];
     [loginBtn setTitle:@"Continue" forState:UIControlStateNormal] ;
     [loginBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     loginBtn.backgroundColor = [CommonClass getColorFromColorCode:themeColor];
-    loginBtn.titleLabel.font = [UIFont systemFontOfSize:18];
-    loginBtn.titleLabel.font = [UIFont fontWithName:@"AvenirBook.otf" size:18];
+    loginBtn.titleLabel.font = [UIFont systemFontOfSize:appDel.isIphone?18:26];
+    loginBtn.titleLabel.font = [UIFont fontWithName:@"AvenirBook.otf" size:appDel.isIphone?18:26];
     [loginBtn addTarget:self action:@selector(handleLoginAction) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:loginBtn];
 }
@@ -139,56 +140,14 @@
         [self callLoginMethod];
     }else{
         
-        ProjListViewController *projVC=[[ProjListViewController alloc] init];
-        [self.navigationController pushViewController:projVC animated:YES];
+//        ProjListViewController *projVC=[[ProjListViewController alloc] init];
+//        [self.navigationController pushViewController:projVC animated:YES];
         
-   //   [CommonClass showAlert:self messageString:@"All Fields are mandatory" withTitle:@"" OKbutton:@"" cancelButton:@"OK"];
+      [CommonClass showAlert:self messageString:@"All Fields are mandatory" withTitle:@"" OKbutton:@"" cancelButton:@"OK"];
     }
 }
 
--(void)uploadTestImage
-{
-    //NSString *urlstr = @"http://punch.gjitsolution.in/api/Image/UploadImage";
-    NSString *urlstr = @"http://punch.gjitsolution.in/api/Image/GetImage";
-    
-    NSString *pathStr1 = [[NSBundle mainBundle] pathForResource:@"test1" ofType:@"jpg"];
-    NSString *pathStr2 = [[NSBundle mainBundle] pathForResource:@"test2" ofType:@"jpg"];
-    NSData *imgData1 = [NSData dataWithContentsOfFile:pathStr1];
-    NSString *image64Str1=[Base64 encode:imgData1];
-    
-    NSData *imgData2 = [NSData dataWithContentsOfFile:pathStr2];
-    NSString *image64Str2=[Base64 encode:imgData2];
-    
-    NSMutableArray *dataArr = [[NSMutableArray alloc] init];
-    
-    NSDictionary *jsonDictionary1 = [[NSDictionary alloc] initWithObjectsAndKeys:image64Str1,@"ImgStr",@"misthi_100",@"Id", nil];
-    NSDictionary *jsonDictionary2 = [[NSDictionary alloc] initWithObjectsAndKeys:image64Str2,@"ImgStr",@"Pari_100",@"Id", nil];
-    [dataArr addObject:jsonDictionary1];
-    [dataArr addObject:jsonDictionary2];
 
-    
-    NSError *error = nil;
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dataArr options:0 error:&error];
-
-    NSURLSessionConfiguration *defaultCon = [NSURLSessionConfiguration defaultSessionConfiguration];
-    defaultCon.timeoutIntervalForResource = 60.00;
-    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration:defaultCon delegate:nil delegateQueue:[NSOperationQueue mainQueue]];
-    NSURL *url = [NSURL URLWithString:urlstr];
-    NSMutableURLRequest *urlRequest = [[NSMutableURLRequest alloc]initWithURL:url];
-    [urlRequest setHTTPMethod:@"POST"];
-    [urlRequest setValue:@"Content-Type" forHTTPHeaderField:@"application/json"];
-    [urlRequest setHTTPBody:jsonData];
-    
-    //Building json string for upload request.
-    NSData *jsonData2 = [NSJSONSerialization dataWithJSONObject:dataArr options:NSJSONWritingPrettyPrinted error:&error];
-    NSString *jsonString = [[NSString alloc] initWithData:jsonData2 encoding:NSUTF8StringEncoding];
-    NSLog(@"jsonData as string:\n%@", jsonString);
-    //NSString *jsonString = [CommonClass convertingToJsonFormat:dataArr];
-
-    DataConnection *dataCon = [[DataConnection alloc] initWithUrlStringFromData:urlstr withJsonString:jsonString delegate:self];
-
-
-}
 -(void)dataLoadingFinished:(NSMutableData*)data
 {
         NSString *responseString =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
@@ -263,7 +222,7 @@
     NSLog(@"login data is...%@",responseString);
     NSDictionary *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
     if ([[responseDict valueForKey:@"UserId"] length]!=0) {
-        [[NSUserDefaults standardUserDefaults] setValue:[responseDict valueForKey:@"UserId"] forKey:@"userToken"];
+        [[NSUserDefaults standardUserDefaults] setValue:[responseDict valueForKey:@"UserId"] forKey:@"UserId"];
         [[NSUserDefaults standardUserDefaults] setValue:[responseDict valueForKey:@"FirstName"] forKey:@"userName"];
         if ([[responseDict valueForKey:@"UserType"] isEqualToString:@"Admin"]) {
             AdminViewController *admin=[[AdminViewController alloc] init];

@@ -113,7 +113,7 @@
     }else{
         [CommonClass showAlert:self messageString:@"No Internet Connection" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
     }
-    NSLog(@"test");
+    
 }
 
 -(void)dataLoadingFinished:(NSMutableData*)data{

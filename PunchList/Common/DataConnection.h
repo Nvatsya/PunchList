@@ -29,6 +29,11 @@
 -(id)initWithUrlStringFromData:(NSString*)myUrlString  withJsonString:(NSString*)jsonString  delegate:(id<connectionProtocolDelegate>)myDelegate;
 
 -(id)initGetDataWithUrlString:(NSString*)myUrlString  withJsonString:(NSString*)jsonString  delegate:(id<connectionProtocolDelegate>)myDelegate;
+
+-(id)initUpdateDataWithUrlString:(NSString*)myUrlString  withJsonString:(NSString*)jsonString  delegate:(id<connectionProtocolDelegate>)myDelegate;
+
+-(void)requestListWithUrl:(NSString *)urlStr bodyDic:(NSDictionary *)body withResponseData:(void  (^)(NSData* bodyData))block failtureResponse:(void (^) (NSError* error))errorBlock checkConnectionStatus: (void (^)(BOOL isNetwork))networkBlock;
+
 @end
 
 @protocol connectionProtocolDelegate

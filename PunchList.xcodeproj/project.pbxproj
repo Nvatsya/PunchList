@@ -12,12 +12,14 @@
 		180CB7C42179C762001959ED /* Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 180CB7C22179C762001959ED /* Base64.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		180CB7C8217CB08F001959ED /* ProjListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 180CB7C7217CB08F001959ED /* ProjListViewController.m */; };
 		180CB7CB217E05DA001959ED /* PunchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 180CB7CA217E05DA001959ED /* PunchViewController.m */; };
-		180CB7D2217F545E001959ED /* upload.png in Resources */ = {isa = PBXBuildFile; fileRef = 180CB7CC217F545D001959ED /* upload.png */; };
 		180CB7D3217F545E001959ED /* radioOnButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 180CB7CD217F545D001959ED /* radioOnButton.png */; };
-		180CB7D4217F545E001959ED /* dropdown.png in Resources */ = {isa = PBXBuildFile; fileRef = 180CB7CE217F545E001959ED /* dropdown.png */; };
 		180CB7D5217F545E001959ED /* delete.png in Resources */ = {isa = PBXBuildFile; fileRef = 180CB7CF217F545E001959ED /* delete.png */; };
 		180CB7D6217F545E001959ED /* calender.png in Resources */ = {isa = PBXBuildFile; fileRef = 180CB7D0217F545E001959ED /* calender.png */; };
 		180CB7D7217F545E001959ED /* radioOffButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 180CB7D1217F545E001959ED /* radioOffButton.png */; };
+		180CB7DB2180543E001959ED /* dropmark.png in Resources */ = {isa = PBXBuildFile; fileRef = 180CB7DA2180543E001959ED /* dropmark.png */; };
+		180CB7DD21805688001959ED /* dropdownW.png in Resources */ = {isa = PBXBuildFile; fileRef = 180CB7DC21805688001959ED /* dropdownW.png */; };
+		180CB7E321806600001959ED /* bgcopy.png in Resources */ = {isa = PBXBuildFile; fileRef = 180CB7E221806600001959ED /* bgcopy.png */; };
+		180CB7E521807E25001959ED /* uploadW.png in Resources */ = {isa = PBXBuildFile; fileRef = 180CB7E421807E25001959ED /* uploadW.png */; };
 		181386D32132C952000D7803 /* AddNewUserController.m in Sources */ = {isa = PBXBuildFile; fileRef = 181386D22132C952000D7803 /* AddNewUserController.m */; };
 		181386D62132C98D000D7803 /* AddNewDeptController.m in Sources */ = {isa = PBXBuildFile; fileRef = 181386D52132C98D000D7803 /* AddNewDeptController.m */; };
 		181386D92132C9A9000D7803 /* AddNewProjController.m in Sources */ = {isa = PBXBuildFile; fileRef = 181386D82132C9A9000D7803 /* AddNewProjController.m */; };
@@ -86,12 +88,14 @@
 		180CB7C7217CB08F001959ED /* ProjListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ProjListViewController.m; sourceTree = "<group>"; };
 		180CB7C9217E05DA001959ED /* PunchViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PunchViewController.h; sourceTree = "<group>"; };
 		180CB7CA217E05DA001959ED /* PunchViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PunchViewController.m; sourceTree = "<group>"; };
-		180CB7CC217F545D001959ED /* upload.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = upload.png; sourceTree = "<group>"; };
 		180CB7CD217F545D001959ED /* radioOnButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = radioOnButton.png; sourceTree = "<group>"; };
-		180CB7CE217F545E001959ED /* dropdown.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dropdown.png; sourceTree = "<group>"; };
 		180CB7CF217F545E001959ED /* delete.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = delete.png; sourceTree = "<group>"; };
 		180CB7D0217F545E001959ED /* calender.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = calender.png; sourceTree = "<group>"; };
 		180CB7D1217F545E001959ED /* radioOffButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = radioOffButton.png; sourceTree = "<group>"; };
+		180CB7DA2180543E001959ED /* dropmark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dropmark.png; sourceTree = "<group>"; };
+		180CB7DC21805688001959ED /* dropdownW.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dropdownW.png; sourceTree = "<group>"; };
+		180CB7E221806600001959ED /* bgcopy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bgcopy.png; sourceTree = "<group>"; };
+		180CB7E421807E25001959ED /* uploadW.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = uploadW.png; sourceTree = "<group>"; };
 		181386D12132C952000D7803 /* AddNewUserController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddNewUserController.h; sourceTree = "<group>"; };
 		181386D22132C952000D7803 /* AddNewUserController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AddNewUserController.m; sourceTree = "<group>"; };
 		181386D42132C98D000D7803 /* AddNewDeptController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddNewDeptController.h; sourceTree = "<group>"; };
@@ -295,13 +299,13 @@
 			isa = PBXGroup;
 			children = (
 				18DE395B2120359D00B03685 /* AppDelegate.h */,
+				18DE395C2120359D00B03685 /* AppDelegate.m */,
 				18DE395E2120359D00B03685 /* LoginViewController.h */,
 				18DE395F2120359D00B03685 /* LoginViewController.m */,
 				18BA30012124739900984E84 /* AdminViewController.h */,
 				18BA30022124739900984E84 /* AdminViewController.m */,
 				181386DF2132CF20000D7803 /* AboutViewController.h */,
 				181386E02132CF20000D7803 /* AboutViewController.m */,
-				18DE395C2120359D00B03685 /* AppDelegate.m */,
 				181386DE2132CA6E000D7803 /* Common */,
 				181386DD2132C9C5000D7803 /* AdminAction */,
 				180CB7C5217CAFC5001959ED /* UserAction */,
@@ -345,9 +349,11 @@
 				18DE398E21203E7D00B03685 /* headerBG.png */,
 				18DE399021203E7D00B03685 /* password.png */,
 				18DE398F21203E7D00B03685 /* user.png */,
+				180CB7E221806600001959ED /* bgcopy.png */,
 				180CB7CF217F545E001959ED /* delete.png */,
-				180CB7CE217F545E001959ED /* dropdown.png */,
-				180CB7CC217F545D001959ED /* upload.png */,
+				180CB7DC21805688001959ED /* dropdownW.png */,
+				180CB7DA2180543E001959ED /* dropmark.png */,
+				180CB7E421807E25001959ED /* uploadW.png */,
 				180CB7D0217F545E001959ED /* calender.png */,
 				180CB7D1217F545E001959ED /* radioOffButton.png */,
 				180CB7CD217F545D001959ED /* radioOnButton.png */,
@@ -473,30 +479,32 @@
 			buildActionMask = 2147483647;
 			files = (
 				18DE399421203E7D00B03685 /* password.png in Resources */,
+				180CB7DD21805688001959ED /* dropdownW.png in Resources */,
 				18DE3968212035A000B03685 /* LaunchScreen.storyboard in Resources */,
 				180CB7D7217F545E001959ED /* radioOffButton.png in Resources */,
 				180CB7D6217F545E001959ED /* calender.png in Resources */,
 				18BA30612126CB0000984E84 /* newProject.png in Resources */,
 				18BA30642126CB0000984E84 /* close.png in Resources */,
 				18BA305F2126CB0000984E84 /* dashboard.png in Resources */,
+				180CB7DB2180543E001959ED /* dropmark.png in Resources */,
 				18BA30652126CB0000984E84 /* department.png in Resources */,
 				180CB7D5217F545E001959ED /* delete.png in Resources */,
 				18BA30662126CB0000984E84 /* about.png in Resources */,
+				180CB7E321806600001959ED /* bgcopy.png in Resources */,
 				18DE399521203E7D00B03685 /* background.png in Resources */,
 				18BA30602126CB0000984E84 /* newUser.png in Resources */,
 				18BA30072124899000984E84 /* Applogo.png in Resources */,
 				18DE399321203E7D00B03685 /* user.png in Resources */,
+				180CB7E521807E25001959ED /* uploadW.png in Resources */,
 				18DE39972120409800B03685 /* MyLogo.png in Resources */,
 				180CB7BB2179C320001959ED /* test1.jpg in Resources */,
 				18DE3965212035A000B03685 /* Assets.xcassets in Resources */,
 				180CB7D3217F545E001959ED /* radioOnButton.png in Resources */,
 				18DE399221203E7D00B03685 /* headerBG.png in Resources */,
 				18BA30632126CB0000984E84 /* logout.png in Resources */,
-				180CB7D4217F545E001959ED /* dropdown.png in Resources */,
 				180CB7B92179C305001959ED /* test2.jpg in Resources */,
 				18BA30622126CB0000984E84 /* status.png in Resources */,
 				18DE39632120359D00B03685 /* Main.storyboard in Resources */,
-				180CB7D2217F545E001959ED /* upload.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

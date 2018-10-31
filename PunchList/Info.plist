@@ -25,8 +25,12 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Application will access camera</string>
 	<key>NSMainStoryboardFile</key>
 	<string>Main</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Application will access Photo Library</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AvenirBook.otf</string>

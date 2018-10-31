@@ -84,15 +84,13 @@
 
 +(void)createPunchView :(UIViewController*)VC fieldsInfo:(NSMutableArray*)fieldsArr withData:(NSDictionary*)dataDict
 {
-    UIView *fieldBg = [[UIView alloc] initWithFrame:CGRectMake(VC.view.frame.size.width/30, VC.view.frame.size.height/8, VC.view.frame.size.width-(VC.view.frame.size.width/15), VC.view.frame.size.height-(VC.view.frame.size.height/7))];
+    UIView *fieldBg = [[UIView alloc] initWithFrame:CGRectMake(VC.view.frame.size.width/30, VC.view.frame.size.height/8, VC.view.frame.size.width-(VC.view.frame.size.width/15), VC.view.frame.size.height-(VC.view.frame.size.height/1.9))];
     [fieldBg setTag:5001];
     [VC.view addSubview:fieldBg];
     
     int yPos = 0;
     for (int i=0; i<[fieldsArr count]; i++) {
-        UIView *paddingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 20)];
-        UIView *paddingView1 = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 30, 20)];
-
+        UIView *paddingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
         
         if ([[[fieldsArr objectAtIndex:i] valueForKey:@"fieldType"] isEqualToString:@"textView"]) {
             UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, yPos,  fieldBg.frame.size.width, 30)];
@@ -102,48 +100,47 @@
             [fieldBg addSubview:label];
             
             UITextView *textfield = [[UITextView alloc] init];
-            textfield.frame = CGRectMake(0, yPos, fieldBg.frame.size.width, 100);
+            textfield.frame = CGRectMake(0, yPos, fieldBg.frame.size.width, fieldBg.frame.size.height-yPos-60);
             textfield.tag = [[[fieldsArr objectAtIndex:i] valueForKey:@"tagval"] intValue];
             textfield.delegate = VC;
             textfield.text = [[[dataDict valueForKey:@"PunchIssues"] valueForKey:@"IssueHistory"] count]==0?@"":[[[[[dataDict valueForKey:@"PunchIssues"] valueForKey:@"IssueHistory"] firstObject] lastObject] valueForKey:@"IssueDescription"];
-            UIColor *color = [UIColor whiteColor];
+            [textfield setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"bgcopy.png"]] ];
+            
+            [textfield setTextColor:[UIColor whiteColor]];
+            [textfield setOpaque:NO];
+            [fieldBg setOpaque:YES];
 //            textfield.attributedPlaceholder = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@",[[fieldsArr objectAtIndex:i] valueForKey:@"Placeholder"]] attributes:@{NSForegroundColorAttributeName: color}];
             [fieldBg addSubview:textfield];
             
             yPos = yPos + textfield.frame.size.height+10;
         }else{
-            //Put username field - starts
+            //Put textfield - starts
             UITextField *textfield = [[UITextField alloc] init];
             textfield.frame = CGRectMake(0, yPos, fieldBg.frame.size.width, 40);
             textfield.tag = [[[fieldsArr objectAtIndex:i] valueForKey:@"tagval"] intValue];
             textfield.delegate = VC;
             UIColor *color = [UIColor whiteColor];
+            textfield.textColor = color;
             textfield.attributedPlaceholder = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@",[[fieldsArr objectAtIndex:i] valueForKey:@"Placeholder"]] attributes:@{NSForegroundColorAttributeName: color}];
             [fieldBg addSubview:textfield];
             
-            //        if ([[[fieldsArr objectAtIndex:i] valueForKey:@"leftview"] length]>0) {
-            //            UIImageView *iconView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:[NSString stringWithFormat:@"%@",[[fieldsArr objectAtIndex:i] valueForKey:@"leftview"]]]];
-            //            iconView.bounds = CGRectInset(iconView.frame, 25, 10);
-            //            iconView.frame = CGRectMake(0, 0, 25, 25);
-            //            //iconView.contentMode = UIViewContentModeScaleAspectFit;
-            //            [paddingView addSubview:iconView];
-            //           // textfield.leftView=paddingView;
-            //            textfield.leftViewMode=UITextFieldViewModeAlways;
-            //        }
-            //        if ([[[fieldsArr objectAtIndex:i] valueForKey:@"rightview"] length]>0) {
-            //            UIImageView *iconView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:[NSString stringWithFormat:@"%@",[[fieldsArr objectAtIndex:i] valueForKey:@"rightview"]]]];
-            //            iconView.bounds = CGRectInset(iconView.frame, 25, 10);
-            //            iconView.frame = CGRectMake(0, 0, 25, 25);
-            //            // iconView.contentMode = UIViewContentModeScaleAspectFit;
-            //            [paddingView addSubview:iconView];
-            //           // textfield.leftView=paddingView;
-            //            textfield.leftViewMode=UITextFieldViewModeAlways;
-            //        }
+            //Put values in textfields
+            if ([[[fieldsArr objectAtIndex:i] valueForKey:@"Placeholder"] isEqualToString:department]) {
+                NSLog(@"department");
+            }else if ([[[fieldsArr objectAtIndex:i] valueForKey:@"Placeholder"] isEqualToString:assignmedTo]){
+                textfield.text = [[[[[dataDict valueForKey:@"PunchIssues"] valueForKey:@"IssueHistory"] firstObject] lastObject] valueForKey:@"AssignedTo"];
+            }else if ([[[fieldsArr objectAtIndex:i] valueForKey:@"Placeholder"] isEqualToString:punchStatus]){
+                textfield.text = [[[[[dataDict valueForKey:@"PunchIssues"] valueForKey:@"IssueHistory"] firstObject] lastObject] valueForKey:@"IssueStatus"];
+            }
+            
+            
+            // values ends
+            
             UIImageView *iconView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:[NSString stringWithFormat:@"%@",[[fieldsArr objectAtIndex:i] valueForKey:@"leftview"]]]];
-            iconView.bounds = CGRectInset(iconView.frame, 25, 10);
-            iconView.frame = CGRectMake(0, 0, 25, 25);
-            [paddingView1 addSubview:iconView];
-            textfield.rightView = paddingView1;
+            iconView.bounds = CGRectInset(iconView.frame, 25, 20);
+            iconView.frame = CGRectMake(0, 0, 35, 35);
+            [paddingView addSubview:iconView];
+            textfield.rightView = paddingView;
             textfield.rightViewMode=UITextFieldViewModeAlways;
 //            textfield.leftView = paddingView;
 //            textfield.leftViewMode = UITextFieldViewModeAlways;
@@ -160,44 +157,7 @@
             yPos =yPos + textfield.frame.size.height+10;
         }
     }
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, yPos,  fieldBg.frame.size.width, 30)];
-    label.text = @"Upload Image";
-    label.textColor = [UIColor whiteColor];
-    yPos = yPos + 40;
-    [fieldBg addSubview:label];
     
-    UITextField *textfield = [[UITextField alloc] init];
-    textfield.frame = CGRectMake(0, yPos, fieldBg.frame.size.width, 30);
-    textfield.tag = 5011;
-    textfield.delegate = VC;
-    UIColor *color = [UIColor whiteColor];
-    textfield.attributedPlaceholder = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"Select Image"] attributes:@{NSForegroundColorAttributeName: color}];
-    [fieldBg addSubview:textfield];
-    yPos = yPos + 40;
-    
-    UIImageView *iconView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:[NSString stringWithFormat:@"dropdown.png"]]];
-    iconView.bounds = CGRectInset(iconView.frame, 25, 10);
-    iconView.frame = CGRectMake(0, 0, 25, 25);
-    textfield.rightView = iconView;
-    textfield.rightViewMode=UITextFieldViewModeAlways;
-    
-    CALayer* borderLayer = [textfield layer];
-    CALayer *bottomBorder = [CALayer layer];
-    bottomBorder.borderColor = [UIColor darkGrayColor].CGColor;
-    bottomBorder.borderWidth = 1;
-    bottomBorder.opacity = 0.50;
-    bottomBorder.frame = CGRectMake(0, borderLayer.frame.size.height-1, borderLayer.frame.size.width, 1);
-    [borderLayer addSublayer:bottomBorder];
-    
-    //Adding scroll view for image scroll
-    UIScrollView *imgScroll = [[UIScrollView alloc] initWithFrame:CGRectMake(fieldBg.frame.size.width/30, yPos, fieldBg.frame.size.width-(fieldBg.frame.size.width/15), 120)];
-    [imgScroll setTag:6001];
-    [fieldBg addSubview:imgScroll];
-    
-    UIImageView *imageV = [[UIImageView alloc] init];
-    imageV.frame = CGRectMake(0, 10, 100, 100);
-    [imageV setBackgroundColor:[UIColor redColor]];
-    [imgScroll addSubview:imageV];
 }
 
 

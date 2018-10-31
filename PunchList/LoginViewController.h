@@ -7,9 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "AppDelegate.h"
 
 @interface LoginViewController : UIViewController <UITextFieldDelegate, NSURLConnectionDelegate>
-
+{
+    AppDelegate *appDel;
+}
 -(void)submitUserNameforForgotPassword :(NSString*)username;
 
 @end
