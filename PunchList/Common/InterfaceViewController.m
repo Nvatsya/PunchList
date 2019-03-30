@@ -81,6 +81,18 @@
     [VC.navigationController.navigationBar setBarTintColor:[UIColor grayColor]];
     [VC.navigationController.navigationBar setTranslucent:YES];
     VC.title = title;
+    if ([title isEqualToString:@"My Projects"]) {
+        [VC.navigationController.navigationItem setHidesBackButton:YES];
+        UIButton *menuButton = [[UIButton alloc] init];
+        [menuButton setBackgroundImage:[UIImage imageNamed:@"SlideMenu.png"] forState:UIControlStateNormal];
+        [menuButton addTarget:VC action:@selector(showSlideMenuItem)
+             forControlEvents:UIControlEventTouchUpInside];
+        [menuButton setShowsTouchWhenHighlighted:YES];
+        
+        UIBarButtonItem *mailbutton =[[UIBarButtonItem alloc] initWithCustomView:menuButton];
+        VC.navigationItem.leftBarButtonItem =mailbutton;
+        
+    }
 }
 
 +(void)createListView :(UIViewController*)VC

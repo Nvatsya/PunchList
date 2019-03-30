@@ -26,16 +26,12 @@
 		181386DC2132C9BE000D7803 /* AddNewStatusController.m in Sources */ = {isa = PBXBuildFile; fileRef = 181386DB2132C9BE000D7803 /* AddNewStatusController.m */; };
 		181386E12132CF20000D7803 /* AboutViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 181386E02132CF20000D7803 /* AboutViewController.m */; };
 		18BA2FF721244BDD00984E84 /* DataConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 18BA2FF621244BDD00984E84 /* DataConnection.m */; };
-		18BA2FF821244BDD00984E84 /* DataConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 18BA2FF621244BDD00984E84 /* DataConnection.m */; };
 		18BA2FFE2124565E00984E84 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 18BA2FFD2124565E00984E84 /* Reachability.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		18BA2FFF2124565E00984E84 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 18BA2FFD2124565E00984E84 /* Reachability.m */; };
 		18BA30032124739900984E84 /* AdminViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18BA30022124739900984E84 /* AdminViewController.m */; };
-		18BA30042124739900984E84 /* AdminViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18BA30022124739900984E84 /* AdminViewController.m */; };
 		18BA30072124899000984E84 /* Applogo.png in Resources */ = {isa = PBXBuildFile; fileRef = 18BA30062124899000984E84 /* Applogo.png */; };
 		18BA30082124899000984E84 /* Applogo.png in Resources */ = {isa = PBXBuildFile; fileRef = 18BA30062124899000984E84 /* Applogo.png */; };
 		18BA30092124899000984E84 /* Applogo.png in Resources */ = {isa = PBXBuildFile; fileRef = 18BA30062124899000984E84 /* Applogo.png */; };
 		18BA300C21248A6D00984E84 /* InterfaceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18BA300B21248A6D00984E84 /* InterfaceViewController.m */; };
-		18BA300D21248A6D00984E84 /* InterfaceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18BA300B21248A6D00984E84 /* InterfaceViewController.m */; };
 		18BA305F2126CB0000984E84 /* dashboard.png in Resources */ = {isa = PBXBuildFile; fileRef = 18BA30572126CAFF00984E84 /* dashboard.png */; };
 		18BA30602126CB0000984E84 /* newUser.png in Resources */ = {isa = PBXBuildFile; fileRef = 18BA30582126CAFF00984E84 /* newUser.png */; };
 		18BA30612126CB0000984E84 /* newProject.png in Resources */ = {isa = PBXBuildFile; fileRef = 18BA30592126CB0000984E84 /* newProject.png */; };
@@ -60,6 +56,8 @@
 		18DE39972120409800B03685 /* MyLogo.png in Resources */ = {isa = PBXBuildFile; fileRef = 18DE39962120409800B03685 /* MyLogo.png */; };
 		18F45DBB21567E1B00CE4AF3 /* VSProgressHud.m in Sources */ = {isa = PBXBuildFile; fileRef = 18F45DBA21567E1B00CE4AF3 /* VSProgressHud.m */; };
 		18FA286B21427C93002152B6 /* TableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 18FA286A21427C93002152B6 /* TableViewCell.m */; };
+		3711541C224F66DE00789E88 /* SliderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3711541A224F66DE00789E88 /* SliderView.m */; };
+		3711541E224F8F7700789E88 /* SlideMenu.png in Resources */ = {isa = PBXBuildFile; fileRef = 3711541D224F8F7700789E88 /* SlideMenu.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -157,6 +155,9 @@
 		18F45DBA21567E1B00CE4AF3 /* VSProgressHud.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VSProgressHud.m; sourceTree = "<group>"; };
 		18FA286921427C93002152B6 /* TableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TableViewCell.h; sourceTree = "<group>"; };
 		18FA286A21427C93002152B6 /* TableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TableViewCell.m; sourceTree = "<group>"; };
+		3711541A224F66DE00789E88 /* SliderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SliderView.m; sourceTree = "<group>"; };
+		3711541B224F66DE00789E88 /* SliderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SliderView.h; sourceTree = "<group>"; };
+		3711541D224F8F7700789E88 /* SlideMenu.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SlideMenu.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -246,6 +247,8 @@
 				18FA286A21427C93002152B6 /* TableViewCell.m */,
 				18F45DB921567E1B00CE4AF3 /* VSProgressHud.h */,
 				18F45DBA21567E1B00CE4AF3 /* VSProgressHud.m */,
+				3711541B224F66DE00789E88 /* SliderView.h */,
+				3711541A224F66DE00789E88 /* SliderView.m */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -344,6 +347,7 @@
 				18DE39992120496600B03685 /* AvenirBook.otf */,
 				18DE39982120496600B03685 /* AvenirLTM.otf */,
 				18BA30062124899000984E84 /* Applogo.png */,
+				3711541D224F8F7700789E88 /* SlideMenu.png */,
 				18DE39962120409800B03685 /* MyLogo.png */,
 				18DE399121203E7D00B03685 /* background.png */,
 				18DE398E21203E7D00B03685 /* headerBG.png */,
@@ -484,6 +488,7 @@
 				180CB7D7217F545E001959ED /* radioOffButton.png in Resources */,
 				180CB7D6217F545E001959ED /* calender.png in Resources */,
 				18BA30612126CB0000984E84 /* newProject.png in Resources */,
+				3711541E224F8F7700789E88 /* SlideMenu.png in Resources */,
 				18BA30642126CB0000984E84 /* close.png in Resources */,
 				18BA305F2126CB0000984E84 /* dashboard.png in Resources */,
 				180CB7DB2180543E001959ED /* dropmark.png in Resources */,
@@ -536,6 +541,7 @@
 				18DE396B212035A000B03685 /* main.m in Sources */,
 				181386D32132C952000D7803 /* AddNewUserController.m in Sources */,
 				180CB7C8217CB08F001959ED /* ProjListViewController.m in Sources */,
+				3711541C224F66DE00789E88 /* SliderView.m in Sources */,
 				18BA306A212816A000984E84 /* Form.m in Sources */,
 				18DE395D2120359D00B03685 /* AppDelegate.m in Sources */,
 				18BA300C21248A6D00984E84 /* InterfaceViewController.m in Sources */,
@@ -558,10 +564,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				18DE3975212035A000B03685 /* PunchListTests.m in Sources */,
-				18BA30042124739900984E84 /* AdminViewController.m in Sources */,
-				18BA2FFF2124565E00984E84 /* Reachability.m in Sources */,
-				18BA300D21248A6D00984E84 /* InterfaceViewController.m in Sources */,
-				18BA2FF821244BDD00984E84 /* DataConnection.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -721,7 +723,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer: venu vasu Polu (FS6QUX32LG)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = RX575VBLC3;
 				INFOPLIST_FILE = PunchList/Info.plist;
@@ -729,7 +731,7 @@
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.gjit.punchList;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = PunchNew;
+				PROVISIONING_PROFILE_SPECIFIER = Punch_Adhoc;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -738,7 +740,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer: venu vasu Polu (FS6QUX32LG)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = RX575VBLC3;
 				INFOPLIST_FILE = PunchList/Info.plist;
@@ -746,7 +748,7 @@
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.gjit.punchList;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = PunchNew;
+				PROVISIONING_PROFILE_SPECIFIER = Punch_Adhoc;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

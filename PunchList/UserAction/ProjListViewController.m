@@ -14,6 +14,7 @@
 #import "CommonClass.h"
 #import "ConstantFile.h"
 #import "PunchViewController.h"
+#import "SliderView.h"
 
 @interface ProjListViewController ()
 {
@@ -25,6 +26,17 @@
 
 @implementation ProjListViewController
 
+-(void)showSlideMenuItem
+{
+    BOOL isTapped = (BOOL) [[NSUserDefaults standardUserDefaults] valueForKey:@"isTapped"];
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"isTapped"]) {
+        [SliderView hideSlider];
+    }else{
+        isTapped = 1;
+        [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithBool:isTapped] forKey:@"isTapped"];
+        [SliderView showSlider];
+    }
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -34,7 +46,7 @@
     [InterfaceViewController createInterfaceForAdminAction:self forScreen:@"My Projects"];
     [InterfaceViewController createListView:self];
     
-    
+    [SliderView createSliderForView:self withActionList:nil];
 }
 
 -(void)viewWillAppear:(BOOL)animated

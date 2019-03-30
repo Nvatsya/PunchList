@@ -16,6 +16,7 @@
 #import <AssetsLibrary/AssetsLibrary.h>
 #import "Base64.h"
 
+
 @interface PunchViewController ()
 {
     NSMutableArray *fieldsArr;
@@ -177,7 +178,7 @@
     UIView *view = [self.view viewWithTag:5001];
     NSLog(@"bgview height %f and ypos %f",view.frame.size.height, view.frame.origin.y);
     UIView *imageFieldContainer = [[UIView alloc]initWithFrame:CGRectMake(view.frame.origin.x, (view.frame.origin.y+view.frame.size.height), view.frame.size.width, self.view.frame.size.height-(view.frame.origin.y+view.frame.size.height+20))];
-   
+    [imageFieldContainer setBackgroundColor:[UIColor greenColor]];
     [self.view addSubview:imageFieldContainer];
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 5,  imageFieldContainer.frame.size.width, 30)];
@@ -211,6 +212,7 @@
     //Adding scroll view for image scroll
     UIScrollView *imgScroll = [[UIScrollView alloc] initWithFrame:CGRectMake(0, textfield.frame.origin.y+textfield.frame.size.height, imageFieldContainer.frame.size.width, imageFieldContainer.frame.size.height/2)];
     [imgScroll setTag:6001];
+    [imgScroll setBackgroundColor:[UIColor yellowColor]];
     [imageFieldContainer addSubview:imgScroll];
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(imageTapped:)];
@@ -261,7 +263,7 @@
 
 -(void)uploadSelectedImage
 {
-    [VSProgressHud presentIndicator:self];
+    
     //NSString *urlstr = @"http://punch.gjitsolution.in/api/Image/UploadImage";
     NSString *urlstr = @"http://punch.gjitsolution.in/api/Image/GetImage";
     
@@ -284,6 +286,47 @@
     DataConnection *dataCon = [[DataConnection alloc] initWithUrlStringFromData:urlstr withJsonString:jsonString delegate:self];
     dataCon.accessibilityLabel = @"ImageUpload";
 }
+-(NSString *)convertingToJsonFormat:(NSDictionary *)dictJson
+{
+    NSString *jsonString=@"{";
+    int count=0;
+    
+    for (id key in dictJson){
+        count++;
+        if (count<dictJson.count) {
+            
+            if ([[dictJson valueForKey:key] isKindOfClass:[NSString class]]) {
+                
+                jsonString=[jsonString stringByAppendingFormat:@"\"%@\":\"%@\",",key,[dictJson objectForKey:key]];
+                
+                
+            }else{
+                
+                jsonString=[jsonString stringByAppendingFormat:@"\"%@\":%@,",key,[dictJson objectForKey:key]];
+                
+            }
+            
+        }
+        else {
+            
+            if ([[dictJson valueForKey:key] isKindOfClass:[NSString class]]) {
+                
+                jsonString=[jsonString stringByAppendingFormat:@"\"%@\":\"%@\"}",key,[dictJson objectForKey:key]];
+                
+            }else{
+                
+                jsonString=[jsonString stringByAppendingFormat:@"\"%@\":%@}",key,[dictJson objectForKey:key]];
+                
+            }
+            
+            
+        }
+        
+    }
+    
+    return jsonString;
+}
+
 -(void)callingAddNewPunch
 {
     [selectedTF resignFirstResponder];
@@ -292,11 +335,15 @@
         [dict setValue:[[[self.detailDict valueForKey:@"PunchIssues"] valueForKey:@"IssueId"]lastObject] forKey:@"IssueId"];
         [dict setValue:[self.detailDict valueForKey:@"ProjectId"] forKey:@"ProjectId"];
         [dict setValue:updatedStatusStr forKey:@"IssueStatus"];
+        [dict setValue:issueName forKey:@"IssueName"];
         [dict setValue:updatedDescription forKey:@"IssueDescription"];
         [dict setValue:assignedToStr forKey:@"AssignedTo"];
-      //  [dict setValue:assignedToStr forKey:@"AssignedTo"];
+        [dict setValue:updatedDeptStr forKey:@"DepartmentId"];
         [dict setValue:[NSString stringWithFormat:@"%@",[[NSUserDefaults standardUserDefaults]valueForKey:@"UserId"]] forKey:@"CreatedBy"];
         [dict setValue:[NSString stringWithFormat:@"%@",[NSDate date]] forKey:@"CreatedOn"];
+//        NSDictionary *imgDict = [[NSDictionary alloc] initWithObjectsAndKeys:imageBase64data,@"ImgStr", nil];
+//       // NSArray *imgArr = [[NSArray alloc] initWithObjects:imgDict, nil];
+//        [dict setValue:[self convertingToJsonFormat:imgDict] forKey:@"IssueImages"];
         
         
         
@@ -354,8 +401,7 @@
         NSString *responseString =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         NSLog(@"updateResponse  %@", responseString);
        
-        [CommonClass showAlert:self messageString:@"To Add image please update the punch item" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
-        
+        [CommonClass showAlert:self messageString:@"Need to update the recently create Punch in order to add Issue image." withTitle:@"" OKbutton:nil cancelButton:@"OK"];
         [self.navigationController popViewControllerAnimated:YES];
     }else if ([[dataCon accessibilityLabel] isEqualToString:@"ImageUpload"]){
         NSString *responseString =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
@@ -424,7 +470,8 @@
             actionPopup = [UIAlertController alertControllerWithTitle:@"Select Image Source" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
             
             [self imageSelectionAction];
-        }else{
+        }
+        else{
             [CommonClass showAlert:self messageString:@"Issue image can't be uploaded for New Punch" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
         }
         
@@ -570,6 +617,12 @@
     
    selectedImage = info[UIImagePickerControllerEditedImage];
     
+    UIScrollView *imgScroll = [self.view viewWithTag:6001];
+    NSLog(@"scroll contentSize %f",imgScroll.contentSize);
+    UIImageView *selectedImgV = [[UIImageView alloc] init];
+    selectedImgV.frame = CGRectMake(imgScroll.contentSize.width, 1, imgScroll.frame.size.height-5, imgScroll.frame.size.height);
+    [selectedImgV setImage:selectedImage];
+    [imgScroll addSubview:selectedImgV];
     
     NSURL *refURL = [info valueForKey:UIImagePickerControllerReferenceURL];
     if (refURL==nil) {
@@ -608,6 +661,7 @@
         [assetslibrary assetForURL:refURL resultBlock:resultblock failureBlock:nil];
     }
     [picker dismissViewControllerAnimated:YES completion:NULL];
+   // [VSProgressHud presentIndicator:self];
 }
 
 -(void)getBinaryDataForImage
@@ -616,7 +670,7 @@
     imageBinaryData=UIImageJPEGRepresentation(selectedImage, 0.8);
     imageBase64data=[Base64 encode:imageBinaryData];
     
-    [self uploadSelectedImage];
+    //[self uploadSelectedImage];
 }
 
 

@@ -43,7 +43,10 @@
     
    // [self uploadTestImage];
 }
-
+-(void)viewWillAppear:(BOOL)animated
+{
+    [self.navigationController setNavigationBarHidden:YES];
+}
 -(void)createLoginUI
 {
     [InterfaceViewController createUserInterface:self];
@@ -119,6 +122,9 @@
     loginBtn.titleLabel.font = [UIFont fontWithName:@"AvenirBook.otf" size:appDel.isIphone?18:26];
     [loginBtn addTarget:self action:@selector(handleLoginAction) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:loginBtn];
+    
+    //temp code
+    username = usernameTF.text = @"Harry@insigniamgmt.com"; password = passwordTF.text = @"7266";
 }
 
 -(void)handleForgotAction
