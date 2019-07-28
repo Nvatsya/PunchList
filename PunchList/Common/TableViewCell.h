@@ -14,4 +14,6 @@
 
 -(void)createCellForProjectList :(UIViewController*)VC onTable:(UITableView*)table forList:(NSString*)listname heightOfRow:(float)height withData:(NSDictionary*)dataDict forLables:(NSDictionary *)labelDict;
 
+-(void)createCellForPunchList :(UIViewController*)VC onTable:(UITableView*)table forList:(NSString*)listname heightOfRow:(float)height withData:(NSDictionary*)dataDict forLables:(NSDictionary *)labelDict;
+
 @end

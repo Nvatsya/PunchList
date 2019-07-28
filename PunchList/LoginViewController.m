@@ -124,7 +124,7 @@
     [self.view addSubview:loginBtn];
     
     //temp code
-    username = usernameTF.text = @"Harry@insigniamgmt.com"; password = passwordTF.text = @"7266";
+    //username = usernameTF.text = @"Harry@insigniamgmt.com"; password = passwordTF.text = @"7266";
 }
 
 -(void)handleForgotAction
@@ -146,10 +146,10 @@
         [self callLoginMethod];
     }else{
         
-//        ProjListViewController *projVC=[[ProjListViewController alloc] init];
-//        [self.navigationController pushViewController:projVC animated:YES];
+        ProjListViewController *projVC=[[ProjListViewController alloc] init];
+        [self.navigationController pushViewController:projVC animated:YES];
         
-      [CommonClass showAlert:self messageString:@"All Fields are mandatory" withTitle:@"" OKbutton:@"" cancelButton:@"OK"];
+     // [CommonClass showAlert:self messageString:@"All Fields are mandatory" withTitle:@"" OKbutton:@"" cancelButton:@"OK"];
     }
 }
 

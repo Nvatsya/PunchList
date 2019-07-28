@@ -42,7 +42,7 @@ CGFloat screenHeight;
     CGRect rect = [[UIScreen mainScreen] bounds];
     screenWidth = [UIScreen mainScreen].bounds.size.width;
     screenHeight = [UIScreen mainScreen].bounds.size.height;
-    baseview = [[UIView alloc] initWithFrame:CGRectMake(-screenWidth, appDelegate.isIphone?60:118, screenWidth, screenHeight - 60)];
+    baseview = [[UIView alloc] initWithFrame:CGRectMake(-screenWidth, appDelegate.isIphone?60:70, screenWidth, screenHeight - 60)];
     baseview.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.2];
     baseview.userInteractionEnabled = YES;
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureHandler:)];
@@ -65,7 +65,7 @@ CGFloat screenHeight;
     sliderView.frame = CGRectMake(-180, 3, 180, rect.size.height-60);
     
     if ([[UIDevice currentDevice] userInterfaceIdiom]==UIUserInterfaceIdiomPad){
-        sliderView.frame=CGRectMake(-280, 3, 280, rect.size.height-113);
+        sliderView.frame=CGRectMake(-280, 3, 280, rect.size.height-60);
     }
     sliderView.backgroundColor = [UIColor lightGrayColor];//[appDelegate getColorFromColorCode:@"#444755"];
     sliderView.bounces=NO;
@@ -139,7 +139,7 @@ CGFloat screenHeight;
             cell.textLabel.textColor = [UIColor blueColor];
         }
         cell.textLabel.text = [actionsListArray objectAtIndex:indexPath.row];
-        cell.textLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightBlack];
+        cell.textLabel.font = [UIFont systemFontOfSize:appDelegate.isIphone?12:15 weight:UIFontWeightBlack];
         
     }
     
@@ -175,41 +175,6 @@ CGFloat screenHeight;
         }
     }
     else if (indexPath.section == 1){
-//        if (userInfo.numUserTypeID == CWTypeID) {
-//
-//            if (userInfo.numCWID == [[NSString stringWithFormat:@"%@",[[appDelegate.mutAryCWNumbers objectAtIndex:indexPath.row] objectForKey:@"saeID"]] integerValue]) {
-//                [[NSNotificationCenter defaultCenter] postNotificationName:@"clientChange" object:nil userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"NO", @"isAPICall", @"", @"info", nil]];
-//            }
-//            else{
-//
-//                NSString *strID = [NSString stringWithFormat:@"%@",[[appDelegate.mutAryCWNumbers objectAtIndex:indexPath.row] valueForKey:@"saeID"]];
-//                userInfo.numCWID = [strID integerValue];
-//                userInfo.strCWID = strID;
-//                userInfo.cwID = strID;
-//                userInfo.saeID = strID;
-//
-//                userInfo.clientID = [NSString stringWithFormat:@"%@",[[appDelegate.mutAryCWNumbers objectAtIndex:indexPath.row] valueForKey:@"clientID"]];
-//                userInfo.numClientID = [[NSString stringWithFormat:@"%@",[[appDelegate.mutAryCWNumbers objectAtIndex:indexPath.row] valueForKey:@"clientID"]] integerValue];
-//                userInfo.numMspClientID = [[NSString stringWithFormat:@"%@",[[appDelegate.mutAryCWNumbers objectAtIndex:indexPath.row] valueForKey:@"MSPClientID"]] integerValue];
-//                userInfo.numMspID = [[NSString stringWithFormat:@"%@",[[appDelegate.mutAryCWNumbers objectAtIndex:indexPath.row] valueForKey:@"MspId"]] integerValue];
-//                userInfo.numSupplierID = [[NSString stringWithFormat:@"%@",[[appDelegate.mutAryCWNumbers objectAtIndex:indexPath.row] valueForKey:@"SupplierId"]] integerValue];
-//                userInfo.numUserID = [[NSString stringWithFormat:@"%@",[[appDelegate.mutAryCWNumbers objectAtIndex:indexPath.row] valueForKey:@"UserId"]] integerValue];
-//                userInfo.strSessionKey = [NSString stringWithFormat:@"%@",[[appDelegate.mutAryCWNumbers objectAtIndex:indexPath.row] valueForKey:@"SessionKey"]];
-//                userInfo.sessionKey = [NSString stringWithFormat:@"%@",[[appDelegate.mutAryCWNumbers objectAtIndex:indexPath.row] valueForKey:@"SessionKey"]];
-//
-//                [[NSNotificationCenter defaultCenter] postNotificationName:@"clientChange" object:nil userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"YES", @"isAPICall", @"", @"info", nil]];
-//            }
-//
-//        }else{
-//            userInfo.clientName = [[clientListArray  objectAtIndex:indexPath.row] clientName];
-//            userInfo.clientID = [[clientListArray  objectAtIndex:indexPath.row] clientID];
-//            userInfo.mspClientID = [[clientListArray  objectAtIndex:indexPath.row] mspClientID];
-//
-//            userInfo.numMspClientID = [[[clientListArray  objectAtIndex:indexPath.row] mspClientID] integerValue];
-//            userInfo.numClientID = [[[clientListArray  objectAtIndex:indexPath.row] clientID] integerValue];
-//            userInfo.strClientName = [[clientListArray  objectAtIndex:indexPath.row] clientName];
-//            [[NSNotificationCenter defaultCenter] postNotificationName:@"clientChange" object:nil userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[clientListArray objectAtIndex:indexPath.row], @"info", nil]];
-//        }
         
         
     }
@@ -259,16 +224,9 @@ CGFloat screenHeight;
         nameLbl.font = [UIFont systemFontOfSize:12];
         nameLbl.textAlignment = NSTextAlignmentCenter;
         
-//        NSString *userName;
-//        if ([CommonMethods checkisStringNotEmpty:[NSString stringWithFormat:@"%@",userInfo.strEnvironementName]]) {
-//            userName = [NSString stringWithFormat:@"%@ - %@ %@ : %@\n%@", userInfo.strEnvironementName, AppLabel, [NSString stringWithFormat:@"%@",[[[NSBundle mainBundle] infoDictionary] valueForKey:@"CFBundleShortVersionString"]], userInfo.strUserType, [[userInfo.strUserName componentsSeparatedByString:@","] lastObject]];
-//        }else{
-//            userName = [NSString stringWithFormat:@"%@  %@ : %@\n%@", AppLabel,[NSString stringWithFormat:@"%@",[[[NSBundle mainBundle] infoDictionary] valueForKey:@"CFBundleShortVersionString"]], userInfo.strUserType, [[userInfo.strUserName componentsSeparatedByString:@","] lastObject]];
-//        }
-//
         NSString *usersName = [[NSUserDefaults standardUserDefaults] valueForKey:@"userName"];
         nameLbl.text=[NSString stringWithFormat:@"Hello, %@", usersName];
-        [nameLbl setFont:[UIFont systemFontOfSize:12 weight:UIFontWeightBlack]];
+        [nameLbl setFont:[UIFont systemFontOfSize:appDelegate.isIphone?12:15 weight:UIFontWeightBlack]];
         nameLbl.textColor = [UIColor whiteColor];
         [headerbaseview addSubview:nameLbl];
         UIView *layerview = [[UIView alloc] initWithFrame:CGRectMake(0, headerbaseview.frame.size.height, sliderView.frame.size.width, 1)];
@@ -321,22 +279,13 @@ CGFloat screenHeight;
 
 +(void)showSlider{
     
-//    if (userInfo.numUserTypeID == CWTypeID || userInfo.numUserTypeID == MSPTypeID) {
-//        actionsListArray = [[NSArray alloc] initWithObjects:@"Logout", @"Exit", nil];
-//    }else{
-//        actionsListArray = [[NSArray alloc] initWithObjects:@"Logout", @"Exit", userInfo.clientName, nil];
-//    }
-    
     [appDelegate.window bringSubviewToFront:sliderView];
-   // [SliderView updateTableData];
-//    isTapped = YES;
-//    [[NSUserDefaults standardUserDefaults] setBool:isTapped forKey:@"isTapped"];
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:0.5];
     
     if ([[UIDevice currentDevice] userInterfaceIdiom]==UIUserInterfaceIdiomPad){
-        baseview.frame = CGRectMake(0, 113, screenWidth, screenHeight - 113);
-        sliderView.frame=CGRectMake(0, 3, 280, (appDelegate.window.frame.size.height-113));
+        baseview.frame = CGRectMake(0, 70, screenWidth, screenHeight - 70);
+        sliderView.frame=CGRectMake(0, 3, 280, (appDelegate.window.frame.size.height-60));
     }else{
         baseview.frame = CGRectMake(0, 60, screenWidth, screenHeight - 60);
         sliderView.frame=CGRectMake(0, 3, 180, (appDelegate.window.frame.size.height-60));
@@ -350,8 +299,8 @@ CGFloat screenHeight;
     [UIView setAnimationDuration:0.5];
     
     if ([[UIDevice currentDevice] userInterfaceIdiom]==UIUserInterfaceIdiomPad){
-        baseview.frame = CGRectMake(0, 113, screenWidth, screenHeight - 113);
-        sliderView.frame=CGRectMake(0, 3, 280, (appDelegate.window.frame.size.height-113));
+        baseview.frame = CGRectMake(-screenWidth, 70, screenWidth, screenHeight - 70);
+        sliderView.frame=CGRectMake(-(sliderView.frame.size.width), 3, 280, (appDelegate.window.frame.size.height-60));
     }else{
         baseview.frame = CGRectMake(-screenWidth, 60, screenWidth, screenHeight - 60);
         sliderView.frame=CGRectMake(-(sliderView.frame.size.width), 3, 180, (appDelegate.window.frame.size.height-60));

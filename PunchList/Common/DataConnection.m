@@ -44,7 +44,6 @@
     
     if (self=[super init]) {
         self.delegate=myDelegate;
-       // if ([self connectedToInternet]) {
             NSURLSessionConfiguration *defaultCon = [NSURLSessionConfiguration defaultSessionConfiguration];
             defaultCon.timeoutIntervalForResource = 60.00;
             NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration:defaultCon delegate:nil delegateQueue:[NSOperationQueue mainQueue]];
@@ -71,7 +70,6 @@
                                                                    }
                                                                }];
             [dataTask resume];
-       // }
         
     }
     return self;
@@ -81,7 +79,7 @@
 {
     if (self = [super init]) {
         self.delegate=myDelegate;
-        // if ([self connectedToInternet]) {
+        NSArray *URLArr = [myUrlString componentsSeparatedByString:@"/"];
         NSURLSessionConfiguration *defaultCon = [NSURLSessionConfiguration defaultSessionConfiguration];
         defaultCon.timeoutIntervalForResource = 60.00;
         NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration:defaultCon delegate:nil delegateQueue:[NSOperationQueue mainQueue]];
@@ -90,6 +88,10 @@
        // [urlRequest setHTTPBody:[jsonString dataUsingEncoding:NSUTF8StringEncoding]];
         [urlRequest setHTTPMethod:@"GET"];
         [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+        if ([[URLArr lastObject] isEqualToString:@"GetAllProjectBasedOnUser"]) {
+            [urlRequest setValue:@"6e71df7e-b1ce-4f88-899f-3e371da47253" forHTTPHeaderField:@"id"];
+            NSLog(@"userIDD - %@",[[NSUserDefaults standardUserDefaults] valueForKey:@"UserId"]);
+        }
        // [urlRequest setValue:[NSString stringWithFormat:@"%lu", (unsigned long)[[jsonString dataUsingEncoding:NSUTF8StringEncoding] length]] forHTTPHeaderField:@"Content-Length"];
         NSURLSessionDataTask * dataTask =[defaultSession dataTaskWithRequest:urlRequest
                                                            completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {

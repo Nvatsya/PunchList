@@ -82,7 +82,8 @@
     [VC.view addSubview:table];
 }
 
-+(void)createPunchView :(UIViewController*)VC fieldsInfo:(NSMutableArray*)fieldsArr withData:(NSDictionary*)dataDict
+//+(void)createPunchView :(UIViewController*)VC fieldsInfo:(NSMutableArray*)fieldsArr withData:(NSDictionary*)dataDict
++(void)createPunchView :(UIViewController*)VC fieldsInfo:(NSMutableArray*)fieldsArr
 {
     UIView *fieldBg = [[UIView alloc] initWithFrame:CGRectMake(VC.view.frame.size.width/30, VC.view.frame.size.height/8, VC.view.frame.size.width-(VC.view.frame.size.width/15), VC.view.frame.size.height-(VC.view.frame.size.height/1.9))];
     [fieldBg setTag:5001];
@@ -100,10 +101,10 @@
             [fieldBg addSubview:label];
             
             UITextView *textfield = [[UITextView alloc] init];
-            textfield.frame = CGRectMake(0, yPos, fieldBg.frame.size.width, fieldBg.frame.size.height-yPos-60);
+            textfield.frame = CGRectMake(0, yPos, fieldBg.frame.size.width, fieldBg.frame.size.height-yPos-30);
             textfield.tag = [[[fieldsArr objectAtIndex:i] valueForKey:@"tagval"] intValue];
             textfield.delegate = VC;
-            textfield.text = [[[dataDict valueForKey:@"PunchIssues"] valueForKey:@"IssueHistory"] count]==0?@"":[[[[[dataDict valueForKey:@"PunchIssues"] valueForKey:@"IssueHistory"] firstObject] lastObject] valueForKey:@"IssueDescription"];
+            textfield.text = [[fieldsArr objectAtIndex:i] valueForKey:@"Value"];
             [textfield setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"bgcopy.png"]] ];
             
             [textfield setTextColor:[UIColor whiteColor]];
@@ -126,11 +127,17 @@
             
             //Put values in textfields
             if ([[[fieldsArr objectAtIndex:i] valueForKey:@"Placeholder"] isEqualToString:department]) {
-                NSLog(@"department");
-            }else if ([[[fieldsArr objectAtIndex:i] valueForKey:@"Placeholder"] isEqualToString:assignmedTo]){
-                textfield.text = [[[[[dataDict valueForKey:@"PunchIssues"] valueForKey:@"IssueHistory"] firstObject] lastObject] valueForKey:@"AssignedTo"];
+                textfield.text = [NSString stringWithFormat:@"%@", [[[fieldsArr objectAtIndex:i] valueForKey:@"Value"]length]==0?@"":[[fieldsArr objectAtIndex:i] valueForKey:@"Value"]];
+            }else if ([[[fieldsArr objectAtIndex:i] valueForKey:@"Placeholder"] isEqualToString:assignedTo]){
+                textfield.text = [NSString stringWithFormat:@"%@", [[[fieldsArr objectAtIndex:i] valueForKey:@"Value"]length]==0?@"": [[fieldsArr objectAtIndex:i] valueForKey:@"Value"]];
             }else if ([[[fieldsArr objectAtIndex:i] valueForKey:@"Placeholder"] isEqualToString:punchStatus]){
-                textfield.text = [[[[[dataDict valueForKey:@"PunchIssues"] valueForKey:@"IssueHistory"] firstObject] lastObject] valueForKey:@"IssueStatus"];
+                textfield.text = [NSString stringWithFormat:@"%@", [[[fieldsArr objectAtIndex:i] valueForKey:@"Value"]length]==0?@"":[[fieldsArr objectAtIndex:i] valueForKey:@"Value"]];
+            }else if ([[[fieldsArr objectAtIndex:i] valueForKey:@"Placeholder"] isEqualToString:description]){
+                textfield.text = [NSString stringWithFormat:@"%@", [[[fieldsArr objectAtIndex:i] valueForKey:@"Value"]length]==0?@"":[[fieldsArr objectAtIndex:i] valueForKey:@"Value"]];
+            }else if ([[[fieldsArr objectAtIndex:i] valueForKey:@"Placeholder"] isEqualToString:punchTitle]){
+                textfield.text = [NSString stringWithFormat:@"%@", [[[fieldsArr objectAtIndex:i] valueForKey:@"Value"]length]==0?@"":[[fieldsArr objectAtIndex:i] valueForKey:@"Value"]];
+                [textfield setUserInteractionEnabled:[[[fieldsArr objectAtIndex:i] valueForKey:@"Value"]length]==0?YES:NO];
+                [textfield setTextColor:[[[fieldsArr objectAtIndex:i] valueForKey:@"Value"]length]==0?color:[UIColor lightGrayColor]];
             }
             
             

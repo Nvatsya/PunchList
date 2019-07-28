@@ -12,11 +12,13 @@
 #define baseURL @"http://punch.gjitsolution.in/api/"
 #define themeColor @"#04BBB0"
 #define createColor @"#0288d1"
+#define fontColor @"#FFFFFF"
+#define lableColor @"#808080"
 
 #define department @"Department"
-#define assignmedTo @"Assign To"
+#define assignedTo @"Assign To"
 #define punchStatus @"Punch Status"
 #define punchTitle @"Issue Name"
-#define description @"Add Discription"
+#define description @"Add Description"
 
 #endif /* ConstantFile_h */

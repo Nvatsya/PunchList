@@ -7,6 +7,7 @@
 //
 
 #import "ProjListViewController.h"
+#import "ProjDetailsViewController.h"
 #import "InterfaceViewController.h"
 #import "TableViewCell.h"
 #import "VSProgressHUD.h"
@@ -58,12 +59,13 @@
     [VSProgressHud presentIndicator:self];
     
     NSString *urlstr = baseURL;
-    NSString *myUrlString = [NSString stringWithFormat:@"%@Project/GetAllRecord",urlstr];
+    NSString *myUrlString = [NSString stringWithFormat:@"%@Project/GetAllProjectBasedOnUser",urlstr];
     
     if ([CommonClass connectedToInternet]) {
         dataCon = [[DataConnection alloc] initGetDataWithUrlString:myUrlString withJsonString:@"" delegate:self];
     }else{
         [CommonClass showAlert:self messageString:@"No Internet Connection" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
+        [VSProgressHud removeIndicator:self];
     }
     
     [dataCon setAccessibilityLabel:@"fetch"];
@@ -118,10 +120,11 @@
     
     
     cell.backgroundColor = [UIColor clearColor];
-    
+    [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
     [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
     return cell;
 }
+/*
 - (nullable NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewRowAction *editAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:@"Update\nPunch" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath) {
@@ -151,12 +154,13 @@
     NSLog(@"add action clicked %@",[dataArray objectAtIndex:rowItem]);
     
 }
-//- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    ProjDetailViewController *detail = [[ProjDetailViewController alloc] init];
-//    detail.detailDict = [dataArray objectAtIndex:indexPath.row];
-//    [self.navigationController pushViewController:detail animated:YES];
-//}
+ */
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    ProjDetailsViewController *detail = [[ProjDetailsViewController alloc] init];
+    detail.projDict = [dataArray objectAtIndex:indexPath.row];
+    [self.navigationController pushViewController:detail animated:YES];
+}
 
 /*
 #pragma mark - Navigation

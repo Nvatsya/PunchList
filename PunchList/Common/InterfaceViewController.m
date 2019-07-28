@@ -98,12 +98,13 @@
 +(void)createListView :(UIViewController*)VC
 {
     UILabel *instructionLabel = [[UILabel alloc] initWithFrame:CGRectMake(VC.view.frame.size.width/24, VC.view.frame.size.height/10.5, VC.view.frame.size.width-(VC.view.frame.size.width/12), 25)];
-    instructionLabel.text = @"Swipe cell left to get Punch options";
+   // instructionLabel.text = @"Swipe cell left to get Punch options";
+    BOOL isDetails = [NSStringFromClass([VC class]) isEqualToString:@"ProjDetailsViewController"];
+    instructionLabel.text = isDetails?@"":@"Tap any of the project to get Punch Info";
     [instructionLabel setTextColor:[CommonClass getColorFromColorCode:themeColor]];
     [instructionLabel setTextAlignment:NSTextAlignmentCenter];
     [VC.view addSubview:instructionLabel];
-    
-    UIView *fieldBgView = [[UIView alloc] initWithFrame:CGRectMake(VC.view.frame.size.width/20, VC.view.frame.size.height/7.5, VC.view.frame.size.width-(VC.view.frame.size.width/10),(VC.view.frame.size.height - (VC.view.frame.size.height/7.5)))];
+    UIView *fieldBgView = [[UIView alloc] initWithFrame:CGRectMake(isDetails?0:VC.view.frame.size.width/20, VC.view.frame.size.height/(isDetails?3:7.5), VC.view.frame.size.width-(isDetails?0:(VC.view.frame.size.width/10)),(VC.view.frame.size.height - (VC.view.frame.size.height/(isDetails?2.5:7.5))))];
     fieldBgView.tag = 5001;
     
     UITableView *table = [[UITableView alloc] init];

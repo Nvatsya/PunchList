@@ -19,7 +19,7 @@
 
 @interface PunchViewController ()
 {
-    NSMutableArray *fieldsArr;
+    NSMutableArray *fieldsArr, *punchImageArr, *imgDataArray;
     NSArray *departmentArr;
     NSArray *usersArr;
     NSArray *statusArr;
@@ -43,42 +43,124 @@
     NSString *updatedDeptStr;
     NSString *selectedStatusId;
     NSString *issueName;
+    BOOL isSaveNew;
 }
 @end
 
 @implementation PunchViewController
 @synthesize detailDict;
+@synthesize isCreateIssue;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-   // [self getDepartmentList];
+    [InterfaceViewController createInterfaceForAdminAction:self forScreen:[NSString stringWithFormat:@"%@",isCreateIssue?@"Create Punch":[self.detailDict valueForKey:@"IssueName"]]];
+     [self getListDataForDropdowns];
     
-    [InterfaceViewController createInterfaceForAdminAction:self forScreen:[NSString stringWithFormat:@"%@",[self.detailDict valueForKey:@"ProjectName"]]];
-    [self createFieldsInfo];
-    
-    [Form createPunchView:self fieldsInfo:fieldsArr withData:self.detailDict];
-    
+    punchImageArr = [[NSMutableArray alloc] initWithCapacity:0];
+    imgDataArray = [[NSMutableArray alloc] initWithCapacity:0];
     pickerV = [[UIPickerView alloc] init];
     [pickerV setDelegate:self];
     [pickerV setDataSource:self];
-    
     toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 40)];
     UIBarButtonItem *donebarBtn = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(handleDoneAction:)];
     UIBarButtonItem *closebarBtn = [[UIBarButtonItem alloc] initWithTitle:@"Close" style:UIBarButtonItemStylePlain target:self action:@selector(handleCloseAction:)];
     UIBarButtonItem *space = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
     [toolbar setItems:@[closebarBtn,space,donebarBtn]];
     
-    [self createViewForIssueImage];
-    
     closeTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(closeIssueImage:)];
     [closeTap setNumberOfTapsRequired:1];
     
-    
-    [self getListDataForDropdowns];
-   
+    [self createFieldsInfo];
+    [Form createPunchView:self fieldsInfo:fieldsArr];
+    [self createViewForIssueImage];
 }
 
+-(void)viewDidAppear:(BOOL)animated
+{
+    if (!isCreateIssue) {
+        [self updateFieldInfo];
+    }else{
+        if (selectedTF.tag!=5011)
+            [self loadPunchFieldValuesForNew];
+    }
+}
+-(void)updateFieldInfo
+{
+    NSString *departmentName = [[departmentArr objectAtIndex:0]valueForKey:@"DepartmentName"];
+    updatedDeptStr = [[departmentArr objectAtIndex:0] valueForKey:@"DepartmentId"];
+    NSString *assignedName = @"";
+    assignedToStr = [[usersArr objectAtIndex:selectedrow] valueForKey:@"UserId"];
+    updatedStatusStr = isCreateIssue?@"":[self.detailDict valueForKey:@"IssueStatus"];
+    updatedDescription = isCreateIssue?@"":[self.detailDict valueForKey:@"IssueDescription"];
+    issueName = isCreateIssue?@"":[self.detailDict valueForKey:@"IssueName"];
+    //Update data dict with field values
+    //get Department name
+    for (int i=0; i<[departmentArr count]; i++) {
+        if ([[self.detailDict valueForKey:@"DepartmentId"] isEqualToString:[[departmentArr objectAtIndex:i]valueForKey:@"DepartmentId"]]) {
+            departmentName = [[departmentArr objectAtIndex:i]valueForKey:@"DepartmentName"];
+            updatedDeptStr = [[departmentArr objectAtIndex:i] valueForKey:@"DepartmentId"];
+            return;
+        }
+    }
+    
+    //get Assigned name
+    for (int i=0; i<[usersArr count]; i++) {
+        if ([[self.detailDict valueForKey:@"AssignedTo"] isEqualToString:[[usersArr objectAtIndex:i]valueForKey:@"UserId"] ]) {
+            [[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat:@"%@ %@", [[usersArr objectAtIndex:i]valueForKey:@"FirstName"], [[usersArr objectAtIndex:i]valueForKey:@"LastName"]]  forKey:@"AssignedName"];
+            assignedName = [NSString stringWithFormat:@"%@ %@", [[usersArr objectAtIndex:i]valueForKey:@"FirstName"], [[usersArr objectAtIndex:i]valueForKey:@"LastName"]];
+            assignedToStr = [[usersArr objectAtIndex:i] valueForKey:@"UserId"];
+            break;
+        }
+    }
+    
+    for (int i=0; i<[fieldsArr count]; i++) {
+        if ([[[fieldsArr objectAtIndex:i] valueForKey:@"Placeholder"] isEqualToString:department]) {
+            [[fieldsArr objectAtIndex:i] setValue:departmentName forKey:@"Value"];
+        }else if ([[[fieldsArr objectAtIndex:i] valueForKey:@"Placeholder"] isEqualToString:assignedTo]) {
+            [[fieldsArr objectAtIndex:i] setValue:assignedName forKey:@"Value"];
+        }else if ([[[fieldsArr objectAtIndex:i] valueForKey:@"Placeholder"] isEqualToString:punchStatus]) {
+            [[fieldsArr objectAtIndex:i] setValue:updatedStatusStr forKey:@"Value"];
+        }else if ([[[fieldsArr objectAtIndex:i] valueForKey:@"Placeholder"] isEqualToString:description]) {
+            [[fieldsArr objectAtIndex:i] setValue:updatedDescription forKey:@"Value"];
+        }else if ([[[fieldsArr objectAtIndex:i] valueForKey:@"Placeholder"] isEqualToString:punchTitle]) {
+            [[fieldsArr objectAtIndex:i] setValue:issueName forKey:@"Value"];
+        }
+    }
+    
+    //update screen with values
+    UIView *formView = [self.view viewWithTag:5001];
+    [formView removeFromSuperview];
+    [Form createPunchView:self fieldsInfo:fieldsArr];
+}
+-(void)loadPunchFieldValuesForNew
+{
+    UIView *bgView = [self.view viewWithTag:5001];
+    for(UITextField *field in [bgView subviews]){
+        if (field.tag == 101) {
+            updatedDeptStr = [[departmentArr objectAtIndex:0] valueForKey:@"DepartmentId"];
+                field.text = [[departmentArr objectAtIndex:0] valueForKey:@"DepartmentName"];;
+            }else if (field.tag == 102) {
+                field.text = isCreateIssue?@"":[self.detailDict valueForKey:@"AssignedTo"];
+            }else if (field.tag == 103) {
+                updatedStatusStr = field.text = [[statusArr objectAtIndex:0] valueForKey:@"StatusDetail"];
+                selectedStatusId = [[statusArr objectAtIndex:0] valueForKey:@"StatusId"];
+            }else if (field.tag == 104) {
+                field.text = @"";
+            }else if (field.tag == 303) {
+                field.text = @"";
+            }
+        }
+    UIScrollView *imgScroll = [self.view viewWithTag:6001];
+    for (UIImageView *imgV in [imgScroll subviews]){
+        [imgV removeFromSuperview];
+    }
+    UITextField *txtF = [[self.view viewWithTag:5002] viewWithTag:5011];
+    txtF.text = @"";
+    imageBase64data = Nil;
+    selectedImageName = @"";
+    selectedImage = Nil;
+}
 -(void)getListDataForDropdowns
 {
     dataCon = [[DataConnection alloc] init];
@@ -155,15 +237,11 @@
 
 -(void)createFieldsInfo
 {
-    updatedStatusStr = [[[self.detailDict valueForKey:@"PunchIssues"] valueForKey:@"IssueStatus"]lastObject];
-    updatedDeptStr = [[[self.detailDict valueForKey:@"PunchIssues"] valueForKey:@"department"]lastObject];
-    assignedToStr = [[[self.detailDict valueForKey:@"PunchIssues"] valueForKey:@"AssignedTo"]lastObject];
-    
-    NSDictionary *field1Dict = [[NSDictionary alloc] initWithObjectsAndKeys: department,@"Placeholder",@"",@"Value",@"dropdownW.png",@"leftview",@"",@"rightview",@"101",@"tagval",@"YES",@"isRequired",@"dropdown",@"fieldType", nil];
-    NSDictionary *field2Dict = [[NSDictionary alloc] initWithObjectsAndKeys: assignmedTo,@"Placeholder",@"",@"Value",@"dropdownW.png",@"leftview",@"",@"rightview",@"102",@"tagval",@"YES",@"isRequired",@"dropdown",@"fieldType", nil];
-    NSDictionary *field3Dict = [[NSDictionary alloc] initWithObjectsAndKeys: punchStatus,@"Placeholder",@"",@"Value",@"dropdownW.png",@"leftview",@"",@"rightview",@"103",@"tagval",@"YES",@"isRequired",@"dropdown",@"fieldType", nil];
-     NSDictionary *field4Dict = [[NSDictionary alloc] initWithObjectsAndKeys: description,@"Placeholder",@"",@"Value",@"",@"leftview",@"",@"rightview",@"303",@"tagval",@"YES",@"isRequired",@"textView",@"fieldType", nil];
-    NSDictionary *field5Dict = [[NSDictionary alloc] initWithObjectsAndKeys: punchTitle,@"Placeholder",@"",@"Value",@"",@"leftview",@"",@"rightview",@"104",@"tagval",@"YES",@"isRequired",@"textfield",@"fieldType", nil];
+    NSMutableDictionary *field1Dict = [[NSMutableDictionary alloc] initWithObjectsAndKeys: department,@"Placeholder",@"",@"Value",@"dropdownW.png",@"leftview",@"",@"rightview",@"101",@"tagval",@"YES",@"isRequired",@"dropdown",@"fieldType", nil];
+    NSMutableDictionary *field2Dict = [[NSMutableDictionary alloc] initWithObjectsAndKeys: assignedTo,@"Placeholder",@"",@"Value",@"dropdownW.png",@"leftview",@"",@"rightview",@"102",@"tagval",@"YES",@"isRequired",@"dropdown",@"fieldType", nil];
+    NSMutableDictionary *field3Dict = [[NSMutableDictionary alloc] initWithObjectsAndKeys: punchStatus,@"Placeholder",@"",@"Value",@"dropdownW.png",@"leftview",@"",@"rightview",@"103",@"tagval",@"YES",@"isRequired",@"dropdown",@"fieldType", nil];
+     NSMutableDictionary *field4Dict = [[NSMutableDictionary alloc] initWithObjectsAndKeys: description,@"Placeholder",@"",@"Value",@"",@"leftview",@"",@"rightview",@"303",@"tagval",@"YES",@"isRequired",@"textView",@"fieldType", nil];
+    NSMutableDictionary *field5Dict = [[NSMutableDictionary alloc] initWithObjectsAndKeys: punchTitle,@"Placeholder",@"",@"Value",@"",@"leftview",@"",@"rightview",@"104",@"tagval",@"YES",@"isRequired",@"textfield",@"fieldType", nil];
     fieldsArr = [[NSMutableArray alloc] init];
     [fieldsArr addObject:field1Dict];
     [fieldsArr addObject:field2Dict];
@@ -178,10 +256,10 @@
     UIView *view = [self.view viewWithTag:5001];
     NSLog(@"bgview height %f and ypos %f",view.frame.size.height, view.frame.origin.y);
     UIView *imageFieldContainer = [[UIView alloc]initWithFrame:CGRectMake(view.frame.origin.x, (view.frame.origin.y+view.frame.size.height), view.frame.size.width, self.view.frame.size.height-(view.frame.origin.y+view.frame.size.height+20))];
-    [imageFieldContainer setBackgroundColor:[UIColor greenColor]];
+    [imageFieldContainer setTag:5002];
     [self.view addSubview:imageFieldContainer];
     
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 5,  imageFieldContainer.frame.size.width, 30)];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 20,  imageFieldContainer.frame.size.width, 30)];
     label.text = @"Upload Image";
     label.textColor = [UIColor whiteColor];
     [imageFieldContainer addSubview:label];
@@ -212,26 +290,41 @@
     //Adding scroll view for image scroll
     UIScrollView *imgScroll = [[UIScrollView alloc] initWithFrame:CGRectMake(0, textfield.frame.origin.y+textfield.frame.size.height, imageFieldContainer.frame.size.width, imageFieldContainer.frame.size.height/2)];
     [imgScroll setTag:6001];
-    [imgScroll setBackgroundColor:[UIColor yellowColor]];
     [imageFieldContainer addSubview:imgScroll];
     
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(imageTapped:)];
-    [tap setNumberOfTapsRequired:1];
+    
+    for (int i=0; i<[[self.detailDict valueForKey:@"IssueImages"] count]; i++) {
+        NSString *imgURL = [[[self.detailDict valueForKey:@"IssueImages"] objectAtIndex:i] valueForKey:@"ImgStr"];
+        NSMutableDictionary *imgDict = [[NSMutableDictionary alloc] init];
+        dispatch_async(dispatch_get_global_queue(0,0), ^{
+            NSData *data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: imgURL]];
+            if ( data == nil )
+                return;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                UIImage *issueImage = [UIImage imageWithData: data];
+                [imgDict setObject:issueImage forKey:@"image"];
+                [imgDict setObject:@"OldImage" forKey:@"imageName"];
+                [self->punchImageArr addObject:imgDict];
+                [self drawPunchImageOnView];
+            });
+            
+        });
+    }
     
     int xPos = 0;
-    for (int i=0; i<[[self.detailDict valueForKey:@"PunchIssues"] count]; i++) {
-        UIImageView *imageV = [[UIImageView alloc] init];
-        imageV.frame = CGRectMake(xPos, 1, imageFieldContainer.frame.size.height/2, imageFieldContainer.frame.size.height/2);
-        imageV.tag = 3000+0+1;
-        [imgScroll addSubview:imageV];
-        [imageV setUserInteractionEnabled:YES];
-        [imageV setGestureRecognizers:@[tap]];
-        issueImgData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[[[[[self.detailDict valueForKey:@"PunchIssues"] objectAtIndex:i] valueForKey:@"IssueImages"]lastObject]valueForKey:@"ImgStr"]]];
-        [imageV setImage:[UIImage imageWithData:issueImgData]];
-        xPos = xPos + imageFieldContainer.frame.size.height/2+5;
-        
-        [imgScroll setContentSize:CGSizeMake(xPos, 0)];
-    }
+//    for (int i=0; i<[[self.detailDict valueForKey:@"IssueImages"] count]; i++) {
+//        UIImageView *imageV = [[UIImageView alloc] init];
+//        imageV.frame = CGRectMake(xPos, 3, imageFieldContainer.frame.size.height/2, imageFieldContainer.frame.size.height/2);
+//        imageV.tag = 3000+0+1;
+//        [imgScroll addSubview:imageV];
+//        [imageV setUserInteractionEnabled:YES];
+//        [imageV setGestureRecognizers:@[tap]];
+//        issueImgData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[[[self.detailDict valueForKey:@"IssueImages"]objectAtIndex:i]valueForKey:@"ImgStr"]]];
+//        [imageV setImage:[UIImage imageWithData:issueImgData]];
+//        xPos = xPos + imageFieldContainer.frame.size.height/2+5;
+//
+//        [imgScroll setContentSize:CGSizeMake(xPos, 0)];
+//    }
 //    for (int i=0; i<[[[[self.detailDict valueForKey:@"PunchIssues"] lastObject]valueForKey:@"IssueImages"] count]; i++) {
 //        UIImageView *imageV = [[UIImageView alloc] init];
 //        imageV.frame = CGRectMake(xPos, 1, imageFieldContainer.frame.size.height/2, imageFieldContainer.frame.size.height/2);
@@ -247,20 +340,43 @@
 //    }
     //Adding action button
     UIButton *actionBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    actionBtn.frame = CGRectMake(0, imageFieldContainer.frame.size.height-self.view.frame.size.height/14, imgScroll.frame.size.width, self.view.frame.size.height/14);
-    [actionBtn setTitle:[[self.detailDict valueForKey:@"PunchIssues"] count]==0?@"Create":@"Update" forState:UIControlStateNormal] ;
-    [actionBtn setTag:[[self.detailDict valueForKey:@"PunchIssues"] count]==0?441:442] ;
-    [actionBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    actionBtn.backgroundColor = [CommonClass getColorFromColorCode:themeColor];
-    actionBtn.titleLabel.font = [UIFont systemFontOfSize:18];
-    actionBtn.titleLabel.font = [UIFont fontWithName:@"AvenirBook.otf" size:18];
-    [actionBtn addTarget:self action:@selector(handlePunchAction:) forControlEvents:UIControlEventTouchUpInside];
-    
+    UIButton *actionNewBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    if (isCreateIssue) {
+        
+        actionBtn.frame = CGRectMake(0, imageFieldContainer.frame.size.height-self.view.frame.size.height/18, imgScroll.frame.size.width/2-5, self.view.frame.size.height/14);
+        [actionBtn setTitle:@"Save" forState:UIControlStateNormal] ;
+        [actionBtn setTag:441] ;
+        [actionBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        actionBtn.backgroundColor = [CommonClass getColorFromColorCode:themeColor];
+        actionBtn.titleLabel.font = [UIFont systemFontOfSize:18];
+        actionBtn.titleLabel.font = [UIFont fontWithName:@"AvenirBook.otf" size:18];
+        [actionBtn addTarget:self action:@selector(handlePunchAction:) forControlEvents:UIControlEventTouchUpInside];
+        
+        //Adding New button
+        actionNewBtn.frame = CGRectMake(actionBtn.frame.origin.x+actionBtn.frame.size.width+10, imageFieldContainer.frame.size.height-self.view.frame.size.height/18, imgScroll.frame.size.width/2-5, self.view.frame.size.height/14);
+        [actionNewBtn setTitle:@"Save & New" forState:UIControlStateNormal] ;
+        [actionNewBtn setTag:443] ;
+        [actionNewBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        actionNewBtn.backgroundColor = [CommonClass getColorFromColorCode:themeColor];
+        actionNewBtn.titleLabel.font = [UIFont systemFontOfSize:18];
+        actionNewBtn.titleLabel.font = [UIFont fontWithName:@"AvenirBook.otf" size:18];
+        [actionNewBtn addTarget:self action:@selector(handlePunchAction:) forControlEvents:UIControlEventTouchUpInside];
+    }else{
+        actionBtn.frame = CGRectMake(0, imageFieldContainer.frame.size.height-self.view.frame.size.height/18, imgScroll.frame.size.width, self.view.frame.size.height/14);
+        [actionBtn setTitle:@"Update" forState:UIControlStateNormal] ;
+        [actionBtn setTag:442] ;
+        [actionBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        actionBtn.backgroundColor = [CommonClass getColorFromColorCode:themeColor];
+        actionBtn.titleLabel.font = [UIFont systemFontOfSize:18];
+        actionBtn.titleLabel.font = [UIFont fontWithName:@"AvenirBook.otf" size:18];
+        [actionBtn addTarget:self action:@selector(handlePunchAction:) forControlEvents:UIControlEventTouchUpInside];
+    }
     [imageFieldContainer addSubview:actionBtn];
+    [imageFieldContainer addSubview:actionNewBtn];
 }
 
 #pragma mark - API calls handler
-
+/*
 -(void)uploadSelectedImage
 {
     
@@ -270,14 +386,11 @@
     
     NSMutableArray *dataArr = [[NSMutableArray alloc] init];
     
-    NSDictionary *jsonDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:[[[self.detailDict valueForKey:@"PunchIssues"] valueForKey:@"IssueId"]lastObject],@"Id",imageBase64data,@"ImgStr", nil];
+    NSDictionary *jsonDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:[self.detailDict valueForKey:@"IssueId"],@"Id",imageBase64data,@"ImgStr", nil];
     
     [dataArr addObject:jsonDictionary];
     
-    
-    
     NSError *error = nil;
-    
     //Building json string for upload request.
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dataArr options:NSJSONWritingPrettyPrinted error:&error];
     NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
@@ -286,6 +399,8 @@
     DataConnection *dataCon = [[DataConnection alloc] initWithUrlStringFromData:urlstr withJsonString:jsonString delegate:self];
     dataCon.accessibilityLabel = @"ImageUpload";
 }
+ */
+/*
 -(NSString *)convertingToJsonFormat:(NSDictionary *)dictJson
 {
     NSString *jsonString=@"{";
@@ -326,13 +441,13 @@
     
     return jsonString;
 }
-
+*/
 -(void)callingAddNewPunch
 {
     [selectedTF resignFirstResponder];
     if ([CommonClass connectedToInternet]) {
         NSMutableDictionary *dict=[[NSMutableDictionary alloc]init];
-        [dict setValue:[[[self.detailDict valueForKey:@"PunchIssues"] valueForKey:@"IssueId"]lastObject] forKey:@"IssueId"];
+       // [dict setValue:[self.detailDict valueForKey:@"IssueId"] forKey:@"IssueId"];
         [dict setValue:[self.detailDict valueForKey:@"ProjectId"] forKey:@"ProjectId"];
         [dict setValue:updatedStatusStr forKey:@"IssueStatus"];
         [dict setValue:issueName forKey:@"IssueName"];
@@ -341,19 +456,27 @@
         [dict setValue:updatedDeptStr forKey:@"DepartmentId"];
         [dict setValue:[NSString stringWithFormat:@"%@",[[NSUserDefaults standardUserDefaults]valueForKey:@"UserId"]] forKey:@"CreatedBy"];
         [dict setValue:[NSString stringWithFormat:@"%@",[NSDate date]] forKey:@"CreatedOn"];
-//        NSDictionary *imgDict = [[NSDictionary alloc] initWithObjectsAndKeys:imageBase64data,@"ImgStr", nil];
-//       // NSArray *imgArr = [[NSArray alloc] initWithObjects:imgDict, nil];
-//        [dict setValue:[self convertingToJsonFormat:imgDict] forKey:@"IssueImages"];
+        
+        NSDictionary *imgDict = [[NSDictionary alloc] initWithObjectsAndKeys:imageBase64data,@"ImgStr", nil];
+        
+        NSArray *imgArr = [[NSArray alloc] initWithObjects:imgDict, nil];
+        [dict setValue:imgArr forKey:@"IssueImages"];
+//        NSData *jsonData2 = [NSJSONSerialization dataWithJSONObject:imgArr options:NSJSONWritingPrettyPrinted error:nil];
+//        NSString *jsonImgString = [[NSString alloc] initWithData:jsonData2 encoding:NSUTF8StringEncoding];
+//        NSLog(@"jsonImgString as string:\n%@", jsonImgString);
         
         
-        
-        //Building json string for login request.
-        NSString *jsonString = [CommonClass convertingToJsonFormat:dict];
+        if ([dict count]<8) {
+            [CommonClass showAlert:self messageString:@"All fields are mandatory" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
+            return;
+        }
+        //Building json string for API request.
+        NSData *jsonData1 = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
+        NSString *jsonString = [[NSString alloc] initWithData:jsonData1 encoding:NSUTF8StringEncoding];
         NSString *urlstr = baseURL;
         NSString *myUrlString = [NSString stringWithFormat:@"%@Issue/CreateNewIssue",urlstr];
         
         dataCon = [[DataConnection alloc] initWithUrlStringFromData:myUrlString withJsonString:jsonString delegate:self];
-        
         dataCon.accessibilityLabel = @"AddNewPunch";
         NSLog(@"my punchUpdateurl %@ and data %@ connection %@",myUrlString,jsonString, dataCon);
     }else{
@@ -365,22 +488,26 @@
     [selectedTF resignFirstResponder];
     if ([CommonClass connectedToInternet]) {
         NSMutableDictionary *dict=[[NSMutableDictionary alloc]init];
-        [dict setValue:[[[self.detailDict valueForKey:@"PunchIssues"] valueForKey:@"IssueId"]lastObject] forKey:@"IssueId"];
+        [dict setValue:[self.detailDict valueForKey:@"ProjectId"] forKey:@"ProjectId"];
+        [dict setValue:[self.detailDict valueForKey:@"IssueId"] forKey:@"IssueId"];
         [dict setValue:updatedStatusStr forKey:@"IssueStatus"];
+        [dict setValue:issueName forKey:@"IssueName"];
         [dict setValue:updatedDescription forKey:@"IssueDescription"];
         [dict setValue:assignedToStr forKey:@"AssignedTo"];
+        [dict setValue:updatedDeptStr forKey:@"DepartmentId"];
         [dict setValue:[NSString stringWithFormat:@"%@",[[NSUserDefaults standardUserDefaults]valueForKey:@"UserId"]] forKey:@"CreatedBy"];
         [dict setValue:[NSString stringWithFormat:@"%@",[NSDate date]] forKey:@"CreatedOn"];
-       
-        
-        
-        //Building json string for login request.
-        NSString *jsonString = [CommonClass convertingToJsonFormat:dict];
+//        NSDictionary *imgDict = [[NSDictionary alloc] initWithObjectsAndKeys:imageBase64data,@"ImgStr", nil];
+//        NSArray *imgArr = [[NSArray alloc] initWithObjects:imgDict, nil];
+        [dict setValue:imgDataArray forKey:@"IssueImages"];
+        //Building json string for API request.
+        NSData *jsonData1 = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
+        NSString *jsonString = [[NSString alloc] initWithData:jsonData1 encoding:NSUTF8StringEncoding];
         NSString *urlstr = baseURL;
-        NSString *myUrlString = [NSString stringWithFormat:@"%@Issue/UpdateIssue",urlstr];
+        NSString *myUrlString = [NSString stringWithFormat:@"%@Issue/UpdateIssue",urlstr]; //
+        //NSString *myUrlString = [NSString stringWithFormat:@"%@Help/Api/PUT-api-Issue-UpdateIssue",urlstr];
         
         dataCon = [[DataConnection alloc] initUpdateDataWithUrlString:myUrlString withJsonString:jsonString delegate:self];
-        
         dataCon.accessibilityLabel = @"updatePunch";
         NSLog(@"my punchUpdateurl %@ and data %@ connection %@",myUrlString,jsonString, dataCon);
     }else{
@@ -392,20 +519,37 @@
     NSLog(@"response data is...%@",responseString);
     
     if ([[dataCon accessibilityLabel] isEqualToString:@"updatePunch"]){
-        NSString *responseString =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        NSLog(@"updateResponse  %@", responseString);
+       // NSString *responseString =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        NSDictionary *responseDict = [NSJSONSerialization JSONObjectWithData:data
+                                                                     options:kNilOptions
+                                                                       error:nil];
+        if ([[responseDict valueForKey:@"value"] length]>0) {
+          //  [CommonClass showAlert:self messageString:@"Punch Updated Successfully" withTitle:@"Updated" OKbutton:nil cancelButton:@"OK"];
+            [self.navigationController popToViewController:[[self.navigationController viewControllers] objectAtIndex:1] animated:YES];
+        }else{
+            [CommonClass showAlert:self messageString:@"Encountered some error.\nPlease try later." withTitle:@"Error!!" OKbutton:nil cancelButton:@"OK"];
+        }
        
-        [CommonClass showAlert:self messageString:responseString withTitle:@"" OKbutton:nil cancelButton:@"OK"];
-         [self.navigationController popViewControllerAnimated:YES];
+        
     }else if ([[dataCon accessibilityLabel] isEqualToString:@"AddNewPunch"]){
         NSString *responseString =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        NSLog(@"updateResponse  %@", responseString);
-       
-        [CommonClass showAlert:self messageString:@"Need to update the recently create Punch in order to add Issue image." withTitle:@"" OKbutton:nil cancelButton:@"OK"];
-        [self.navigationController popViewControllerAnimated:YES];
+        NSDictionary *responseDict = [NSJSONSerialization JSONObjectWithData:data
+                                                             options:kNilOptions
+                                                               error:nil];
+        if ([responseString rangeOfString:@"value"].location != NSNotFound) {
+            if ([[responseDict valueForKey:@"value"] length]>0) {
+                if (isSaveNew){
+                    [CommonClass showAlert:self messageString:@"New Punch Added" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
+                    [self loadPunchFieldValuesForNew];
+                }
+                else
+                    [self.navigationController popToViewController:[[self.navigationController viewControllers] objectAtIndex:1] animated:YES];
+            }
+        }
+        
     }else if ([[dataCon accessibilityLabel] isEqualToString:@"ImageUpload"]){
         NSString *responseString =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        NSLog(@"updateResponse  %@", responseString);
+        NSLog(@"uploadImgResponse  %@", responseString);
         
         [CommonClass showAlert:self messageString:responseString withTitle:@"" OKbutton:nil cancelButton:@"OK"];
     }
@@ -447,6 +591,7 @@
 #pragma mark - UITextField & TextView Delegate
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
+    [selectedTF resignFirstResponder];
     selectedrow = 0;
     selectedItem = @"";
     selectedTF = textField;
@@ -466,14 +611,14 @@
         textField.inputView = pickerV;
         textField.inputAccessoryView = toolbar;
     }else if (textField.tag==5011){
-        if ([[[[self.detailDict valueForKey:@"PunchIssues"] valueForKey:@"IssueId"]lastObject] length]>0) {
+       // if ([[[[self.detailDict valueForKey:@"PunchIssues"] valueForKey:@"IssueId"]lastObject] length]>0) {
             actionPopup = [UIAlertController alertControllerWithTitle:@"Select Image Source" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
             
             [self imageSelectionAction];
-        }
-        else{
-            [CommonClass showAlert:self messageString:@"Issue image can't be uploaded for New Punch" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
-        }
+//        }
+//        else{
+//            [CommonClass showAlert:self messageString:@"Issue image can't be uploaded for New Punch" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
+//        }
         
         return NO;
     }
@@ -482,11 +627,7 @@
 }
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    if (textField.tag==103){
-        updatedStatusStr = textField.text;
-    }
     [textField resignFirstResponder];
-   // selectedTF = nil;
     return YES;
 }
 -(BOOL)textViewShouldBeginEditing:(UITextView *)textView
@@ -496,6 +637,22 @@
     textView.inputAccessoryView = toolbar;
     
     return YES;
+}
+- (void)textViewDidEndEditing:(UITextView *)textView
+{
+    updatedDescription = selectedTF.text;
+    [textView resignFirstResponder];
+}
+- (void)textFieldDidEndEditing:(UITextField *)textField
+{
+    if (textField.tag==103){
+        updatedStatusStr = textField.text;
+    }
+    if (textField.tag==104){
+        issueName = textField.text;
+    }
+    [textField resignFirstResponder];
+   // [selectedTF resignFirstResponder];
 }
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
     
@@ -520,8 +677,17 @@
         [self->actionPopup dismissViewControllerAnimated:YES completion:^{
         }];
     }]];
+    
+    UIPopoverPresentationController *popPresenter = [actionPopup
+                                                     popoverPresentationController];
+    popPresenter.sourceView = selectedTF;
+    popPresenter.sourceRect = selectedTF.bounds;
     [self presentViewController:actionPopup animated:YES completion:nil];
-    //[actionPopup showFromRect:popupFrame inView:self.view animated:YES];
+    
+  //  [actionPopup.popoverPresentationController setPermittedArrowDirections:0];
+    
+   // [self presentViewController:actionPopup animated:YES completion:nil];
+   // [actionPopup showViewController:self.view sender:nil];
 }
 
 -(void)presentCameraForImage
@@ -559,9 +725,14 @@
 -(void)handlePunchAction :(id)sender
 {
     if ([sender tag]==441) {
+        isSaveNew = NO;
         [self callingAddNewPunch];
     }else if ([sender tag]==442) {
+        isSaveNew = NO;
         [self callingUpdatePunch];
+    }else if ([sender tag]==443) {
+        isSaveNew = YES;
+        [self callingAddNewPunch];
     }
     
 }
@@ -577,8 +748,8 @@
         selectedTF.text = selectedItem;
         assignedToStr = [[usersArr objectAtIndex:selectedrow] valueForKey:@"UserId"];
     }else if (selectedTF.tag==103){
-        selectedTF.text = selectedItem;
-        selectedStatusId = [[statusArr objectAtIndex:selectedrow] valueForKey:@"StatusId"];
+        updatedStatusStr = selectedTF.text = selectedItem;
+        //selectedStatusId = [[statusArr objectAtIndex:selectedrow] valueForKey:@"StatusId"];
     }
     selectedrow = 0;
     [selectedTF resignFirstResponder];
@@ -603,7 +774,7 @@
     UIImageView *imgV=[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, bgView.frame.size.width/1.2, bgView.frame.size.width/1.2)];
     [bgView addSubview:imgV];
     imgV.center = bgView.center;
-    [imgV setImage:[UIImage imageWithData:issueImgData]];
+    [imgV setImage:[[punchImageArr objectAtIndex:(tap.view.tag%3000)-1]valueForKey:@"image"]];
 }
 -(void)closeIssueImage:(UITapGestureRecognizer*)closetap
 {
@@ -616,13 +787,6 @@
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info{
     
    selectedImage = info[UIImagePickerControllerEditedImage];
-    
-    UIScrollView *imgScroll = [self.view viewWithTag:6001];
-    NSLog(@"scroll contentSize %f",imgScroll.contentSize);
-    UIImageView *selectedImgV = [[UIImageView alloc] init];
-    selectedImgV.frame = CGRectMake(imgScroll.contentSize.width, 1, imgScroll.frame.size.height-5, imgScroll.frame.size.height);
-    [selectedImgV setImage:selectedImage];
-    [imgScroll addSubview:selectedImgV];
     
     NSURL *refURL = [info valueForKey:UIImagePickerControllerReferenceURL];
     if (refURL==nil) {
@@ -648,7 +812,7 @@
             float exactMbSize=(float)representation.size/(1024 * 1024);
             NSLog(@"Size: %f", exactMbSize);
             if (exactMbSize <=3){
-                selectedImageName=fileName;
+                self->selectedImageName=fileName;
                 [self getBinaryDataForImage];
             }else{
                 
@@ -660,15 +824,84 @@
         ALAssetsLibrary* assetslibrary = [[ALAssetsLibrary alloc] init];
         [assetslibrary assetForURL:refURL resultBlock:resultblock failureBlock:nil];
     }
+    NSDictionary *imgDict = [[NSDictionary alloc] initWithObjectsAndKeys:selectedImage,@"image",selectedImageName,@"imageName", nil];
+    [punchImageArr addObject:imgDict];
+    
+    [self drawPunchImageOnView];
     [picker dismissViewControllerAnimated:YES completion:NULL];
    // [VSProgressHud presentIndicator:self];
 }
-
+-(void)drawPunchImageOnView
+{
+    UIScrollView *imgScroll = [self.view viewWithTag:6001];
+    [[imgScroll subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    int xPos = 0;
+    for (int i=0; i<[punchImageArr count]; i++) {
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(imageTapped:)];
+        [tap setNumberOfTapsRequired:1];
+        UIImageView *imageV = [[UIImageView alloc] init];
+        imageV.frame = CGRectMake(xPos, 3, imgScroll.frame.size.height-5, imgScroll.frame.size.height);
+        imageV.tag = 3000+i+1;
+        [imageV setUserInteractionEnabled:YES];
+        [imageV setGestureRecognizers:@[tap]];
+        [imgScroll addSubview:imageV];
+        [imageV setImage:[[punchImageArr objectAtIndex:i]valueForKey:@"image"]];
+        if (![[[punchImageArr objectAtIndex:i] valueForKey:@"imageName"] isEqualToString:@"OldImage"]) {
+            UIButton *delBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+            delBtn.frame = CGRectMake(imageV.frame.size.width-25, 3, 25, 25);
+            [delBtn setBackgroundColor:[UIColor blackColor]];
+            [delBtn.layer setCornerRadius:12.5];
+            [delBtn setClipsToBounds:YES];
+            [delBtn setImage:[UIImage imageNamed:@"delete_cross.png"] forState:UIControlStateNormal];
+            [delBtn setTag:3000+i+1];
+            [delBtn addTarget:self action:@selector(deleteIssueImage:) forControlEvents:UIControlEventTouchUpInside];
+            [imageV addSubview:delBtn];
+        }
+//        if (isCreateIssue) {
+//            [imageV setImage:[[punchImageArr objectAtIndex:i]valueForKey:@"image"]];
+//        }else{
+//            dispatch_async(dispatch_get_global_queue(0,0), ^{
+//                NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: [NSString stringWithFormat:@"%@",[[self->punchImageArr objectAtIndex:i]valueForKey:@"image"]]]];
+//                if ( data == nil )
+//                    return;
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    [imageV setImage:[UIImage imageWithData: data]];
+//                });
+//
+//            });
+//        }
+        
+        xPos = xPos + imageV.frame.size.width+15;
+        [imgScroll setContentSize:CGSizeMake(xPos, 0)];
+    }
+    /////
+    
+}
+-(void)deleteIssueImage:(UIButton*)btn
+{
+    NSLog(@"delete tag %ld",[btn tag]);
+    NSInteger tagV = ([btn tag]%3000)-1;
+    [punchImageArr removeObjectAtIndex:tagV];
+    [self drawPunchImageOnView];
+    [self getBinaryDataForImage];
+}
 -(void)getBinaryDataForImage
 {
-    selectedTF.text=selectedImageName;
-    imageBinaryData=UIImageJPEGRepresentation(selectedImage, 0.8);
-    imageBase64data=[Base64 encode:imageBinaryData];
+    //selectedTF.text=selectedImageName;
+    [imgDataArray removeAllObjects];
+    for (int i = 0; i<[punchImageArr count]; i++) {
+        if (![[[punchImageArr objectAtIndex:i] valueForKey:@"imageName"] isEqualToString:@"OldImage"]) {
+            NSMutableDictionary *imgDataDict = [[NSMutableDictionary alloc] init];
+            NSData *imgBinaryData=UIImageJPEGRepresentation([[punchImageArr objectAtIndex:i] valueForKey:@"image"], 0.8);
+            NSString *imgBase64data=[Base64 encode:imgBinaryData];
+            [imgDataDict setObject:imgBase64data forKey:@"ImgStr"];
+            [imgDataArray addObject:imgDataDict];
+        }
+        
+    }
+    
+//    imageBinaryData=UIImageJPEGRepresentation(selectedImage, 0.8);
+//    imageBase64data=[Base64 encode:imageBinaryData];
     
     //[self uploadSelectedImage];
 }

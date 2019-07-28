@@ -58,6 +58,9 @@
 		18FA286B21427C93002152B6 /* TableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 18FA286A21427C93002152B6 /* TableViewCell.m */; };
 		3711541C224F66DE00789E88 /* SliderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3711541A224F66DE00789E88 /* SliderView.m */; };
 		3711541E224F8F7700789E88 /* SlideMenu.png in Resources */ = {isa = PBXBuildFile; fileRef = 3711541D224F8F7700789E88 /* SlideMenu.png */; };
+		371B360422EE0A39002FC107 /* delete_cross.png in Resources */ = {isa = PBXBuildFile; fileRef = 371B360322EE0A38002FC107 /* delete_cross.png */; };
+		3759198322E7084B0009C8CB /* ProjDetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3759198222E7084B0009C8CB /* ProjDetailsViewController.m */; };
+		3759198622E756080009C8CB /* PunchDetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3759198522E756080009C8CB /* PunchDetailsViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -158,6 +161,11 @@
 		3711541A224F66DE00789E88 /* SliderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SliderView.m; sourceTree = "<group>"; };
 		3711541B224F66DE00789E88 /* SliderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SliderView.h; sourceTree = "<group>"; };
 		3711541D224F8F7700789E88 /* SlideMenu.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SlideMenu.png; sourceTree = "<group>"; };
+		371B360322EE0A38002FC107 /* delete_cross.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = delete_cross.png; sourceTree = "<group>"; };
+		3759198122E7084B0009C8CB /* ProjDetailsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProjDetailsViewController.h; sourceTree = "<group>"; };
+		3759198222E7084B0009C8CB /* ProjDetailsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ProjDetailsViewController.m; sourceTree = "<group>"; };
+		3759198422E756080009C8CB /* PunchDetailsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PunchDetailsViewController.h; sourceTree = "<group>"; };
+		3759198522E756080009C8CB /* PunchDetailsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PunchDetailsViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -211,6 +219,10 @@
 				180CB7C7217CB08F001959ED /* ProjListViewController.m */,
 				180CB7C9217E05DA001959ED /* PunchViewController.h */,
 				180CB7CA217E05DA001959ED /* PunchViewController.m */,
+				3759198122E7084B0009C8CB /* ProjDetailsViewController.h */,
+				3759198222E7084B0009C8CB /* ProjDetailsViewController.m */,
+				3759198422E756080009C8CB /* PunchDetailsViewController.h */,
+				3759198522E756080009C8CB /* PunchDetailsViewController.m */,
 			);
 			path = UserAction;
 			sourceTree = "<group>";
@@ -355,6 +367,7 @@
 				18DE398F21203E7D00B03685 /* user.png */,
 				180CB7E221806600001959ED /* bgcopy.png */,
 				180CB7CF217F545E001959ED /* delete.png */,
+				371B360322EE0A38002FC107 /* delete_cross.png */,
 				180CB7DC21805688001959ED /* dropdownW.png */,
 				180CB7DA2180543E001959ED /* dropmark.png */,
 				180CB7E421807E25001959ED /* uploadW.png */,
@@ -499,6 +512,7 @@
 				18DE399521203E7D00B03685 /* background.png in Resources */,
 				18BA30602126CB0000984E84 /* newUser.png in Resources */,
 				18BA30072124899000984E84 /* Applogo.png in Resources */,
+				371B360422EE0A39002FC107 /* delete_cross.png in Resources */,
 				18DE399321203E7D00B03685 /* user.png in Resources */,
 				180CB7E521807E25001959ED /* uploadW.png in Resources */,
 				18DE39972120409800B03685 /* MyLogo.png in Resources */,
@@ -539,8 +553,10 @@
 				18DE39602120359D00B03685 /* LoginViewController.m in Sources */,
 				18BA2FF721244BDD00984E84 /* DataConnection.m in Sources */,
 				18DE396B212035A000B03685 /* main.m in Sources */,
+				3759198322E7084B0009C8CB /* ProjDetailsViewController.m in Sources */,
 				181386D32132C952000D7803 /* AddNewUserController.m in Sources */,
 				180CB7C8217CB08F001959ED /* ProjListViewController.m in Sources */,
+				3759198622E756080009C8CB /* PunchDetailsViewController.m in Sources */,
 				3711541C224F66DE00789E88 /* SliderView.m in Sources */,
 				18BA306A212816A000984E84 /* Form.m in Sources */,
 				18DE395D2120359D00B03685 /* AppDelegate.m in Sources */,
@@ -723,7 +739,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = RX575VBLC3;
 				INFOPLIST_FILE = PunchList/Info.plist;
@@ -731,7 +747,7 @@
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.gjit.punchList;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = Punch_Adhoc;
+				PROVISIONING_PROFILE_SPECIFIER = PunchNew1;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -740,7 +756,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = RX575VBLC3;
 				INFOPLIST_FILE = PunchList/Info.plist;
@@ -748,7 +764,7 @@
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.gjit.punchList;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = Punch_Adhoc;
+				PROVISIONING_PROFILE_SPECIFIER = PunchNew1;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

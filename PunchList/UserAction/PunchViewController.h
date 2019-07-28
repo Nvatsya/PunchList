@@ -12,7 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PunchViewController : UIViewController <UITextFieldDelegate, UITextViewDelegate, UIPickerViewDelegate, UIPickerViewDataSource, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
-@property (nonatomic, assign)NSDictionary *detailDict;
+@property (nonatomic, retain)NSMutableDictionary *detailDict;
+@property (nonatomic)BOOL isCreateIssue;
 
 @end
 

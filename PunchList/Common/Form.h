@@ -14,6 +14,7 @@
 
 +(void)createFormWithList :(UIViewController *)VC forAction:(NSString*)name fieldsInfo:(NSMutableArray*)fieldsArr;
 
-+(void)createPunchView :(UIViewController*)VC fieldsInfo:(NSMutableArray*)fieldsArr withData:(NSDictionary*)dataDict;
+//+(void)createPunchView :(UIViewController*)VC fieldsInfo:(NSMutableArray*)fieldsArr withData:(NSDictionary*)dataDict;
++(void)createPunchView :(UIViewController*)VC fieldsInfo:(NSMutableArray*)fieldsArr;
 
 @end
