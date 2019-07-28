@@ -24,7 +24,6 @@
     NSArray *usersArr;
     NSArray *statusArr;
     NSArray *pickerDataArr;
-    NSData *issueImgData;
     UITapGestureRecognizer *closeTap;
     UIPickerView *pickerV;
     UIToolbar *toolbar;
@@ -311,33 +310,6 @@
         });
     }
     
-    int xPos = 0;
-//    for (int i=0; i<[[self.detailDict valueForKey:@"IssueImages"] count]; i++) {
-//        UIImageView *imageV = [[UIImageView alloc] init];
-//        imageV.frame = CGRectMake(xPos, 3, imageFieldContainer.frame.size.height/2, imageFieldContainer.frame.size.height/2);
-//        imageV.tag = 3000+0+1;
-//        [imgScroll addSubview:imageV];
-//        [imageV setUserInteractionEnabled:YES];
-//        [imageV setGestureRecognizers:@[tap]];
-//        issueImgData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[[[self.detailDict valueForKey:@"IssueImages"]objectAtIndex:i]valueForKey:@"ImgStr"]]];
-//        [imageV setImage:[UIImage imageWithData:issueImgData]];
-//        xPos = xPos + imageFieldContainer.frame.size.height/2+5;
-//
-//        [imgScroll setContentSize:CGSizeMake(xPos, 0)];
-//    }
-//    for (int i=0; i<[[[[self.detailDict valueForKey:@"PunchIssues"] lastObject]valueForKey:@"IssueImages"] count]; i++) {
-//        UIImageView *imageV = [[UIImageView alloc] init];
-//        imageV.frame = CGRectMake(xPos, 1, imageFieldContainer.frame.size.height/2, imageFieldContainer.frame.size.height/2);
-//        imageV.tag = 3000+0+1;
-//        [imgScroll addSubview:imageV];
-//        [imageV setUserInteractionEnabled:YES];
-//        [imageV setGestureRecognizers:@[tap]];
-//        issueImgData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[[[[[self.detailDict valueForKey:@"PunchIssues"] lastObject]valueForKey:@"IssueImages"]lastObject]valueForKey:@"ImgStr"]]];
-//        [imageV setImage:[UIImage imageWithData:issueImgData]];
-//        xPos = xPos + imageFieldContainer.frame.size.height/2+5;
-//
-//        [imgScroll setContentSize:CGSizeMake(xPos, 0)];
-//    }
     //Adding action button
     UIButton *actionBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     UIButton *actionNewBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -376,72 +348,6 @@
 }
 
 #pragma mark - API calls handler
-/*
--(void)uploadSelectedImage
-{
-    
-    //NSString *urlstr = @"http://punch.gjitsolution.in/api/Image/UploadImage";
-    NSString *urlstr = @"http://punch.gjitsolution.in/api/Image/GetImage";
-    
-    
-    NSMutableArray *dataArr = [[NSMutableArray alloc] init];
-    
-    NSDictionary *jsonDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:[self.detailDict valueForKey:@"IssueId"],@"Id",imageBase64data,@"ImgStr", nil];
-    
-    [dataArr addObject:jsonDictionary];
-    
-    NSError *error = nil;
-    //Building json string for upload request.
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dataArr options:NSJSONWritingPrettyPrinted error:&error];
-    NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-    NSLog(@"jsonData as string:\n%@", jsonString);
-    
-    DataConnection *dataCon = [[DataConnection alloc] initWithUrlStringFromData:urlstr withJsonString:jsonString delegate:self];
-    dataCon.accessibilityLabel = @"ImageUpload";
-}
- */
-/*
--(NSString *)convertingToJsonFormat:(NSDictionary *)dictJson
-{
-    NSString *jsonString=@"{";
-    int count=0;
-    
-    for (id key in dictJson){
-        count++;
-        if (count<dictJson.count) {
-            
-            if ([[dictJson valueForKey:key] isKindOfClass:[NSString class]]) {
-                
-                jsonString=[jsonString stringByAppendingFormat:@"\"%@\":\"%@\",",key,[dictJson objectForKey:key]];
-                
-                
-            }else{
-                
-                jsonString=[jsonString stringByAppendingFormat:@"\"%@\":%@,",key,[dictJson objectForKey:key]];
-                
-            }
-            
-        }
-        else {
-            
-            if ([[dictJson valueForKey:key] isKindOfClass:[NSString class]]) {
-                
-                jsonString=[jsonString stringByAppendingFormat:@"\"%@\":\"%@\"}",key,[dictJson objectForKey:key]];
-                
-            }else{
-                
-                jsonString=[jsonString stringByAppendingFormat:@"\"%@\":%@}",key,[dictJson objectForKey:key]];
-                
-            }
-            
-            
-        }
-        
-    }
-    
-    return jsonString;
-}
-*/
 -(void)callingAddNewPunch
 {
     [selectedTF resignFirstResponder];
@@ -458,13 +364,8 @@
         [dict setValue:[NSString stringWithFormat:@"%@",[NSDate date]] forKey:@"CreatedOn"];
         
         NSDictionary *imgDict = [[NSDictionary alloc] initWithObjectsAndKeys:imageBase64data,@"ImgStr", nil];
-        
         NSArray *imgArr = [[NSArray alloc] initWithObjects:imgDict, nil];
         [dict setValue:imgArr forKey:@"IssueImages"];
-//        NSData *jsonData2 = [NSJSONSerialization dataWithJSONObject:imgArr options:NSJSONWritingPrettyPrinted error:nil];
-//        NSString *jsonImgString = [[NSString alloc] initWithData:jsonData2 encoding:NSUTF8StringEncoding];
-//        NSLog(@"jsonImgString as string:\n%@", jsonImgString);
-        
         
         if ([dict count]<8) {
             [CommonClass showAlert:self messageString:@"All fields are mandatory" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
@@ -497,15 +398,12 @@
         [dict setValue:updatedDeptStr forKey:@"DepartmentId"];
         [dict setValue:[NSString stringWithFormat:@"%@",[[NSUserDefaults standardUserDefaults]valueForKey:@"UserId"]] forKey:@"CreatedBy"];
         [dict setValue:[NSString stringWithFormat:@"%@",[NSDate date]] forKey:@"CreatedOn"];
-//        NSDictionary *imgDict = [[NSDictionary alloc] initWithObjectsAndKeys:imageBase64data,@"ImgStr", nil];
-//        NSArray *imgArr = [[NSArray alloc] initWithObjects:imgDict, nil];
         [dict setValue:imgDataArray forKey:@"IssueImages"];
         //Building json string for API request.
         NSData *jsonData1 = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
         NSString *jsonString = [[NSString alloc] initWithData:jsonData1 encoding:NSUTF8StringEncoding];
         NSString *urlstr = baseURL;
-        NSString *myUrlString = [NSString stringWithFormat:@"%@Issue/UpdateIssue",urlstr]; //
-        //NSString *myUrlString = [NSString stringWithFormat:@"%@Help/Api/PUT-api-Issue-UpdateIssue",urlstr];
+        NSString *myUrlString = [NSString stringWithFormat:@"%@Issue/UpdateIssue",urlstr];
         
         dataCon = [[DataConnection alloc] initUpdateDataWithUrlString:myUrlString withJsonString:jsonString delegate:self];
         dataCon.accessibilityLabel = @"updatePunch";
@@ -611,15 +509,8 @@
         textField.inputView = pickerV;
         textField.inputAccessoryView = toolbar;
     }else if (textField.tag==5011){
-       // if ([[[[self.detailDict valueForKey:@"PunchIssues"] valueForKey:@"IssueId"]lastObject] length]>0) {
-            actionPopup = [UIAlertController alertControllerWithTitle:@"Select Image Source" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-            
-            [self imageSelectionAction];
-//        }
-//        else{
-//            [CommonClass showAlert:self messageString:@"Issue image can't be uploaded for New Punch" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
-//        }
-        
+        actionPopup = [UIAlertController alertControllerWithTitle:@"Select Image Source" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+        [self imageSelectionAction];
         return NO;
     }
     
@@ -652,7 +543,6 @@
         issueName = textField.text;
     }
     [textField resignFirstResponder];
-   // [selectedTF resignFirstResponder];
 }
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
     
@@ -683,11 +573,6 @@
     popPresenter.sourceView = selectedTF;
     popPresenter.sourceRect = selectedTF.bounds;
     [self presentViewController:actionPopup animated:YES completion:nil];
-    
-  //  [actionPopup.popoverPresentationController setPermittedArrowDirections:0];
-    
-   // [self presentViewController:actionPopup animated:YES completion:nil];
-   // [actionPopup showViewController:self.view sender:nil];
 }
 
 -(void)presentCameraForImage
@@ -749,7 +634,6 @@
         assignedToStr = [[usersArr objectAtIndex:selectedrow] valueForKey:@"UserId"];
     }else if (selectedTF.tag==103){
         updatedStatusStr = selectedTF.text = selectedItem;
-        //selectedStatusId = [[statusArr objectAtIndex:selectedrow] valueForKey:@"StatusId"];
     }
     selectedrow = 0;
     [selectedTF resignFirstResponder];
@@ -764,7 +648,6 @@
 }
 -(void)imageTapped :(UIGestureRecognizer*)tap
 {
-    NSLog(@"image tapped for tag %ld",tap.view.tag);
     UIView *bgView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
     [bgView setTag:1111];
     [bgView setGestureRecognizers:@[closeTap]];
@@ -829,7 +712,6 @@
     
     [self drawPunchImageOnView];
     [picker dismissViewControllerAnimated:YES completion:NULL];
-   // [VSProgressHud presentIndicator:self];
 }
 -(void)drawPunchImageOnView
 {
@@ -857,29 +739,13 @@
             [delBtn addTarget:self action:@selector(deleteIssueImage:) forControlEvents:UIControlEventTouchUpInside];
             [imageV addSubview:delBtn];
         }
-//        if (isCreateIssue) {
-//            [imageV setImage:[[punchImageArr objectAtIndex:i]valueForKey:@"image"]];
-//        }else{
-//            dispatch_async(dispatch_get_global_queue(0,0), ^{
-//                NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: [NSString stringWithFormat:@"%@",[[self->punchImageArr objectAtIndex:i]valueForKey:@"image"]]]];
-//                if ( data == nil )
-//                    return;
-//                dispatch_async(dispatch_get_main_queue(), ^{
-//                    [imageV setImage:[UIImage imageWithData: data]];
-//                });
-//
-//            });
-//        }
-        
         xPos = xPos + imageV.frame.size.width+15;
         [imgScroll setContentSize:CGSizeMake(xPos, 0)];
     }
-    /////
     
 }
 -(void)deleteIssueImage:(UIButton*)btn
 {
-    NSLog(@"delete tag %ld",[btn tag]);
     NSInteger tagV = ([btn tag]%3000)-1;
     [punchImageArr removeObjectAtIndex:tagV];
     [self drawPunchImageOnView];
@@ -887,7 +753,6 @@
 }
 -(void)getBinaryDataForImage
 {
-    //selectedTF.text=selectedImageName;
     [imgDataArray removeAllObjects];
     for (int i = 0; i<[punchImageArr count]; i++) {
         if (![[[punchImageArr objectAtIndex:i] valueForKey:@"imageName"] isEqualToString:@"OldImage"]) {
@@ -899,11 +764,6 @@
         }
         
     }
-    
-//    imageBinaryData=UIImageJPEGRepresentation(selectedImage, 0.8);
-//    imageBase64data=[Base64 encode:imageBinaryData];
-    
-    //[self uploadSelectedImage];
 }
 
 
