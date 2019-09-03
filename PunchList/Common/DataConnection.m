@@ -89,7 +89,8 @@
         [urlRequest setHTTPMethod:@"GET"];
         [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
         if ([[URLArr lastObject] isEqualToString:@"GetAllProjectBasedOnUser"]) {
-            [urlRequest setValue:@"6e71df7e-b1ce-4f88-899f-3e371da47253" forHTTPHeaderField:@"id"];
+            //[urlRequest setValue:@"6e71df7e-b1ce-4f88-899f-3e371da47253" forHTTPHeaderField:@"id"];
+            [urlRequest setValue:[[NSUserDefaults standardUserDefaults] valueForKey:@"UserId"] forHTTPHeaderField:@"id"];
             NSLog(@"userIDD - %@",[[NSUserDefaults standardUserDefaults] valueForKey:@"UserId"]);
         }
        // [urlRequest setValue:[NSString stringWithFormat:@"%lu", (unsigned long)[[jsonString dataUsingEncoding:NSUTF8StringEncoding] length]] forHTTPHeaderField:@"Content-Length"];

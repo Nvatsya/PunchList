@@ -27,6 +27,7 @@
 
 @implementation ProjListViewController
 
+
 -(void)showSlideMenuItem
 {
     BOOL isTapped = (BOOL) [[NSUserDefaults standardUserDefaults] valueForKey:@"isTapped"];
@@ -44,9 +45,9 @@
     dataArray = [[NSMutableArray alloc] init];
     lableDict = [[NSDictionary alloc] initWithObjectsAndKeys:@"Code",@"ProjectCode",@"Name",@"ProjectName",@"Total Punch",@"PunchIssues", nil];
     
-    [InterfaceViewController createInterfaceForAdminAction:self forScreen:@"My Projects"];
+    [InterfaceViewController createInterfaceForActions:self forScreen:@"My Projects"];
     [InterfaceViewController createListView:self];
-    
+    [InterfaceViewController addSlideMenuToView:self];
     [SliderView createSliderForView:self withActionList:nil];
 }
 
@@ -73,6 +74,7 @@
 }
 
 -(void)dataLoadingFinished:(NSMutableData*)data{
+    // Add Try Catch to handle exception and avoid crash
     NSString *responseString =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     NSLog(@"login data is...%@",responseString);
     NSArray *projListArray = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];

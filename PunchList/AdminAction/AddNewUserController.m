@@ -14,6 +14,9 @@
 #import "TableViewCell.h"
 #import "DataConnection.h"
 #import "VSProgressHud.h"
+#import "AppDelegate.h"
+#import "AdminViewController.h"
+#import "ReportsViewController.h"
 
 @interface AddNewUserController () <UITableViewDelegate, UITableViewDataSource>
 {
@@ -24,6 +27,7 @@
     NSMutableData *downloadData;
     NSDictionary *lableDict;
     DataConnection *dataCon;
+    AppDelegate *appDel;
 }
 @end
 
@@ -32,20 +36,43 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    [InterfaceViewController createInterfaceForAdminAction:self forScreen:@"User List"];
+    appDel = (AppDelegate*)[UIApplication sharedApplication].delegate;
+    [InterfaceViewController createInterfaceForActions:self forScreen:@"User List"];
     [self createFieldsInfo];
     [Form createFormWithList:self forAction:@"user" fieldsInfo:fieldsArr];
     
     dataArray = [[NSMutableArray alloc] init];
-    
+    dataArray = [appDel.userArr mutableCopy];
     lableDict = [[NSDictionary alloc] initWithObjectsAndKeys:@"FirstName",@"namelbl",@"Status",@"statuslbl",@"UserEmail",@"emaillbl", nil];
     
-    [self fetchUserList];
+    //[self fetchUserList];
 }
-
+-(void)viewWillAppear:(BOOL)animated
+{
+    UIBarButtonItem *newBackButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"icon_back.png"] style:UIBarButtonItemStylePlain target:self action:@selector(backAction)];
+    self.navigationItem.leftBarButtonItem = newBackButton;
+}
+-(void)backAction
+{
+    [self.navigationController popToViewController:[[self.navigationController viewControllers]objectAtIndex:1] animated:YES];
+}
 -(void)viewDidDisappear:(BOOL)animated
 {
     [dataArray removeAllObjects];
+}
+
+-(void)viewDidAppear:(BOOL)animated
+{
+//    UIView *tableV = [self.view viewWithTag:1001];
+//    [tableV removeFromSuperview];
+    for (UIView *tableV in [self.view subviews]) {
+        
+        if ([tableV isKindOfClass:[UITableView class]]) {
+            UITableView *listTable = (UITableView*)tableV;
+            NSLog(@"table %@",listTable);
+            [listTable reloadData];
+        }
+    }
 }
 -(void)createFieldsInfo
 {
@@ -79,27 +106,25 @@
     cell.backgroundColor = [UIColor clearColor];
     return cell;
 }
--(void)fetchUserList{
-    
-    [VSProgressHud presentIndicator:self];
-
-    NSString *jsonString = @"";
-    NSString *urlstr = baseURL;
-    NSString *myUrlString = [NSString stringWithFormat:@"%@User/GetAllRecord",urlstr];
-    if ([CommonClass connectedToInternet]) {
-        dataCon = [[DataConnection alloc] initGetDataWithUrlString:myUrlString withJsonString:jsonString delegate:self];
-        [dataCon setAccessibilityLabel:@"fetch"];
-    }else{
-        [CommonClass showAlert:self messageString:@"No Internet Connection" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
-    }
-    
-}
+//-(void)fetchUserList{
+//    
+//    [VSProgressHud presentIndicator:self];
+//
+//    NSString *jsonString = @"";
+//    NSString *urlstr = baseURL;
+//    NSString *myUrlString = [NSString stringWithFormat:@"%@User/GetAllRecord",urlstr];
+//    if ([CommonClass connectedToInternet]) {
+//        dataCon = [[DataConnection alloc] initGetDataWithUrlString:myUrlString withJsonString:jsonString delegate:self];
+//        [dataCon setAccessibilityLabel:@"fetch"];
+//    }else{
+//        [CommonClass showAlert:self messageString:@"No Internet Connection" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
+//    }
+//    
+//}
 -(void)handleAddNewAction
 {
     [selectedTF resignFirstResponder];
     if ([CommonClass connectedToInternet]) {
-        [VSProgressHud presentIndicator:self];
-        
         if ((ufname.length>0)&&(uemail.length>0)) {
             NSMutableDictionary *dict=[[NSMutableDictionary alloc]init];
             [dict setValue:ufname forKey:@"FirstName"];
@@ -119,7 +144,7 @@
             dataCon = [[DataConnection alloc] initWithUrlStringFromData:myUrlString withJsonString:jsonString delegate:self];
             
             NSLog(@"my logurl %@ and data %@ connection %@",myUrlString,jsonString, dataCon);
-            
+            [VSProgressHud presentIndicator:self];
         }else{
             [CommonClass showAlert:self messageString:@"Please fill required field" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
         }
@@ -132,9 +157,6 @@
 
 -(void)dataLoadingFinished:(NSMutableData*)data
 {
-//    NSString *responseString =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-//    NSLog(@"login data is...%@",responseString);
-    
     UIView *formV = [self.view viewWithTag:5001];
     [formV removeFromSuperview];
     UIView *tableV = [self.view viewWithTag:1001];

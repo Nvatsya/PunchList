@@ -16,6 +16,7 @@
 +(void)showAlert:(UIViewController*)actionVC messageString:(NSString*)message withTitle:(NSString*)title OKbutton:(NSString*)okTitle cancelButton:(NSString*)cancelTitle;
 
 +(void)showPopupWithTextfield:(UIViewController*)VC withTitle:(NSString*)title messageString:(NSString*)message OKbutton:(NSString*)okTitle CancelButton:(NSString*)cancelTitle textFieldsDetails:(NSMutableArray*)tfArray;
++(void)showPopupWithSelectedDropdown:(UIViewController*)VC withTitle:(NSString*)title messageString:(NSString*)message OKbutton:(NSString*)okTitle CancelButton:(NSString*)cancelTitle textFieldsDetails:(NSMutableArray*)tfArray;
 
 +(NSString *)convertingToJsonFormat:(NSDictionary *)dictJson;
 +(UIColor*)getColorFromColorCode:(NSString*)colorCode;

@@ -14,6 +14,7 @@
 #import "TableViewCell.h"
 #import "DataConnection.h"
 #import "VSProgressHud.h"
+#import "AppDelegate.h"
 
 @interface AddNewProjController ()
 {
@@ -24,6 +25,7 @@
     NSMutableData *downloadData;
     DataConnection *dataCon;
     NSDictionary *lableDict;
+    AppDelegate *appDel;
 }
 @end
 
@@ -32,15 +34,15 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    [InterfaceViewController createInterfaceForAdminAction:self forScreen:@"Project List"];
+    [InterfaceViewController createInterfaceForActions:self forScreen:@"Project List"];
     [self createFieldsInfo];
     [Form createFormWithList:self forAction:@"proj" fieldsInfo:fieldsArr];
-    
-    dataArray = [[NSMutableArray alloc] init];
+    appDel = (AppDelegate*)[UIApplication sharedApplication].delegate;
+    dataArray = [[NSMutableArray alloc] initWithArray:appDel.projectArr];
     
     lableDict = [[NSDictionary alloc] initWithObjectsAndKeys:@"Project Name",@"namelbl",@"Project Code",@"statuslbl", nil];
     
-    [self fetchProjectList];
+    //[self fetchProjectList];
     
 }
 -(void)createFieldsInfo
@@ -51,7 +53,15 @@
     fieldsArr = [[NSMutableArray alloc] init];
     [fieldsArr addObject:field1Dict];
     [fieldsArr addObject:field2Dict];
-    
+}
+-(void)viewWillAppear:(BOOL)animated
+{
+    UIBarButtonItem *newBackButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"icon_back.png"] style:UIBarButtonItemStylePlain target:self action:@selector(backAction)];
+    self.navigationItem.leftBarButtonItem = newBackButton;
+}
+-(void)backAction
+{
+    [self.navigationController popToViewController:[[self.navigationController viewControllers]objectAtIndex:1] animated:YES];
 }
 
 #pragma mark - UITableViewDelegate & Datasource
@@ -78,46 +88,45 @@
     return cell;
 }
 
--(void)fetchProjectList{
-    [VSProgressHud presentIndicator:self];
-    
-    NSString *urlstr = baseURL;
-    NSString *myUrlString = [NSString stringWithFormat:@"%@Project/GetAllRecord",urlstr];
-    
-    if ([CommonClass connectedToInternet]) {
-        dataCon = [[DataConnection alloc] initGetDataWithUrlString:myUrlString withJsonString:@"" delegate:self];
-    }else{
-        [CommonClass showAlert:self messageString:@"No Internet Connection" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
-    }
-    
-    [dataCon setAccessibilityLabel:@"fetch"];
-    
-}
+//-(void)fetchProjectList{
+//    [VSProgressHud presentIndicator:self];
+//    
+//    NSString *urlstr = baseURL;
+//    NSString *myUrlString = [NSString stringWithFormat:@"%@Project/GetAllRecord",urlstr];
+//    
+//    if ([CommonClass connectedToInternet]) {
+//        dataCon = [[DataConnection alloc] initGetDataWithUrlString:myUrlString withJsonString:@"" delegate:self];
+//    }else{
+//        [CommonClass showAlert:self messageString:@"No Internet Connection" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
+//    }
+//    
+//    [dataCon setAccessibilityLabel:@"fetch"];
+//    
+//}
 
 -(void)handleAddNewAction
 {
-    [VSProgressHud presentIndicator:self];
-    
     [selectedTF resignFirstResponder];
     if ([CommonClass connectedToInternet]) {
-        NSMutableDictionary *dict=[[NSMutableDictionary alloc]init];
-        [dict setValue:ufname forKey:@"ProjectName"];
-        [dict setValue:ulname forKey:@"ProjectCode"];
-        [dict setValue:@"UserId" forKey:@"ProjectId"];
-        
-        
-        //Building json string for login request.
-        NSString *jsonString = [CommonClass convertingToJsonFormat:dict];
-        NSString *urlstr = baseURL;
-        NSString *myUrlString = [NSString stringWithFormat:@"%@Project/CreateNewProject",urlstr];
-        
-        dataCon = [[DataConnection alloc] initWithUrlStringFromData:myUrlString withJsonString:jsonString delegate:self];
-        
-        NSLog(@"my logurl %@ and data %@ connection %@",myUrlString,jsonString, dataCon);
+        if (ufname.length>0 && ulname>0) {
+            NSMutableDictionary *dict=[[NSMutableDictionary alloc]init];
+            [dict setValue:ufname forKey:@"ProjectName"];
+            [dict setValue:ulname forKey:@"ProjectCode"];
+            [dict setValue:@"UserId" forKey:@"ProjectId"];
+            //Building json string for login request.
+            NSString *jsonString = [CommonClass convertingToJsonFormat:dict];
+            NSString *urlstr = baseURL;
+            NSString *myUrlString = [NSString stringWithFormat:@"%@Project/CreateNewProject",urlstr];
+            
+            dataCon = [[DataConnection alloc] initWithUrlStringFromData:myUrlString withJsonString:jsonString delegate:self];
+            [VSProgressHud presentIndicator:self];
+            NSLog(@"my logurl %@ and data %@ connection %@",myUrlString,jsonString, dataCon);
+        }else{
+            [CommonClass showAlert:self messageString:@"Please fill required field" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
+        }
     }else{
         [CommonClass showAlert:self messageString:@"No Internet Connection" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
     }
-    NSLog(@"test");
 }
 
 -(void)dataLoadingFinished:(NSMutableData*)data{
@@ -146,7 +155,7 @@
 //                }
 //            }
 //        }
-        [self fetchProjectList];
+      //  [self fetchProjectList];
     }else{
         NSArray *projListArray = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
         

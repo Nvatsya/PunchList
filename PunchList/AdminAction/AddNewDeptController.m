@@ -14,7 +14,7 @@
 #import "TableViewCell.h"
 #import "DataConnection.h"
 #import "VSProgressHud.h"
-
+#import "AppDelegate.h"
 
 @interface AddNewDeptController ()
 {
@@ -25,6 +25,7 @@
     NSDictionary *lableDict;
     NSMutableData *downloadData;
     DataConnection *dataCon;
+    AppDelegate *appDel;
 }
 @end
 
@@ -33,15 +34,14 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    [InterfaceViewController createInterfaceForAdminAction:self forScreen:@"Department List"];
+    [InterfaceViewController createInterfaceForActions:self forScreen:@"Department List"];
     [self createFieldsInfo];
     [Form createFormWithList:self forAction:@"dept" fieldsInfo:fieldsArr];
-    
-    dataArray = [[NSMutableArray alloc] init];
-    
+    appDel = (AppDelegate*)[UIApplication sharedApplication].delegate;
+    dataArray = [[NSMutableArray alloc] initWithArray:appDel.departmentArr];
     lableDict = [[NSDictionary alloc] initWithObjectsAndKeys:@"Department",@"deptlbl",@"Admin Name",@"namelbl",@"Admin Email",@"emaillbl", nil];
     
-    [self fetchDepartmentList];
+    //[self fetchDepartmentList];
 }
 
 -(void)createFieldsInfo
@@ -56,7 +56,15 @@
     [fieldsArr addObject:field3Dict];
     [fieldsArr addObject:field4Dict];
 }
-
+-(void)viewWillAppear:(BOOL)animated
+{
+    UIBarButtonItem *newBackButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"icon_back.png"] style:UIBarButtonItemStylePlain target:self action:@selector(backAction)];
+    self.navigationItem.leftBarButtonItem = newBackButton;
+}
+-(void)backAction
+{
+    [self.navigationController popToViewController:[[self.navigationController viewControllers]objectAtIndex:1] animated:YES];
+}
 
 #pragma mark - UITableViewDelegate & Datasource
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -80,41 +88,43 @@
     return cell;
     
 }
--(void)fetchDepartmentList{
-    [VSProgressHud presentIndicator:self];
-    
-    NSString *urlstr = baseURL;
-    NSString *myUrlString = [NSString stringWithFormat:@"%@Department/GetAllRecord",urlstr];
-    
-    if ([CommonClass connectedToInternet]) {
-        dataCon = [[DataConnection alloc] initGetDataWithUrlString:myUrlString withJsonString:@"" delegate:self];
-    }else{
-        [CommonClass showAlert:self messageString:@"No Internet Connection" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
-    }
-    
-    [dataCon setAccessibilityLabel:@"fetch"];
-    
-}
+//-(void)fetchDepartmentList{
+//    [VSProgressHud presentIndicator:self];
+//    
+//    NSString *urlstr = baseURL;
+//    NSString *myUrlString = [NSString stringWithFormat:@"%@Department/GetAllRecord",urlstr];
+//    
+//    if ([CommonClass connectedToInternet]) {
+//        dataCon = [[DataConnection alloc] initGetDataWithUrlString:myUrlString withJsonString:@"" delegate:self];
+//    }else{
+//        [CommonClass showAlert:self messageString:@"No Internet Connection" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
+//    }
+//    
+//    [dataCon setAccessibilityLabel:@"fetch"];
+//    
+//}
 -(void)handleAddNewAction{
-    [VSProgressHud presentIndicator:self];
-    
     [selectedTF resignFirstResponder];
     if ([CommonClass connectedToInternet]) {
-        NSMutableDictionary *dict=[[NSMutableDictionary alloc]init];
-        [dict setValue:@"" forKey:@"DepartmentId"];
-        [dict setValue:ufname forKey:@"DepartmentName"];
-        [dict setValue:ulname forKey:@"DepartmentAdmin"];
-        [dict setValue:uemail forKey:@"DepartmentAdminEmail"];
-        [dict setValue:mobilestr forKey:@"DepartmentAdminMobile"];
-        
-        //Building json string for login request.
-        NSString *jsonString = [CommonClass convertingToJsonFormat:dict];
-        NSString *urlstr = baseURL;
-        NSString *myUrlString = [NSString stringWithFormat:@"%@Department/CreateNewDepartment",urlstr];
-        
-        dataCon = [[DataConnection alloc] initWithUrlStringFromData:myUrlString withJsonString:jsonString delegate:self];
-        
-        NSLog(@"my logurl %@ and data %@ connection %@",myUrlString,jsonString, dataCon);
+        if (ufname.length>0 && ulname.length>0 && uemail.length>0 && mobilestr.length>0) {
+            NSMutableDictionary *dict=[[NSMutableDictionary alloc]init];
+            [dict setValue:@"" forKey:@"DepartmentId"];
+            [dict setValue:ufname forKey:@"DepartmentName"];
+            [dict setValue:ulname forKey:@"DepartmentAdmin"];
+            [dict setValue:uemail forKey:@"DepartmentAdminEmail"];
+            [dict setValue:mobilestr forKey:@"DepartmentAdminMobile"];
+            
+            //Building json string for login request.
+            NSString *jsonString = [CommonClass convertingToJsonFormat:dict];
+            NSString *urlstr = baseURL;
+            NSString *myUrlString = [NSString stringWithFormat:@"%@Department/CreateNewDepartment",urlstr];
+            
+            dataCon = [[DataConnection alloc] initWithUrlStringFromData:myUrlString withJsonString:jsonString delegate:self];
+            [VSProgressHud presentIndicator:self];
+            NSLog(@"my logurl %@ and data %@ connection %@",myUrlString,jsonString, dataCon);
+        }else{
+            [CommonClass showAlert:self messageString:@"Please fill required field" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
+        }
     }else{
         [CommonClass showAlert:self messageString:@"No Internet Connection" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
     }
@@ -146,7 +156,7 @@
 //            }
 //        }
        // if ([responseString isEqualToString:@"Record Created successfully"]) {
-            [self fetchDepartmentList];
+          //  [self fetchDepartmentList];
        // }
         
         

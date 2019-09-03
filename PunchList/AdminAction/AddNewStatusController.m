@@ -14,6 +14,7 @@
 #import "TableViewCell.h"
 #import "DataConnection.h"
 #import "VSProgressHud.h"
+#import "AppDelegate.h"
 
 @interface AddNewStatusController ()
 {
@@ -24,6 +25,7 @@
     NSMutableData *downloadData;
     NSDictionary *lableDict;
     DataConnection *dataCon;
+    AppDelegate *appDel;
 }
 @end
 
@@ -32,15 +34,15 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    [InterfaceViewController createInterfaceForAdminAction:self forScreen:@"Status List"];
+    [InterfaceViewController createInterfaceForActions:self forScreen:@"Status List"];
     [self createFieldsInfo];
     [Form createFormWithList:self forAction:@"status" fieldsInfo:fieldsArr];
-    
-    dataArray = [[NSMutableArray alloc] init];
+    appDel = (AppDelegate*)[UIApplication sharedApplication].delegate;
+    dataArray = [[NSMutableArray alloc] initWithArray:appDel.statusArr];
     
     lableDict = [[NSDictionary alloc] initWithObjectsAndKeys:@"Status Name",@"namelbl",@"Status Code",@"statuslbl", nil];
     
-    [self fetchStatusList];
+   // [self fetchStatusList];
     
 }
 -(void)createFieldsInfo
@@ -51,6 +53,15 @@
     fieldsArr = [[NSMutableArray alloc] init];
     [fieldsArr addObject:field1Dict];
     [fieldsArr addObject:field2Dict];
+}
+-(void)viewWillAppear:(BOOL)animated
+{
+    UIBarButtonItem *newBackButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"icon_back.png"] style:UIBarButtonItemStylePlain target:self action:@selector(backAction)];
+    self.navigationItem.leftBarButtonItem = newBackButton;
+}
+-(void)backAction
+{
+    [self.navigationController popToViewController:[[self.navigationController viewControllers]objectAtIndex:1] animated:YES];
 }
 
 #pragma mark - UITableViewDelegate & Datasource
@@ -76,40 +87,46 @@
     return cell;
 }
 
--(void)fetchStatusList{
-    [VSProgressHud presentIndicator:self];
-    
-    NSString *urlstr = baseURL;
-    NSString *myUrlString = [NSString stringWithFormat:@"%@Status/GetAllRecord",urlstr];
-    
-    if ([CommonClass connectedToInternet]) {
-        dataCon = [[DataConnection alloc] initGetDataWithUrlString:myUrlString withJsonString:@"" delegate:self];
-    }else{
-        [CommonClass showAlert:self messageString:@"No Internet Connection" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
-    }
-    
-    [dataCon setAccessibilityLabel:@"fetch"];
-    
-}
+//-(void)fetchStatusList{
+//    [VSProgressHud presentIndicator:self];
+//    
+//    NSString *urlstr = baseURL;
+//    NSString *myUrlString = [NSString stringWithFormat:@"%@Status/GetAllRecord",urlstr];
+//    
+//    if ([CommonClass connectedToInternet]) {
+//        dataCon = [[DataConnection alloc] initGetDataWithUrlString:myUrlString withJsonString:@"" delegate:self];
+//    }else{
+//        [CommonClass showAlert:self messageString:@"No Internet Connection" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
+//    }
+//    
+//    [dataCon setAccessibilityLabel:@"fetch"];
+//    
+//}
 
 -(void)handleAddNewAction
 {
     [selectedTF resignFirstResponder];
     if ([CommonClass connectedToInternet]) {
-        NSMutableDictionary *dict=[[NSMutableDictionary alloc]init];
-        [dict setValue:ufname forKey:@"StatusDetail"];
-        [dict setValue:ulname forKey:@"StatusCode"];
-        [dict setValue:@"UserId" forKey:@"StatusId"];
-        
-        
-        //Building json string for login request.
-        NSString *jsonString = [CommonClass convertingToJsonFormat:dict];
-        NSString *urlstr = baseURL;
-        NSString *myUrlString = [NSString stringWithFormat:@"%@Status/CreateStatus",urlstr];
-        
-        dataCon = [[DataConnection alloc] initWithUrlStringFromData:myUrlString withJsonString:jsonString delegate:self];
-        
-        NSLog(@"my logurl %@ and data %@ connection %@",myUrlString,jsonString, dataCon);
+        if ((ufname.length>0)&&(ulname.length>0)) {
+            NSMutableDictionary *dict=[[NSMutableDictionary alloc]init];
+            [dict setValue:ufname forKey:@"StatusDetail"];
+            [dict setValue:ulname forKey:@"StatusCode"];
+            [dict setValue:@"UserId" forKey:@"StatusId"];
+            
+            
+            //Building json string for login request.
+            NSString *jsonString = [CommonClass convertingToJsonFormat:dict];
+            NSString *urlstr = baseURL;
+            NSString *myUrlString = [NSString stringWithFormat:@"%@Status/CreateStatus",urlstr];
+            
+            dataCon = [[DataConnection alloc] initWithUrlStringFromData:myUrlString withJsonString:jsonString delegate:self];
+            
+            NSLog(@"my logurl %@ and data %@ connection %@",myUrlString,jsonString, dataCon);
+            [VSProgressHud presentIndicator:self];
+        }else{
+            [CommonClass showAlert:self messageString:@"Please fill required field" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
+        }
+
     }else{
         [CommonClass showAlert:self messageString:@"No Internet Connection" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
     }
@@ -142,7 +159,7 @@
         //                }
         //            }
         //        }
-        [self fetchStatusList];
+       // [self fetchStatusList];
     }else{
         NSArray *statusListArray = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
         

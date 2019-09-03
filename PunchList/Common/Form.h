@@ -7,8 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "DataConnection.h"
 
 @interface Form : NSObject <UITextFieldDelegate>
+
+@property(nonatomic,retain)DataConnection *dataCon;
 
 +(void)createFormWithTextField :(UIViewController *)VC PlaceholderText:(NSString *)placeholder FieldNameText:(NSString*)fieldTitle RightViewImage:(UIImage*)rightImage LeftViewImage:(UIImage*)leftImage FieldTagValue:(int)tagVal;
 

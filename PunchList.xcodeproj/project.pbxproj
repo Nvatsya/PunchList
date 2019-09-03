@@ -61,6 +61,10 @@
 		371B360422EE0A39002FC107 /* delete_cross.png in Resources */ = {isa = PBXBuildFile; fileRef = 371B360322EE0A38002FC107 /* delete_cross.png */; };
 		3759198322E7084B0009C8CB /* ProjDetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3759198222E7084B0009C8CB /* ProjDetailsViewController.m */; };
 		3759198622E756080009C8CB /* PunchDetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3759198522E756080009C8CB /* PunchDetailsViewController.m */; };
+		37BD6076231C1C08002BE3D2 /* icon_back.png in Resources */ = {isa = PBXBuildFile; fileRef = 37BD6075231C1C08002BE3D2 /* icon_back.png */; };
+		37E3187B2312A06B00230A2B /* ReportsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E3187A2312A06B00230A2B /* ReportsViewController.m */; };
+		37E3187D2312BA0700230A2B /* checkMark64.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E3187C2312BA0700230A2B /* checkMark64.png */; };
+		37E31890231808D100230A2B /* DropdownDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E3188F231808D100230A2B /* DropdownDataManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -166,6 +170,12 @@
 		3759198222E7084B0009C8CB /* ProjDetailsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ProjDetailsViewController.m; sourceTree = "<group>"; };
 		3759198422E756080009C8CB /* PunchDetailsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PunchDetailsViewController.h; sourceTree = "<group>"; };
 		3759198522E756080009C8CB /* PunchDetailsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PunchDetailsViewController.m; sourceTree = "<group>"; };
+		37BD6075231C1C08002BE3D2 /* icon_back.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_back.png; sourceTree = "<group>"; };
+		37E318792312A06B00230A2B /* ReportsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReportsViewController.h; sourceTree = "<group>"; };
+		37E3187A2312A06B00230A2B /* ReportsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReportsViewController.m; sourceTree = "<group>"; };
+		37E3187C2312BA0700230A2B /* checkMark64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = checkMark64.png; sourceTree = "<group>"; };
+		37E3188E231808D100230A2B /* DropdownDataManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DropdownDataManager.h; sourceTree = "<group>"; };
+		37E3188F231808D100230A2B /* DropdownDataManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DropdownDataManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -238,6 +248,8 @@
 				181386D82132C9A9000D7803 /* AddNewProjController.m */,
 				181386DA2132C9BE000D7803 /* AddNewStatusController.h */,
 				181386DB2132C9BE000D7803 /* AddNewStatusController.m */,
+				37E318792312A06B00230A2B /* ReportsViewController.h */,
+				37E3187A2312A06B00230A2B /* ReportsViewController.m */,
 			);
 			path = AdminAction;
 			sourceTree = "<group>";
@@ -255,6 +267,8 @@
 				18BA3069212816A000984E84 /* Form.m */,
 				18BA2FF521244BDD00984E84 /* DataConnection.h */,
 				18BA2FF621244BDD00984E84 /* DataConnection.m */,
+				37E3188E231808D100230A2B /* DropdownDataManager.h */,
+				37E3188F231808D100230A2B /* DropdownDataManager.m */,
 				18FA286921427C93002152B6 /* TableViewCell.h */,
 				18FA286A21427C93002152B6 /* TableViewCell.m */,
 				18F45DB921567E1B00CE4AF3 /* VSProgressHud.h */,
@@ -364,10 +378,12 @@
 				18DE399121203E7D00B03685 /* background.png */,
 				18DE398E21203E7D00B03685 /* headerBG.png */,
 				18DE399021203E7D00B03685 /* password.png */,
+				37E3187C2312BA0700230A2B /* checkMark64.png */,
 				18DE398F21203E7D00B03685 /* user.png */,
 				180CB7E221806600001959ED /* bgcopy.png */,
 				180CB7CF217F545E001959ED /* delete.png */,
 				371B360322EE0A38002FC107 /* delete_cross.png */,
+				37BD6075231C1C08002BE3D2 /* icon_back.png */,
 				180CB7DC21805688001959ED /* dropdownW.png */,
 				180CB7DA2180543E001959ED /* dropmark.png */,
 				180CB7E421807E25001959ED /* uploadW.png */,
@@ -522,6 +538,8 @@
 				18DE399221203E7D00B03685 /* headerBG.png in Resources */,
 				18BA30632126CB0000984E84 /* logout.png in Resources */,
 				180CB7B92179C305001959ED /* test2.jpg in Resources */,
+				37E3187D2312BA0700230A2B /* checkMark64.png in Resources */,
+				37BD6076231C1C08002BE3D2 /* icon_back.png in Resources */,
 				18BA30622126CB0000984E84 /* status.png in Resources */,
 				18DE39632120359D00B03685 /* Main.storyboard in Resources */,
 			);
@@ -568,7 +586,9 @@
 				181386E12132CF20000D7803 /* AboutViewController.m in Sources */,
 				181386D62132C98D000D7803 /* AddNewDeptController.m in Sources */,
 				18BA30032124739900984E84 /* AdminViewController.m in Sources */,
+				37E31890231808D100230A2B /* DropdownDataManager.m in Sources */,
 				18FA286B21427C93002152B6 /* TableViewCell.m in Sources */,
+				37E3187B2312A06B00230A2B /* ReportsViewController.m in Sources */,
 				180CB7C42179C762001959ED /* Base64.m in Sources */,
 				181386D92132C9A9000D7803 /* AddNewProjController.m in Sources */,
 				180CB7CB217E05DA001959ED /* PunchViewController.m in Sources */,

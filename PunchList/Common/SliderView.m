@@ -7,15 +7,23 @@
 
 #import "SliderView.h"
 #import "AppDelegate.h"
+#import "AddNewuserController.h"
+#import "AddNewDeptController.h"
+#import "AddNewProjController.h"
+#import "AddNewStatusController.h"
 
 
 AppDelegate *appDelegate;
 UIView *currentView;
 NSMutableArray *actionsListArray;
+NSArray *userActionsArray;
 BOOL isTapped;
 UIView *baseview;
 SliderView *sliderView;
 @implementation SliderView
+{
+    
+}
 @synthesize currentViewController;
 /*
  // Only override drawRect: if you perform custom drawing.
@@ -31,18 +39,16 @@ CGFloat screenHeight;
     appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     currentView = currentViewController.view;
     
-    
     actionsListArray = [[NSMutableArray alloc] init];
     [actionsListArray removeAllObjects];
-    if (ActionList==nil) {
-        ActionList = [NSArray arrayWithObjects:@"Logout",@"Exit", nil];
-    }
-    [actionsListArray setArray:ActionList];
+    userActionsArray = [NSArray arrayWithObjects:@"Logout",@"Exit", nil];
+    [actionsListArray addObjectsFromArray:ActionList];
+    
     
     CGRect rect = [[UIScreen mainScreen] bounds];
     screenWidth = [UIScreen mainScreen].bounds.size.width;
     screenHeight = [UIScreen mainScreen].bounds.size.height;
-    baseview = [[UIView alloc] initWithFrame:CGRectMake(-screenWidth, appDelegate.isIphone?60:70, screenWidth, screenHeight - 60)];
+    baseview = [[UIView alloc] initWithFrame:CGRectMake(-screenWidth, appDelegate.isIphone?70:80, screenWidth, screenHeight - 70)];
     baseview.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.2];
     baseview.userInteractionEnabled = YES;
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureHandler:)];
@@ -53,7 +59,7 @@ CGFloat screenHeight;
     tapGesture.delegate = self;
     
     
-    sliderView= [[SliderView alloc] initWithFrame:CGRectMake(-180, 3, appDelegate.isIphone?180:280, rect.size.height-60) style:UITableViewStyleGrouped];
+    sliderView= [[SliderView alloc] initWithFrame:CGRectMake(-180, 3, appDelegate.isIphone?180:280, rect.size.height-(appDelegate.isIphone?70:80)) style:UITableViewStyleGrouped];
     sliderView.delegate=sliderView;
     sliderView.dataSource=sliderView;
     sliderView.tag = 2;
@@ -62,10 +68,10 @@ CGFloat screenHeight;
     
     [baseview addSubview:sliderView];
     [appDelegate.window addSubview:baseview];
-    sliderView.frame = CGRectMake(-180, 3, 180, rect.size.height-60);
+    sliderView.frame = CGRectMake(-180, 3, 180, rect.size.height-70);
     
     if ([[UIDevice currentDevice] userInterfaceIdiom]==UIUserInterfaceIdiomPad){
-        sliderView.frame=CGRectMake(-280, 3, 280, rect.size.height-60);
+        sliderView.frame=CGRectMake(-280, 3, 280, rect.size.height-80);
     }
     sliderView.backgroundColor = [UIColor lightGrayColor];//[appDelegate getColorFromColorCode:@"#444755"];
     sliderView.bounces=NO;
@@ -75,27 +81,10 @@ CGFloat screenHeight;
 }
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
-    NSInteger section = 2;
-    
-//    switch (userInfo.numUserTypeID) {
-//        case ApprovalTypeID: case SupplierTypeID:
-//            section = 1;
-//            break;
-//        case CWTypeID:
-//            section = 2;
-//            break;
-//
-//        default:
-//        {
-//            /*if (clientListArray.count>0) {
-//             section = 3;
-//             }else{
-//             section=2;
-//             }*/
-//            section = 2;
-//        }
-//            break;
-//    }
+    NSInteger section = 1;
+    if (actionsListArray.count>0) {
+        section = 2;
+    }
     return section;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -104,11 +93,11 @@ CGFloat screenHeight;
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     if (section == 0) {
+        return userActionsArray.count;
+    }
+    else if (section == 1){
         return actionsListArray.count;
     }
-//    else if (section == 1){
-//        return (userInfo.numUserTypeID == CWTypeID) ? appDelegate.mutAryCWNumbers.count : clientListArray.count;
-//    }
     return 0;
 }
 
@@ -120,29 +109,18 @@ CGFloat screenHeight;
     if (cell==nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
-    cell.textLabel.textColor = [UIColor whiteColor];
-    cell.textLabel.font = [UIFont systemFontOfSize:appDelegate.isIphone ? 13: 13];
     if (indexPath.section == 0) {
-        
-        if (indexPath.row==0) {
-            cell.backgroundColor = [UIColor colorWithRed:238.0/255.0f green:238.0/255.0f blue:238.0/255.0f alpha:1];
-            cell.backgroundColor = [UIColor clearColor];
-            
-        }else{
-            cell.textLabel.text = [actionsListArray objectAtIndex:indexPath.row-1];
-            cell.backgroundColor = [UIColor clearColor];
-            
-        }
-        if(indexPath.row == 2)
-        {
-            cell.backgroundColor = [UIColor whiteColor];
-            cell.textLabel.textColor = [UIColor blueColor];
-        }
-        cell.textLabel.text = [actionsListArray objectAtIndex:indexPath.row];
+        cell.textLabel.textColor = [UIColor whiteColor];
+        cell.textLabel.text = [userActionsArray objectAtIndex:indexPath.row];
         cell.textLabel.font = [UIFont systemFontOfSize:appDelegate.isIphone?12:15 weight:UIFontWeightBlack];
-        
+    } else if (indexPath.section==1){
+        cell.textLabel.text = [actionsListArray objectAtIndex:indexPath.row];
+        cell.textLabel.font = [UIFont systemFontOfSize:appDelegate.isIphone?12:15 weight:UIFontWeightThin];
+        cell.textLabel.textColor = [UIColor blueColor];
+        cell.backgroundColor = [UIColor clearColor];//[UIColor colorWithRed:238.0/255.0f green:238.0/255.0f blue:238.0/255.0f alpha:1];
     }
     
+    cell.backgroundColor = [UIColor clearColor];
     UIView *layerview = [[UIView alloc] initWithFrame:CGRectMake(0, cell.frame.size.height, sliderView.frame.size.width, 1)];
     layerview.backgroundColor = [UIColor whiteColor];
     [cell.contentView addSubview:layerview];
@@ -175,8 +153,21 @@ CGFloat screenHeight;
         }
     }
     else if (indexPath.section == 1){
-        
-        
+        if (indexPath.row==0) {
+            [appDelegate.navigationController popViewControllerAnimated:YES];
+        }else if (indexPath.row==1) {
+            AddNewUserController *userS = [[AddNewUserController alloc] init];
+            [appDelegate.navigationController pushViewController:userS animated:YES];
+        }else if (indexPath.row==2) {
+            AddNewProjController *projS = [[AddNewProjController alloc] init];
+            [appDelegate.navigationController pushViewController:projS animated:YES];
+        }else if (indexPath.row==3) {
+            AddNewDeptController *deptS = [[AddNewDeptController alloc] init];
+            [appDelegate.navigationController pushViewController:deptS animated:YES];
+        }else if (indexPath.row==4) {
+            AddNewStatusController *statusS = [[AddNewStatusController alloc] init];
+            [appDelegate.navigationController pushViewController:statusS animated:YES];
+        }
     }
    // userInfo.isSlider = NO;
     [SliderView hideSlider];
@@ -205,7 +196,6 @@ CGFloat screenHeight;
 }
 
 -(UIView*)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
-    UILabel *changeClientLabel = [[UILabel alloc] init];
     if(section == 0)
     {
         int x_pos  = 0;
@@ -237,8 +227,18 @@ CGFloat screenHeight;
         
         return headerbaseview;
         
+    }else{
+        UIView *headerbaseview = [[UIView alloc] init];
+        headerbaseview.backgroundColor = [UIColor clearColor];
+        UILabel *titleLabel = [[UILabel alloc] init];
+        titleLabel.frame = CGRectMake(0, 0, 150, 22);
+        titleLabel.text = @"Navigate To :";
+        titleLabel.font = [UIFont systemFontOfSize:11];
+        titleLabel.textAlignment = NSTextAlignmentCenter;
+        [headerbaseview addSubview:titleLabel];
+        return headerbaseview;
     }
-    return changeClientLabel;
+    return nil;
 }
 
 
@@ -284,10 +284,10 @@ CGFloat screenHeight;
     [UIView setAnimationDuration:0.5];
     
     if ([[UIDevice currentDevice] userInterfaceIdiom]==UIUserInterfaceIdiomPad){
-        baseview.frame = CGRectMake(0, 70, screenWidth, screenHeight - 70);
-        sliderView.frame=CGRectMake(0, 3, 280, (appDelegate.window.frame.size.height-60));
+        baseview.frame = CGRectMake(0, 80, screenWidth, screenHeight - 80);
+        sliderView.frame=CGRectMake(0, 3, 280, (appDelegate.window.frame.size.height-70));
     }else{
-        baseview.frame = CGRectMake(0, 60, screenWidth, screenHeight - 60);
+        baseview.frame = CGRectMake(0, 70, screenWidth, screenHeight - 70);
         sliderView.frame=CGRectMake(0, 3, 180, (appDelegate.window.frame.size.height-60));
     }
     
@@ -299,10 +299,10 @@ CGFloat screenHeight;
     [UIView setAnimationDuration:0.5];
     
     if ([[UIDevice currentDevice] userInterfaceIdiom]==UIUserInterfaceIdiomPad){
-        baseview.frame = CGRectMake(-screenWidth, 70, screenWidth, screenHeight - 70);
-        sliderView.frame=CGRectMake(-(sliderView.frame.size.width), 3, 280, (appDelegate.window.frame.size.height-60));
+        baseview.frame = CGRectMake(-screenWidth, 80, screenWidth, screenHeight - 80);
+        sliderView.frame=CGRectMake(-(sliderView.frame.size.width), 3, 280, (appDelegate.window.frame.size.height-70));
     }else{
-        baseview.frame = CGRectMake(-screenWidth, 60, screenWidth, screenHeight - 60);
+        baseview.frame = CGRectMake(-screenWidth, 70, screenWidth, screenHeight - 70);
         sliderView.frame=CGRectMake(-(sliderView.frame.size.width), 3, 180, (appDelegate.window.frame.size.height-60));
     }
     
@@ -327,7 +327,6 @@ CGFloat screenHeight;
         }
     }
 }
-
 
 @end
 

@@ -63,6 +63,7 @@
     if (okTitle.length>0) {
         UIAlertAction *ok = [UIAlertAction actionWithTitle:okTitle style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action)
                              {
+                                 NSLog(@"test alert");
                                 // [self.navigationController ];
                                  //BUTTON OK CLICK EVENT
                              }];
@@ -126,7 +127,59 @@
     [VC presentViewController:alertController animated:YES completion:nil];
 
 }
-
++(void)showPopupWithSelectedDropdown:(UIViewController*)VC withTitle:(NSString*)title messageString:(NSString*)message OKbutton:(NSString*)okTitle CancelButton:(NSString*)cancelTitle optionItems:(NSMutableArray*)optionArray
+{
+    NSMutableAttributedString *titleString = [[ NSMutableAttributedString alloc]initWithString:title];
+    NSUInteger len = [title length];
+    NSRange strRange=NSMakeRange(0, len);
+    
+    [titleString addAttribute:NSForegroundColorAttributeName value:[CommonClass getColorFromColorCode:themeColor] range:strRange];
+    [titleString addAttribute: NSFontAttributeName
+                        value:[UIFont systemFontOfSize:16 weight:UIFontWeightBold]
+                        range:strRange];
+    
+    UIAlertController * alertController = [UIAlertController alertControllerWithTitle: @""
+                                                                              message: message
+                                                                       preferredStyle:UIAlertControllerStyleAlert];
+    [alertController setValue:titleString forKey:@"attributedTitle"];
+    [self createOptionPicker:optionArray];
+    
+    for (int i=0; i<[optionArray count]; i++) {
+        [alertController addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+            textField.placeholder = [[optionArray objectAtIndex:i] valueForKey:@"fieldname"];
+            textField.clearButtonMode = UITextFieldViewModeWhileEditing;
+           // textField.inputView = [self optPicker];
+            //            textField.borderStyle = UITextBorderStyleRoundedRect;
+            //            textField.backgroundColor = [CommonClass getColorFromColorCode:themeColor];
+        }];
+    }
+    
+    
+    UIAlertAction *ok = [UIAlertAction actionWithTitle:okTitle style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action)
+                         {
+                             NSArray * textfields = alertController.textFields;
+                             UITextField * namefield = textfields[0];
+                             
+                             LoginViewController *logVC=[[LoginViewController alloc] init];
+                             [logVC submitUserNameforForgotPassword:namefield.text];
+                         }];
+    
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:cancelTitle style:UIAlertActionStyleCancel handler:nil];
+    if (okTitle.length>0) {
+        [alertController addAction:ok];
+        [alertController addAction:cancel];
+    }
+    alertController.view.tintColor = [CommonClass getColorFromColorCode:themeColor];
+    alertController.transitioningDelegate = VC.transitioningDelegate;
+    
+    [VC presentViewController:alertController animated:YES completion:nil];
+}
++(void)createOptionPicker :(NSArray*)options
+{
+  //  optPicker = [[UIPickerView alloc] init];
+   // [optPicker ];
+    
+}
 +(NSString *)convertingToJsonFormat:(NSDictionary *)dictJson
 {
     NSString *jsonString=@"{";

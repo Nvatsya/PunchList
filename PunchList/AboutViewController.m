@@ -18,7 +18,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    [InterfaceViewController createInterfaceForAdminAction:self forScreen:@"About App"];
+    [InterfaceViewController createInterfaceForActions:self forScreen:@"About App"];
     
     [self createAboutView];
 }

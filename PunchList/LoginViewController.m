@@ -18,6 +18,7 @@
 #import "DataConnection.h"
 #import "Base64.h"
 #import "ProjListViewController.h"
+#import "DropdownDataManager.h"
 
 
 @interface LoginViewController ()
@@ -27,6 +28,7 @@
     UITextField *selectedTF;
     NSMutableData *downloadData;
     UIActivityIndicatorView *spinner;
+    DataConnection *dataCon;
 }
 @end
 
@@ -129,7 +131,6 @@
 
 -(void)handleForgotAction
 {
-    NSLog(@"forget");
     NSMutableArray *fieldArr = [[NSMutableArray alloc] init];
     NSDictionary *fieldDict1 =[[NSDictionary alloc] initWithObjectsAndKeys:@"User Name",@"fieldname", nil];
     [fieldArr addObject:fieldDict1];
@@ -146,10 +147,10 @@
         [self callLoginMethod];
     }else{
         
-        ProjListViewController *projVC=[[ProjListViewController alloc] init];
-        [self.navigationController pushViewController:projVC animated:YES];
+//        ProjListViewController *projVC=[[ProjListViewController alloc] init];
+//        [self.navigationController pushViewController:projVC animated:YES];
         
-     // [CommonClass showAlert:self messageString:@"All Fields are mandatory" withTitle:@"" OKbutton:@"" cancelButton:@"OK"];
+      [CommonClass showAlert:self messageString:@"All Fields are mandatory" withTitle:@"" OKbutton:@"" cancelButton:@"OK"];
     }
 }
 
@@ -224,6 +225,12 @@
 #pragma mark connection delegate methods
 -(void)loginDataLoadingFinished:(NSMutableData*)data
 {
+    DropdownDataManager *dataManager = [[DropdownDataManager alloc] init];
+    [dataManager getListDataForUserDropdown];
+    [dataManager getListDataForStatusDropdown];
+    [dataManager getListDataForDepartmentDropdown];
+    [dataManager getListDataForProjectDropdown];
+    
     NSString *responseString =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     NSLog(@"login data is...%@",responseString);
     NSDictionary *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
@@ -234,11 +241,91 @@
             AdminViewController *admin=[[AdminViewController alloc] init];
             [self.navigationController pushViewController:admin animated:YES];
         }else{
+           // [self getListDataForDropdowns];
             ProjListViewController *projVC=[[ProjListViewController alloc] init];
             [self.navigationController pushViewController:projVC animated:YES];
         }
         
     }
+}
+
+-(void)getListDataForDropdowns
+{
+    dataCon = [[DataConnection alloc] init];
+    dispatch_queue_t backgroundQueue = dispatch_queue_create("dispatch_queue_#1", 0);
+    dispatch_async(backgroundQueue, ^{
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSString *myUrlString = [NSString stringWithFormat:@"%@Department/GetAllRecord",baseURL];
+            
+            [self->dataCon requestListWithUrl:myUrlString bodyDic:nil withResponseData:^(NSData *bodyData) {
+                NSArray *deptListArray = [NSJSONSerialization JSONObjectWithData:bodyData options:NSJSONReadingMutableLeaves error:nil];
+                
+                if ([deptListArray isKindOfClass:[NSArray class]]&&[deptListArray count]!=0) {
+                    NSArray *departmentArr = [[NSArray alloc] initWithArray:deptListArray];
+                    [[NSUserDefaults standardUserDefaults] setObject:departmentArr forKey:@"departmentArr"];
+                    [[NSUserDefaults standardUserDefaults] synchronize];
+                }
+            } failtureResponse:^(NSError *error) {
+                NSLog(@"Error %@",error.localizedDescription);
+            }checkConnectionStatus: ^(BOOL isNetwork){
+                
+                [CommonClass showAlert:self messageString:@"No Network" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
+            }];
+            
+            
+        });
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            NSString *myUrlString = [NSString stringWithFormat:@"%@User/GetAllRecord",baseURL];
+            
+            [self->dataCon requestListWithUrl:myUrlString bodyDic:nil withResponseData:^(NSData *bodyData) {
+                NSArray *listArray = [NSJSONSerialization JSONObjectWithData:bodyData options:NSJSONReadingMutableLeaves error:nil];
+                NSMutableArray *userListArray = [[NSMutableArray alloc] initWithCapacity:0];
+                for (NSDictionary *dict in listArray) {
+                    if ([[dict valueForKey:@"Status"] isEqualToString:@"Active"]) {
+                        NSDictionary *userDict = [[NSDictionary alloc] initWithObjectsAndKeys:[NSString stringWithFormat:@"%@ %@",[dict valueForKey:@"FirstName"],[dict valueForKey:@"LastName"]],@"UserName",[dict valueForKey:@"UserId"],@"UserId",[dict valueForKey:@"UserEmail"],@"UserEmail",[dict valueForKey:@"UserType"],@"UserType", nil];
+                        [userListArray addObject:userDict];
+                    }
+                }
+                [[NSUserDefaults standardUserDefaults] setObject:userListArray forKey:@"usersArr"];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+            }failtureResponse:^(NSError *error) {
+                NSLog(@"Error %@",error.localizedDescription);
+            }checkConnectionStatus: ^(BOOL isNetwork){
+                
+                [CommonClass showAlert:self messageString:@"No Network" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
+            }];
+            
+        });
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            NSString *myUrlString = [NSString stringWithFormat:@"%@Status/GetAllRecord",baseURL];
+            
+            [self->dataCon requestListWithUrl:myUrlString bodyDic:nil withResponseData:^(NSData *bodyData) {
+                NSArray *userListArray = [NSJSONSerialization JSONObjectWithData:bodyData options:NSJSONReadingMutableLeaves error:nil];
+                
+                if ([userListArray isKindOfClass:[NSArray class]]&&[userListArray count]!=0) {
+                    NSArray *statusArr = [[NSArray alloc] initWithArray:userListArray];
+                    [[NSUserDefaults standardUserDefaults] setObject:statusArr forKey:@"statusArr"];
+                    [[NSUserDefaults standardUserDefaults] synchronize];
+                }
+            } failtureResponse:^(NSError *error) {
+                NSLog(@"Error %@",error.localizedDescription);
+                
+            }checkConnectionStatus: ^(BOOL isNetwork){
+                
+                [CommonClass showAlert:self messageString:@"No Network" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
+            }];
+            
+        });
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [VSProgressHud removeIndicator:self];
+          //  [ self->pickerV reloadAllComponents];
+        });
+        
+    });
 }
 
 #pragma mark - UITextField Delegate

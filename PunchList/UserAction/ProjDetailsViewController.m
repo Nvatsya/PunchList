@@ -32,7 +32,7 @@
     // Do any additional setup after loading the view.
     appDel = (AppDelegate*)[UIApplication sharedApplication].delegate;
     lableDict = [[NSDictionary alloc] initWithObjectsAndKeys:@"Punch Name", @"PunchName", @"Description", @"PunchDetail", @"Created On", @"PunchDate", @"Assigned To", @"PunchHolder", @"Status", @"PunchStatus", nil];
-    [InterfaceViewController createInterfaceForAdminAction:self forScreen:[NSString stringWithFormat:@"%@",[self.projDict valueForKey:@"ProjectName"]]];
+    [InterfaceViewController createInterfaceForActions:self forScreen:[NSString stringWithFormat:@"%@",[self.projDict valueForKey:@"ProjectName"]]];
      [InterfaceViewController createListView:self];
     [self createViewForProjDetails];
    // [self createViewForPunchList];
@@ -94,7 +94,7 @@
     
     UILabel *projdateLbl = [[UILabel alloc] init];
     projdateLbl.frame = CGRectMake(dateLbl.frame.origin.x+dateLbl.frame.size.width+5, dateLbl.frame.origin.y, self.view.frame.size.width-105,25);
-    [projdateLbl setText:[NSString stringWithFormat:@"07/21/2019"]]; //[self.projDict valueForKey:@"dateCreated"]
+    [projdateLbl setText:[self.projDict valueForKey:@"dateCreated"]];
     [projdateLbl setTextColor:[CommonClass getColorFromColorCode:fontColor]];
     [projDetailsView addSubview:projdateLbl];
     
@@ -146,7 +146,6 @@
     
     [cell createCellForPunchList:self onTable:tableView forList:@"" heightOfRow:[self tableView:tableView heightForRowAtIndexPath:indexPath] withData:dataDict forLables:lableDict];
     cell.backgroundColor = [UIColor clearColor];
-    //[cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
     [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
     return cell;
 }
@@ -155,17 +154,17 @@
     UITableViewRowAction *editAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:@"Update\nPunch" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath) {
         [self updatePunchDetails:indexPath.row];
     }];
-    UITableViewRowAction *addAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:@"Create\nPunch" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath) {
-        [self updatePunchDetails:indexPath.row];
-    }];
+//    UITableViewRowAction *addAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:@"Create\nPunch" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath) {
+//        [self updatePunchDetails:indexPath.row];
+//    }];
     
     editAction.backgroundColor = [CommonClass getColorFromColorCode:themeColor];
-    addAction.backgroundColor = [CommonClass getColorFromColorCode:createColor];
+  //  addAction.backgroundColor = [CommonClass getColorFromColorCode:createColor];
     
     if ([[self.projDict valueForKey:@"PunchIssues"] count]>0) {
         return @[editAction];
     }else{
-        return @[addAction];
+       // return @[addAction];
     }
     return nil;
 }
@@ -179,12 +178,11 @@
 }
 - (void)createPunchAction
 {
-   // NSLog(@"add action clicked %@",[[self.projDict valueForKey:@"PunchIssues"] objectAtIndex:rowItem]);
     PunchViewController *punch = [[PunchViewController alloc] init];
     [punch.detailDict removeAllObjects];
     NSMutableDictionary *tempDict = [self.projDict mutableCopy];
     [tempDict removeObjectForKey:@"PunchIssues"];
-    punch.detailDict = tempDict;// = [self.projDict valueForKey:@"PunchIssues"] ;
+    punch.detailDict = tempDict;
     punch.isCreateIssue = YES;
     [self.navigationController pushViewController:punch animated:YES];
 }

@@ -15,6 +15,7 @@
 #import "AddNewProjController.h"
 #import "AddNewStatusController.h"
 #import "AboutViewController.h"
+#import "ReportsViewController.h"
 #import "CommonClass.h"
 
 @interface AdminViewController ()
@@ -47,7 +48,7 @@
 }
 -(void)getActionsDetailsforDashboard
 {
-    NSArray *tempActionArr = [[NSArray alloc] initWithObjects:@"Dashboard",@"New user",@"New Project",@"New Department",@"New Status",@"About", nil];
+    NSArray *tempActionArr = [[NSArray alloc] initWithObjects:@"Reports",@"New user",@"New Project",@"New Department",@"New Status",@"About", nil];
     allActionArr = [[NSMutableArray alloc]init];
     for (int i=0; i<[tempActionArr count]; i++) {
         NSMutableDictionary *actionDict = [[NSMutableDictionary alloc] init];
@@ -59,7 +60,7 @@
 -(void)createDashboardUI
 {
     [InterfaceViewController createUserInterface:self];
-    
+    NSLog(@"department %@,,, users %@ ,,, status %@",appDel.departmentArr, appDel.userArr, appDel.statusArr);
     scroll = [[UIScrollView alloc] initWithFrame:CGRectMake((self.view.frame.size.width/18), self.view.frame.size.height/3+10, self.view.frame.size.width-self.view.frame.size.width/9, self.view.frame.size.height-(self.view.frame.size.height/3)-20)];
     
     // Add action buttons on Landing screen
@@ -116,7 +117,9 @@
     [tap.view setBackgroundColor:[UIColor colorWithRed:4.0/255 green:187.0/255 blue:176.0/255 alpha:1]];
     NSLog(@"tapview tag %ld",[tap.view tag]);
     if ([tap.view tag]==1) {
-        [CommonClass showAlert:self messageString:@"Will be designed as per Admin's feedback including Logout option" withTitle:@"" OKbutton:@"" cancelButton:@"OK"];
+        ReportsViewController *reportVC = [[ReportsViewController alloc] init];
+        [self.navigationController pushViewController:reportVC animated:YES];
+        //[CommonClass showAlert:self messageString:@"Will be designed as per Admin's feedback including Logout option" withTitle:@"" OKbutton:@"" cancelButton:@"OK"];
     }else if ([tap.view tag]==2){
         AddNewUserController *newUserVC = [[AddNewUserController alloc] init];
         [self.navigationController pushViewController:newUserVC animated:YES];

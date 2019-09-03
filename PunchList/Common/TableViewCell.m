@@ -33,7 +33,8 @@
             UILabel *datalbl = [[UILabel alloc] init];
             datalbl.frame = CGRectMake(namelbl.frame.size.width+10, 0, VC.view.frame.size.width-120, 22);
             datalbl.text = [NSString stringWithFormat:@"%@",[dataDict valueForKey:@"FirstName"]];
-            [CommonClass getColorFromColorCode:fontColor];
+            //[CommonClass getColorFromColorCode:fontColor];
+            [datalbl setTextColor:[UIColor whiteColor]];
             [self.contentView addSubview:namelbl];
             [self.contentView addSubview:datalbl];
             
@@ -45,7 +46,8 @@
             UILabel *datalbl1 = [[UILabel alloc] init];
             datalbl1.frame = CGRectMake(namelbl1.frame.size.width+10, namelbl1.frame.origin.y, VC.view.frame.size.width-120, 22);
             datalbl1.text = [NSString stringWithFormat:@"%@",[dataDict valueForKey:@"Status"]];
-            [CommonClass getColorFromColorCode:fontColor];
+        //[CommonClass getColorFromColorCode:fontColor];
+            [datalbl1 setTextColor:[UIColor whiteColor]];
             [self.contentView addSubview:namelbl1];
             [self.contentView addSubview:datalbl1];
             
@@ -57,7 +59,8 @@
             UILabel *datalbl2 = [[UILabel alloc] init];
             datalbl2.frame = CGRectMake(namelbl2.frame.size.width+10, namelbl2.frame.origin.y, VC.view.frame.size.width-120, 22);
             datalbl2.text = [NSString stringWithFormat:@"%@",[dataDict valueForKey:@"UserEmail"]];
-            [CommonClass getColorFromColorCode:fontColor];
+            //[CommonClass getColorFromColorCode:fontColor];
+            [datalbl2 setTextColor:[UIColor whiteColor]];
             [self.contentView addSubview:namelbl2];
             [self.contentView addSubview:datalbl2];
     }else if ([listname isEqualToString:@"dept"]) {
@@ -69,7 +72,8 @@
         UILabel *datalbl = [[UILabel alloc] init];
         datalbl.frame = CGRectMake(namelbl.frame.size.width+10, 0, VC.view.frame.size.width-120, 22);
         datalbl.text = [NSString stringWithFormat:@"%@",[dataDict valueForKey:@"DepartmentName"]];
-        [CommonClass getColorFromColorCode:fontColor];
+        //[CommonClass getColorFromColorCode:fontColor];
+        [datalbl setTextColor:[UIColor whiteColor]];
         [self.contentView addSubview:namelbl];
         [self.contentView addSubview:datalbl];
         
@@ -81,7 +85,8 @@
         UILabel *datalbl1 = [[UILabel alloc] init];
         datalbl1.frame = CGRectMake(namelbl1.frame.size.width+10, namelbl1.frame.origin.y, VC.view.frame.size.width-120, 22);
         datalbl1.text = [NSString stringWithFormat:@"%@",[dataDict valueForKey:@"DepartmentAdmin"]];
-        [CommonClass getColorFromColorCode:fontColor];
+        //[CommonClass getColorFromColorCode:fontColor];
+        [datalbl1 setTextColor:[UIColor whiteColor]];
         [self.contentView addSubview:namelbl1];
         [self.contentView addSubview:datalbl1];
         
@@ -93,7 +98,8 @@
         UILabel *datalbl2 = [[UILabel alloc] init];
         datalbl2.frame = CGRectMake(namelbl2.frame.size.width+10, namelbl2.frame.origin.y, VC.view.frame.size.width-120, 22);
         datalbl2.text = [NSString stringWithFormat:@"%@",[dataDict valueForKey:@"DepartmentAdminEmail"]];
-        [CommonClass getColorFromColorCode:fontColor];
+        //[CommonClass getColorFromColorCode:fontColor];
+        [datalbl2 setTextColor:[UIColor whiteColor]];
         [self.contentView addSubview:namelbl2];
         [self.contentView addSubview:datalbl2];
     }else if ([listname isEqualToString:@"project"]) {
@@ -105,7 +111,8 @@
         UILabel *datalbl = [[UILabel alloc] init];
         datalbl.frame = CGRectMake(namelbl.frame.size.width+10, 20, VC.view.frame.size.width-120, 22);
         datalbl.text = [NSString stringWithFormat:@"%@",[dataDict valueForKey:@"ProjectName"]];
-        [CommonClass getColorFromColorCode:fontColor];
+        //[CommonClass getColorFromColorCode:fontColor];
+        [datalbl setTextColor:[UIColor whiteColor]];
         [self.contentView addSubview:namelbl];
         [self.contentView addSubview:datalbl];
         
@@ -117,7 +124,8 @@
         UILabel *datalbl1 = [[UILabel alloc] init];
         datalbl1.frame = CGRectMake(namelbl1.frame.size.width+10, namelbl1.frame.origin.y, VC.view.frame.size.width-120, 22);
         datalbl1.text = [NSString stringWithFormat:@"%@",[dataDict valueForKey:@"ProjectCode"]];
-        [CommonClass getColorFromColorCode:fontColor];
+        //[CommonClass getColorFromColorCode:fontColor];
+        [datalbl1 setTextColor:[UIColor whiteColor]];
         [self.contentView addSubview:namelbl1];
         [self.contentView addSubview:datalbl1];
         
@@ -130,7 +138,8 @@
         UILabel *datalbl = [[UILabel alloc] init];
         datalbl.frame = CGRectMake(namelbl.frame.size.width+10, 20, VC.view.frame.size.width-120, 22);
         datalbl.text = [NSString stringWithFormat:@"%@",[dataDict valueForKey:@"StatusDetail"]];
-        [CommonClass getColorFromColorCode:fontColor];
+        //[CommonClass getColorFromColorCode:fontColor];
+        [datalbl setTextColor:[UIColor whiteColor]];
         [self.contentView addSubview:namelbl];
         [self.contentView addSubview:datalbl];
         
@@ -142,7 +151,8 @@
         UILabel *datalbl1 = [[UILabel alloc] init];
         datalbl1.frame = CGRectMake(namelbl1.frame.size.width+10, namelbl1.frame.origin.y, VC.view.frame.size.width-120, 22);
         datalbl1.text = [NSString stringWithFormat:@"%@",[dataDict valueForKey:@"StatusCode"]];
-        [CommonClass getColorFromColorCode:fontColor];
+        //[CommonClass getColorFromColorCode:fontColor];
+        [datalbl1 setTextColor:[UIColor whiteColor]];
         [self.contentView addSubview:namelbl1];
         [self.contentView addSubview:datalbl1];
         
@@ -162,7 +172,7 @@
     UILabel *datalbl = [[UILabel alloc] init];
     datalbl.frame = CGRectMake(namelbl.frame.size.width+10, namelbl.frame.origin.y, table.frame.size.width-(namelbl.frame.size.width+16), 22);
     datalbl.text = [NSString stringWithFormat:@"%@",[dataDict valueForKey:@"IssueName"]];
-    datalbl.textColor = [CommonClass getColorFromColorCode:fontColor];
+    datalbl.textColor = [UIColor whiteColor];// [CommonClass getColorFromColorCode:fontColor];
     
     UILabel *namelbl1 = [[UILabel alloc] init];
     namelbl1.frame = CGRectMake(5, (namelbl.frame.origin.y+namelbl.frame.size.height), 100, 22);
@@ -171,7 +181,7 @@
     UILabel *datalbl1 = [[UILabel alloc] init];
     datalbl1.frame = CGRectMake(namelbl1.frame.size.width+10, namelbl1.frame.origin.y, table.frame.size.width-(namelbl1.frame.size.width+16), 22);
     datalbl1.text = [NSString stringWithFormat:@"%@",[dataDict valueForKey:@"IssueDescription"]];
-    datalbl1.textColor = [CommonClass getColorFromColorCode:fontColor];
+    datalbl1.textColor = [UIColor whiteColor];//[CommonClass getColorFromColorCode:fontColor];
     
     UILabel *namelbl2 = [[UILabel alloc] init];
     namelbl2.frame = CGRectMake(5, (namelbl1.frame.origin.y+namelbl1.frame.size.height), 100, 22);
@@ -180,7 +190,7 @@
     UILabel *datalbl2 = [[UILabel alloc] init];
     datalbl2.frame = CGRectMake(namelbl2.frame.size.width+10, namelbl2.frame.origin.y, table.frame.size.width-(namelbl2.frame.size.width+16), 22);
     datalbl2.text = [NSString stringWithFormat:@"%@",[dataDict valueForKey:@"CreatedOn"]];
-    datalbl2.textColor = [CommonClass getColorFromColorCode:fontColor];
+    datalbl2.textColor = [UIColor whiteColor];//[CommonClass getColorFromColorCode:fontColor];
     
     UILabel *namelbl3 = [[UILabel alloc] init];
     namelbl3.frame = CGRectMake(5, (namelbl2.frame.origin.y+namelbl2.frame.size.height), 100, 22);
@@ -189,7 +199,7 @@
     UILabel *datalbl3 = [[UILabel alloc] init];
     datalbl3.frame = CGRectMake(namelbl3.frame.size.width+10, namelbl3.frame.origin.y, table.frame.size.width-(namelbl3.frame.size.width+16), 22);
     datalbl3.text = [NSString stringWithFormat:@"%@",[dataDict valueForKey:@"AssignedTo"]];
-    datalbl3.textColor = [CommonClass getColorFromColorCode:fontColor];
+    datalbl3.textColor = [UIColor whiteColor];//[CommonClass getColorFromColorCode:fontColor];
     
     UILabel *namelbl4 = [[UILabel alloc] init];
     namelbl4.frame = CGRectMake(5, (namelbl3.frame.origin.y+namelbl3.frame.size.height), 100, 22);
@@ -198,7 +208,7 @@
     UILabel *datalbl4 = [[UILabel alloc] init];
     datalbl4.frame = CGRectMake(namelbl4.frame.size.width+10, namelbl4.frame.origin.y, table.frame.size.width-(namelbl4.frame.size.width+16), 22);
     datalbl4.text = [NSString stringWithFormat:@"%@",[dataDict valueForKey:@"IssueStatus"]];
-    datalbl4.textColor = [CommonClass getColorFromColorCode:fontColor];
+    datalbl4.textColor = [UIColor whiteColor];//[CommonClass getColorFromColorCode:fontColor];
     
     [contentBG addSubview:namelbl];
     [contentBG addSubview:datalbl];
@@ -234,7 +244,7 @@
     UILabel *datalbl = [[UILabel alloc] init];
     datalbl.frame = CGRectMake(namelbl.frame.size.width+10, namelbl.frame.origin.y, table.frame.size.width-(namelbl.frame.size.width+16), 22);
     datalbl.text = [NSString stringWithFormat:@"%@",[dataDict valueForKey:@"ProjectName"]];
-    datalbl.textColor = [CommonClass getColorFromColorCode:fontColor];
+    datalbl.textColor = [UIColor whiteColor];//[CommonClass getColorFromColorCode:fontColor];
     
     UILabel *namelbl1 = [[UILabel alloc] init];
     namelbl1.frame = CGRectMake(5, (namelbl.frame.origin.y+namelbl.frame.size.height), 130, 22);
@@ -243,7 +253,7 @@
     UILabel *datalbl1 = [[UILabel alloc] init];
     datalbl1.frame = CGRectMake(namelbl1.frame.size.width+10, namelbl1.frame.origin.y, table.frame.size.width-(namelbl1.frame.size.width+16), 22);
     datalbl1.text = [NSString stringWithFormat:@"%@",[dataDict valueForKey:@"ProjectCode"]];
-    datalbl1.textColor = [CommonClass getColorFromColorCode:fontColor];
+    datalbl1.textColor = [UIColor whiteColor];//[CommonClass getColorFromColorCode:fontColor];
     
     UILabel *namelbl2 = [[UILabel alloc] init];
     namelbl2.frame = CGRectMake(5, (namelbl1.frame.origin.y+namelbl1.frame.size.height), 130, 22);
@@ -252,7 +262,7 @@
     UILabel *datalbl2 = [[UILabel alloc] init];
     datalbl2.frame = CGRectMake(namelbl2.frame.size.width+10, namelbl2.frame.origin.y, table.frame.size.width-(namelbl2.frame.size.width+16), 22);
     datalbl2.text = [NSString stringWithFormat:@"%lu",[[dataDict valueForKey:@"PunchIssues"] count]];
-    datalbl2.textColor = [CommonClass getColorFromColorCode:fontColor];
+    datalbl2.textColor = [UIColor whiteColor];//[CommonClass getColorFromColorCode:fontColor];
     
     [contentBG addSubview:namelbl];
     [contentBG addSubview:datalbl];

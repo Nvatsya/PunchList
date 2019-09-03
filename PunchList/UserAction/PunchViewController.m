@@ -42,7 +42,7 @@
     NSString *updatedDeptStr;
     NSString *selectedStatusId;
     NSString *issueName;
-    BOOL isSaveNew;
+    BOOL isSaveNew, isLargeImage;
 }
 @end
 
@@ -53,9 +53,11 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    [InterfaceViewController createInterfaceForAdminAction:self forScreen:[NSString stringWithFormat:@"%@",isCreateIssue?@"Create Punch":[self.detailDict valueForKey:@"IssueName"]]];
-     [self getListDataForDropdowns];
-    
+    [InterfaceViewController createInterfaceForActions:self forScreen:[NSString stringWithFormat:@"%@",isCreateIssue?@"Create Punch":[self.detailDict valueForKey:@"IssueName"]]];
+     //[self getListDataForDropdowns];
+    departmentArr = [[NSUserDefaults standardUserDefaults] valueForKey:@"departmentArr"];
+    usersArr = [[NSUserDefaults standardUserDefaults] valueForKey:@"usersArr"];
+    statusArr = [[NSUserDefaults standardUserDefaults] valueForKey:@"statusArr"];
     punchImageArr = [[NSMutableArray alloc] initWithCapacity:0];
     imgDataArray = [[NSMutableArray alloc] initWithCapacity:0];
     pickerV = [[UIPickerView alloc] init];
@@ -99,15 +101,15 @@
         if ([[self.detailDict valueForKey:@"DepartmentId"] isEqualToString:[[departmentArr objectAtIndex:i]valueForKey:@"DepartmentId"]]) {
             departmentName = [[departmentArr objectAtIndex:i]valueForKey:@"DepartmentName"];
             updatedDeptStr = [[departmentArr objectAtIndex:i] valueForKey:@"DepartmentId"];
-            return;
+            break;
         }
     }
     
     //get Assigned name
     for (int i=0; i<[usersArr count]; i++) {
         if ([[self.detailDict valueForKey:@"AssignedTo"] isEqualToString:[[usersArr objectAtIndex:i]valueForKey:@"UserId"] ]) {
-            [[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat:@"%@ %@", [[usersArr objectAtIndex:i]valueForKey:@"FirstName"], [[usersArr objectAtIndex:i]valueForKey:@"LastName"]]  forKey:@"AssignedName"];
-            assignedName = [NSString stringWithFormat:@"%@ %@", [[usersArr objectAtIndex:i]valueForKey:@"FirstName"], [[usersArr objectAtIndex:i]valueForKey:@"LastName"]];
+            [[NSUserDefaults standardUserDefaults] setObject:[[usersArr objectAtIndex:i]valueForKey:@"UserName"]  forKey:@"AssignedName"];
+            assignedName = [[usersArr objectAtIndex:i]valueForKey:@"UserName"];
             assignedToStr = [[usersArr objectAtIndex:i] valueForKey:@"UserId"];
             break;
         }
@@ -141,13 +143,16 @@
                 field.text = [[departmentArr objectAtIndex:0] valueForKey:@"DepartmentName"];;
             }else if (field.tag == 102) {
                 field.text = isCreateIssue?@"":[self.detailDict valueForKey:@"AssignedTo"];
+                assignedToStr = Nil;
             }else if (field.tag == 103) {
                 updatedStatusStr = field.text = [[statusArr objectAtIndex:0] valueForKey:@"StatusDetail"];
                 selectedStatusId = [[statusArr objectAtIndex:0] valueForKey:@"StatusId"];
             }else if (field.tag == 104) {
                 field.text = @"";
+                issueName = Nil;
             }else if (field.tag == 303) {
                 field.text = @"";
+                updatedDescription = Nil;
             }
         }
     UIScrollView *imgScroll = [self.view viewWithTag:6001];
@@ -159,6 +164,7 @@
     imageBase64data = Nil;
     selectedImageName = @"";
     selectedImage = Nil;
+    [imgDataArray removeAllObjects];
 }
 -(void)getListDataForDropdowns
 {
@@ -362,10 +368,7 @@
         [dict setValue:updatedDeptStr forKey:@"DepartmentId"];
         [dict setValue:[NSString stringWithFormat:@"%@",[[NSUserDefaults standardUserDefaults]valueForKey:@"UserId"]] forKey:@"CreatedBy"];
         [dict setValue:[NSString stringWithFormat:@"%@",[NSDate date]] forKey:@"CreatedOn"];
-        
-        NSDictionary *imgDict = [[NSDictionary alloc] initWithObjectsAndKeys:imageBase64data,@"ImgStr", nil];
-        NSArray *imgArr = [[NSArray alloc] initWithObjects:imgDict, nil];
-        [dict setValue:imgArr forKey:@"IssueImages"];
+        [dict setValue:imgDataArray forKey:@"IssueImages"];
         
         if ([dict count]<8) {
             [CommonClass showAlert:self messageString:@"All fields are mandatory" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
@@ -379,6 +382,10 @@
         
         dataCon = [[DataConnection alloc] initWithUrlStringFromData:myUrlString withJsonString:jsonString delegate:self];
         dataCon.accessibilityLabel = @"AddNewPunch";
+        UIView *btnView1 = [[self.view viewWithTag:5002] viewWithTag:441];
+        [btnView1 setUserInteractionEnabled:FALSE];
+        UIView *btnView2 = [[self.view viewWithTag:5002] viewWithTag:443];
+        [btnView2 setUserInteractionEnabled:FALSE];
         NSLog(@"my punchUpdateurl %@ and data %@ connection %@",myUrlString,jsonString, dataCon);
     }else{
         [CommonClass showAlert:self messageString:@"No Internet Connection" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
@@ -407,6 +414,8 @@
         
         dataCon = [[DataConnection alloc] initUpdateDataWithUrlString:myUrlString withJsonString:jsonString delegate:self];
         dataCon.accessibilityLabel = @"updatePunch";
+        UIView *btnView3 = [[self.view viewWithTag:5002] viewWithTag:442];
+        [btnView3 setUserInteractionEnabled:FALSE];
         NSLog(@"my punchUpdateurl %@ and data %@ connection %@",myUrlString,jsonString, dataCon);
     }else{
         [CommonClass showAlert:self messageString:@"No Internet Connection" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
@@ -415,6 +424,12 @@
 -(void)dataLoadingFinished:(NSMutableData*)data{
     NSString *responseString =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     NSLog(@"response data is...%@",responseString);
+    UIView *btnView1 = [[self.view viewWithTag:5002] viewWithTag:441];
+    [btnView1 setUserInteractionEnabled:TRUE];
+    UIView *btnView2 = [[self.view viewWithTag:5002] viewWithTag:443];
+    [btnView2 setUserInteractionEnabled:TRUE];
+    UIView *btnView3 = [[self.view viewWithTag:5002] viewWithTag:442];
+    [btnView3 setUserInteractionEnabled:TRUE];
     
     if ([[dataCon accessibilityLabel] isEqualToString:@"updatePunch"]){
        // NSString *responseString =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
@@ -471,10 +486,13 @@
 - (nullable NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
 {
     if (selectedTF.tag==101) {
+        pickerDataArr = departmentArr;
         return [NSString stringWithFormat:@"%@",[[pickerDataArr objectAtIndex:row] valueForKey:@"DepartmentName"]];
     }else if (selectedTF.tag==102){
-        return [NSString stringWithFormat:@"%@ %@",[[pickerDataArr objectAtIndex:row] valueForKey:@"FirstName"],[[pickerDataArr objectAtIndex:row] valueForKey:@"LastName"]] ;
+        pickerDataArr = usersArr;
+        return [NSString stringWithFormat:@"%@",[[pickerDataArr objectAtIndex:row] valueForKey:@"UserName"]] ;
     }else if (selectedTF.tag==103) {
+        pickerDataArr = statusArr;
         return [NSString stringWithFormat:@"%@",[[pickerDataArr objectAtIndex:row] valueForKey:@"StatusDetail"]];
     }
     return @"text";
@@ -494,17 +512,17 @@
     selectedItem = @"";
     selectedTF = textField;
     if (textField.tag==101) {
-        pickerDataArr =[[NSArray alloc] initWithArray:departmentArr];
+        pickerDataArr =[[NSUserDefaults standardUserDefaults] valueForKey:@"departmentArr"];//[[NSArray alloc] initWithArray:departmentArr];
         [pickerV reloadAllComponents];
         textField.inputView = pickerV;
         textField.inputAccessoryView = toolbar;
     }else if (textField.tag==102){
-        pickerDataArr =[[NSArray alloc] initWithArray:usersArr];
+        pickerDataArr =[[NSUserDefaults standardUserDefaults] valueForKey:@"usersArr"];//[[NSArray alloc] initWithArray:usersArr];
         [pickerV reloadAllComponents];
         textField.inputView = pickerV;
         textField.inputAccessoryView = toolbar;
     }else if (textField.tag==103){
-        pickerDataArr =[[NSArray alloc] initWithArray:statusArr];
+        pickerDataArr = [[NSUserDefaults standardUserDefaults] valueForKey:@"statusArr"];//[[NSArray alloc] initWithArray:statusArr];
         [pickerV reloadAllComponents];
         textField.inputView = pickerV;
         textField.inputAccessoryView = toolbar;
@@ -678,12 +696,10 @@
         float exactMbSize=(float)dataForImage.length/1024.0f/1024.0f;
         
         if (exactMbSize <=3){
-            //[detailsTable reloadData];
-             selectedImageName = @"cameraImage.png";
-            [self getBinaryDataForImage];
+            isLargeImage = NO;
+            selectedImageName = @"cameraImage.png";
         }else{
-            
-           // [self showInvalidSizeAlert];
+            isLargeImage = YES;
         }
     }else{
         ALAssetsLibraryAssetForURLResultBlock resultblock = ^(ALAsset *myasset)
@@ -695,11 +711,11 @@
             float exactMbSize=(float)representation.size/(1024 * 1024);
             NSLog(@"Size: %f", exactMbSize);
             if (exactMbSize <=3){
+                isLargeImage = NO;
                 self->selectedImageName=fileName;
-                [self getBinaryDataForImage];
+               // [self getBinaryDataForImage];
             }else{
-                
-               // [self showInvalidSizeAlert];
+                self->isLargeImage = YES;
             }
             
         };
@@ -707,11 +723,15 @@
         ALAssetsLibrary* assetslibrary = [[ALAssetsLibrary alloc] init];
         [assetslibrary assetForURL:refURL resultBlock:resultblock failureBlock:nil];
     }
-    NSDictionary *imgDict = [[NSDictionary alloc] initWithObjectsAndKeys:selectedImage,@"image",selectedImageName,@"imageName", nil];
-    [punchImageArr addObject:imgDict];
-    
-    [self drawPunchImageOnView];
     [picker dismissViewControllerAnimated:YES completion:NULL];
+    if (!isLargeImage) {
+        NSDictionary *imgDict = [[NSDictionary alloc] initWithObjectsAndKeys:selectedImage,@"image",selectedImageName,@"imageName", nil];
+        [punchImageArr addObject:imgDict];
+        [self getBinaryDataForImage];
+        [self drawPunchImageOnView];
+    }else{
+        [CommonClass showAlert:self messageString:@"Image is too large to upload." withTitle:@"" OKbutton:nil cancelButton:@"OK"];
+    }
 }
 -(void)drawPunchImageOnView
 {
@@ -765,7 +785,6 @@
         
     }
 }
-
 
 #pragma mark - Navigation
 

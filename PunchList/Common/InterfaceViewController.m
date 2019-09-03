@@ -10,6 +10,7 @@
 #import "AdminViewController.h"
 #import "CommonClass.h"
 #import "ConstantFile.h"
+#import "SliderView.h"
 
 @interface InterfaceViewController ()
 {
@@ -70,7 +71,7 @@
     [bgheaderView addSubview:logoView];
 }
 
-+(void)createInterfaceForAdminAction :(UIViewController *)VC forScreen:(NSString*)title
++(void)createInterfaceForActions :(UIViewController *)VC forScreen:(NSString*)title
 {
     UIImageView *bgView = [[UIImageView alloc] init];
     bgView.frame = CGRectMake(0, 0, VC.view.frame.size.width, VC.view.frame.size.height);
@@ -81,20 +82,7 @@
     [VC.navigationController.navigationBar setBarTintColor:[UIColor grayColor]];
     [VC.navigationController.navigationBar setTranslucent:YES];
     VC.title = title;
-    if ([title isEqualToString:@"My Projects"]) {
-        [VC.navigationController.navigationItem setHidesBackButton:YES];
-        UIButton *menuButton = [[UIButton alloc] init];
-        [menuButton setBackgroundImage:[UIImage imageNamed:@"SlideMenu.png"] forState:UIControlStateNormal];
-        [menuButton addTarget:VC action:@selector(showSlideMenuItem)
-             forControlEvents:UIControlEventTouchUpInside];
-        [menuButton setShowsTouchWhenHighlighted:YES];
-        
-        UIBarButtonItem *mailbutton =[[UIBarButtonItem alloc] initWithCustomView:menuButton];
-        VC.navigationItem.leftBarButtonItem =mailbutton;
-        
-    }
 }
-
 +(void)createListView :(UIViewController*)VC
 {
     UILabel *instructionLabel = [[UILabel alloc] initWithFrame:CGRectMake(VC.view.frame.size.width/24, VC.view.frame.size.height/10.5, VC.view.frame.size.width-(VC.view.frame.size.width/12), 25)];
@@ -117,5 +105,29 @@
     
     [fieldBgView addSubview:table];
     [VC.view addSubview:fieldBgView];
+}
+//Adding slide menu
++(void)addSlideMenuToView :(UIViewController *)VC
+{
+    [VC.navigationController.navigationItem setHidesBackButton:YES];
+    UIButton *menuButton = [[UIButton alloc] init];
+    [menuButton setBackgroundImage:[UIImage imageNamed:@"SlideMenu.png"] forState:UIControlStateNormal];
+    [menuButton addTarget:self action:@selector(showSlideMenuItem)
+         forControlEvents:UIControlEventTouchUpInside];
+    [menuButton setShowsTouchWhenHighlighted:YES];
+    
+    UIBarButtonItem *leftbutton =[[UIBarButtonItem alloc] initWithCustomView:menuButton];
+    VC.navigationItem.leftBarButtonItem =leftbutton;
+}
++(void)showSlideMenuItem
+{
+    BOOL isTapped = (BOOL) [[NSUserDefaults standardUserDefaults] valueForKey:@"isTapped"];
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"isTapped"]) {
+        [SliderView hideSlider];
+    }else{
+        isTapped = 1;
+        [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithBool:isTapped] forKey:@"isTapped"];
+        [SliderView showSlider];
+    }
 }
 @end

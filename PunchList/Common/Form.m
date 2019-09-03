@@ -9,8 +9,12 @@
 #import "Form.h"
 #import "CommonClass.h"
 #import "ConstantFile.h"
+#import "DataConnection.h"
 
 @implementation Form
+{
+    DataConnection *dataCon;
+}
 
 +(void)createFormWithList :(UIViewController *)VC forAction:(NSString*)name fieldsInfo:(NSMutableArray*)fieldsArr
 {
@@ -25,9 +29,10 @@
         UITextField *textfield = [[UITextField alloc] init];
         textfield.frame = CGRectMake(0, yPos, fieldBgView.frame.size.width, 40);
         textfield.tag = [[[fieldsArr objectAtIndex:i] valueForKey:@"tagval"] intValue];
+        textfield.textColor = [UIColor whiteColor];
         textfield.delegate = VC;
         UIColor *color = [UIColor whiteColor];
-        textfield.attributedPlaceholder = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@",[[fieldsArr objectAtIndex:i] valueForKey:@"Placeholder"]] attributes:@{NSForegroundColorAttributeName: color}];
+        textfield.attributedPlaceholder = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@",[[fieldsArr objectAtIndex:i] valueForKey:@"Placeholder"]] attributes:@{NSForegroundColorAttributeName: color, NSFontAttributeName: [UIFont systemFontOfSize:15 weight:UIFontWeightThin]}];
         [fieldBgView addSubview:textfield];
         
         if ([[[fieldsArr objectAtIndex:i] valueForKey:@"leftview"] length]>0) {
