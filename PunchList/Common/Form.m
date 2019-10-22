@@ -50,8 +50,8 @@
             iconView.frame = CGRectMake(0, 0, 25, 25);
            // iconView.contentMode = UIViewContentModeScaleAspectFit;
             [paddingView addSubview:iconView];
-            textfield.leftView=paddingView;
-            textfield.leftViewMode=UITextFieldViewModeAlways;
+            textfield.rightView=paddingView;
+            textfield.rightViewMode=UITextFieldViewModeAlways;
         }
         
         CALayer* borderLayer = [textfield layer];
@@ -125,9 +125,10 @@
             textfield.frame = CGRectMake(0, yPos, fieldBg.frame.size.width, 40);
             textfield.tag = [[[fieldsArr objectAtIndex:i] valueForKey:@"tagval"] intValue];
             textfield.delegate = VC;
-            UIColor *color = [UIColor whiteColor];
-            textfield.textColor = color;
-            textfield.attributedPlaceholder = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@",[[fieldsArr objectAtIndex:i] valueForKey:@"Placeholder"]] attributes:@{NSForegroundColorAttributeName: color}];
+            UIColor *placeHoldercolor = [UIColor lightGrayColor];
+            UIColor *textcolor = [UIColor whiteColor];
+            textfield.textColor = textcolor;
+            textfield.attributedPlaceholder = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@",[[fieldsArr objectAtIndex:i] valueForKey:@"Placeholder"]] attributes:@{NSForegroundColorAttributeName: placeHoldercolor}];
             [fieldBg addSubview:textfield];
             
             //Put values in textfields
@@ -142,7 +143,7 @@
             }else if ([[[fieldsArr objectAtIndex:i] valueForKey:@"Placeholder"] isEqualToString:punchTitle]){
                 textfield.text = [NSString stringWithFormat:@"%@", [[[fieldsArr objectAtIndex:i] valueForKey:@"Value"]length]==0?@"":[[fieldsArr objectAtIndex:i] valueForKey:@"Value"]];
                 [textfield setUserInteractionEnabled:[[[fieldsArr objectAtIndex:i] valueForKey:@"Value"]length]==0?YES:NO];
-                [textfield setTextColor:[[[fieldsArr objectAtIndex:i] valueForKey:@"Value"]length]==0?color:[UIColor lightGrayColor]];
+                [textfield setTextColor:[[[fieldsArr objectAtIndex:i] valueForKey:@"Value"]length]==0?textcolor:[UIColor lightGrayColor]];
             }
             
             

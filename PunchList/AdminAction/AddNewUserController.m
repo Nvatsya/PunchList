@@ -17,6 +17,7 @@
 #import "AppDelegate.h"
 #import "AdminViewController.h"
 #import "ReportsViewController.h"
+#import "DropdownDataManager.h"
 
 @interface AddNewUserController () <UITableViewDelegate, UITableViewDataSource>
 {
@@ -92,7 +93,7 @@
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 100;
+    return 110;
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -142,7 +143,7 @@
             NSString *myUrlString = [NSString stringWithFormat:@"%@User/SaveNewUser",urlstr];
             
             dataCon = [[DataConnection alloc] initWithUrlStringFromData:myUrlString withJsonString:jsonString delegate:self];
-            
+            [dataCon setAccessibilityLabel:@"addNew"];
             NSLog(@"my logurl %@ and data %@ connection %@",myUrlString,jsonString, dataCon);
             [VSProgressHud presentIndicator:self];
         }else{
@@ -157,44 +158,10 @@
 
 -(void)dataLoadingFinished:(NSMutableData*)data
 {
-    UIView *formV = [self.view viewWithTag:5001];
-    [formV removeFromSuperview];
-    UIView *tableV = [self.view viewWithTag:1001];
-    [tableV removeFromSuperview];
-    [Form createFormWithList:self forAction:@"user" fieldsInfo:fieldsArr];
-    
-    if (![[dataCon accessibilityLabel] isEqualToString:@"fetch"]) {
-        NSDictionary *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
-        
-        if ([[responseDict valueForKey:@"UserList"] count]!=0) {
-            [dataArray removeAllObjects];
-            [dataArray addObjectsFromArray:[responseDict valueForKey:@"UserList"]];
-            
-            for (UIView *tableV in [self.view subviews]) {
-                
-                if ([tableV isKindOfClass:[UITableView class]]) {
-                    UITableView *listTable = (UITableView*)tableV;
-                    NSLog(@"table %@",listTable);
-                    [listTable reloadData];
-                }
-            }
-        }
-    }else{
-        NSArray *userListArray = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
-        
-        if ([userListArray count]!=0) {
-            [dataArray removeAllObjects];
-            [dataArray addObjectsFromArray:userListArray];
-            
-            for (UIView *tableV in [self.view subviews]) {
-                
-                if ([tableV isKindOfClass:[UITableView class]]) {
-                    UITableView *listTable = (UITableView*)tableV;
-                    NSLog(@"table %@",listTable);
-                    [listTable reloadData];
-                }
-            }
-        }
+    if ([[dataCon accessibilityLabel] isEqualToString:@"addNew"]==YES) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadListData) name:@"DataWithNewUser" object:nil];
+        DropdownDataManager *dataManager = [[DropdownDataManager alloc] init];
+        [dataManager getListDataForUserDropdown];
     }
     
     [VSProgressHud removeIndicator:self];
@@ -202,7 +169,26 @@
     ulname=@"";
     uemail=@"";
 }
-
+-(void)reloadListData
+{
+    [dataArray removeAllObjects];
+    dataArray = appDel.userArr;
+    UIView *formV = [self.view viewWithTag:5001];
+        [formV removeFromSuperview];
+        UIView *tableV = [self.view viewWithTag:1001];
+        [tableV removeFromSuperview];
+        [Form createFormWithList:self forAction:@"user" fieldsInfo:fieldsArr];
+        
+            
+            for (UIView *tableV in [self.view subviews]) {
+                
+                if ([tableV isKindOfClass:[UITableView class]]) {
+                    UITableView *listTable = (UITableView*)tableV;
+                    NSLog(@"table %@",listTable);
+                    [listTable reloadData];
+                }
+            }
+}
 #pragma mark - UITextField Delegate
 - (void)textFieldDidBeginEditing:(UITextField *)textField
 {

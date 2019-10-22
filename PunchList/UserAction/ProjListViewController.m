@@ -94,7 +94,6 @@
             
             if ([tableV isKindOfClass:[UITableView class]]) {
                 UITableView *listTable = (UITableView*)tableV;
-                NSLog(@"table %@",listTable);
                 [listTable reloadData];
             }
         }

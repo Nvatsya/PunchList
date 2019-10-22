@@ -16,7 +16,7 @@
 @implementation AppDelegate
 @synthesize navigationController;
 @synthesize isIphone;
-@synthesize departmentArr,userArr,statusArr,projectArr;
+@synthesize departmentArr,userArr,statusArr,projectArr, punchIssueArr;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.

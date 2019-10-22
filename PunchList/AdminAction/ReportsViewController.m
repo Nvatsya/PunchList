@@ -13,6 +13,7 @@
 #import "ConstantFile.h"
 #import "DataConnection.h"
 #import "AppDelegate.h"
+#import "DropdownDataManager.h"
 
 @interface ReportsViewController () <UITableViewDelegate, UITableViewDataSource>
 {
@@ -46,7 +47,7 @@
     
     NSArray *slideActions = [NSArray arrayWithObjects:@"Landing",@"New User",@"New Project",@"New Department",@"New Status", nil];
     [SliderView createSliderForView:self withActionList:slideActions];
-    reportOptionArray = [[NSArray alloc] initWithObjects:@"Punch",@"Department",@"Project", nil];
+    reportOptionArray = [[NSArray alloc] initWithObjects:@"PunchItem",@"Department",@"Project", nil];
     [self createReportTypeView];
 }
 -(void)viewWillAppear:(BOOL)animated
@@ -60,7 +61,6 @@
     optionListView.delegate = self;
     optionListView.dataSource = self;
     optionListView.tag = 200;
-   // optionListView.center = self.view.center;
     [optionListView setBackgroundColor:[UIColor clearColor]];
     [self.view addSubview:optionListView];
 }
@@ -97,8 +97,8 @@
         if ([selectedType isEqualToString:@"Project"]) {
             cell.textLabel.text = [[dropDownArray objectAtIndex:indexPath.row] valueForKey:@"ProjectName"];
         }
-        if ([selectedType isEqualToString:@"Punch"]) {
-            cell.textLabel.text = [[dropDownArray objectAtIndex:indexPath.row] valueForKey:@"StatusDetail"];
+        if ([selectedType isEqualToString:@"PunchItem"]) {
+            cell.textLabel.text = [[dropDownArray objectAtIndex:indexPath.row] valueForKey:@"value"];
         }
         
     }
@@ -131,7 +131,7 @@
         }else if (indexPath.row == 2){
             dropDownArray = appDel.projectArr;
         }else{
-            dropDownArray = appDel.statusArr;
+            dropDownArray = appDel.punchIssueArr;
         }
         
         [self showDropdownListView];
@@ -143,7 +143,7 @@
             selectedItemCode = [[dropDownArray objectAtIndex:indexPath.row] valueForKey:@"ProjectId"];
         }
         if ([selectedType isEqualToString:@"Punch"]) {
-            selectedItemCode = [[dropDownArray objectAtIndex:indexPath.row] valueForKey:@"StatusId"];
+            selectedItemCode = [[dropDownArray objectAtIndex:indexPath.row] valueForKey:@"key"];
         }
         [self getConfirmationToGenerateReport:cell.textLabel.text];
     }
@@ -180,8 +180,9 @@
 }
 -(void)createDropdownListView
 {
-    UIView *listBgView = [[UIView alloc] initWithFrame:CGRectMake(0, optionListView.frame.origin.y+optionListView.frame.size.height+70, self.view.frame.size.width, 350)];
+    UIView *listBgView = [[UIView alloc] initWithFrame:CGRectMake(0, optionListView.frame.origin.y+optionListView.frame.size.height-50, self.view.frame.size.width, 350)];
    // [listBgView setBackgroundColor:[UIColor whiteColor]];
+    //listBgView.center = self.view.center;
     [listBgView setTag:2200];
     
     UILabel *instructionForItem = [[UILabel alloc] initWithFrame:CGRectMake(self.view.frame.size.width/24, 10, self.view.frame.size.width-(self.view.frame.size.width/12), 25)];
@@ -192,7 +193,7 @@
     
     
     dropDownList = [[UITableView alloc] initWithFrame:CGRectMake(0, instructionForItem.frame.origin.y+instructionForItem.frame.size.height, listBgView.frame.size.width, listBgView.frame.size.height-120) style:UITableViewStylePlain];
-    listBgView.center = self.view.center;
+   // listBgView.center = self.view.center;
     [dropDownList setBackgroundColor:[UIColor clearColor]];
     [dropDownList setDelegate:self];
     [dropDownList setDataSource:self];
@@ -230,7 +231,11 @@
     if ([[responseDict valueForKey:@"code"] isEqualToString:@"EXPORTMAIL"]) {
         [CommonClass showAlert:self messageString:[NSString stringWithFormat:@"%@",[responseDict valueForKey:@"value"]] withTitle:@"Reports" OKbutton:@"OK" cancelButton:@"Cancel"];
     }else{
-        [CommonClass showAlert:self messageString:[NSString stringWithFormat:@"Temporary error!\nPlease try later."] withTitle:@"Reports" OKbutton:@"OK" cancelButton:@"Cancel"];
+        if ([[responseDict allKeys] containsObject:@"Message"]) {
+            [CommonClass showAlert:self messageString:[NSString stringWithFormat:@"%@",[responseDict valueForKey:@"Message"]] withTitle:@"Error" OKbutton:@"OK" cancelButton:@"Cancel"];
+        }else{
+            [CommonClass showAlert:self messageString:[NSString stringWithFormat:@"Temporary error!\nPlease try later."] withTitle:@"Reports" OKbutton:@"OK" cancelButton:@"Cancel"];
+        }
     }
     
 }

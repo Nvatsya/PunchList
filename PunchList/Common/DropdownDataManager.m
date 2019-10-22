@@ -27,14 +27,14 @@
     dispatch_async(backgroundQueue, ^{
         dispatch_async(dispatch_get_main_queue(), ^{
             
-            NSString *myUrlString = [NSString stringWithFormat:@"%@Project/GetAllRecord",baseURL];
-            
-            [self->dataCon requestListWithUrl:myUrlString bodyDic:nil withResponseData:^(NSData *bodyData) {
+            //NSString *myUrlString = [NSString stringWithFormat:@"%@Project/GetAllRecord",baseURL];
+            NSString *myUrlString = [NSString stringWithFormat:@"%@Project/GetAllProjectBasedOnUser",baseURL];
+            [self->dataCon getProjectListWithUrl:myUrlString bodyDic:nil withResponseData:^(NSData *bodyData) {
                 NSArray *userListArray = [NSJSONSerialization JSONObjectWithData:bodyData options:NSJSONReadingMutableLeaves error:nil];
                 
-                if ([userListArray isKindOfClass:[NSArray class]]&&[userListArray count]!=0) {
+                if ([userListArray isKindOfClass:[NSArray class]]) {
                     self->appDel.projectArr = [[NSMutableArray alloc] initWithArray:userListArray];
-                    //self->pickerDataArr =[[NSArray alloc] initWithArray: self->usersArr];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"DataWithNewProj" object:nil userInfo:nil];
                     NSLog(@"projecttt %@",self->appDel.projectArr);
                 }
             }failtureResponse:^(NSError *error) {
@@ -62,7 +62,7 @@
                 
                 if ([userListArray isKindOfClass:[NSArray class]]&&[userListArray count]!=0) {
                     self->appDel.userArr = [[NSMutableArray alloc] initWithArray:userListArray];
-                    //self->pickerDataArr =[[NSArray alloc] initWithArray: self->usersArr];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"DataWithNewUser" object:nil userInfo:nil];
                 }
             }failtureResponse:^(NSError *error) {
                 NSLog(@"Error %@",error.localizedDescription);
@@ -89,7 +89,7 @@
                 
                 if ([userListArray isKindOfClass:[NSArray class]]&&[userListArray count]!=0) {
                     self->appDel.statusArr = [[NSMutableArray alloc] initWithArray:userListArray];
-                    //self->pickerDataArr =[[NSArray alloc] initWithArray: self->statusArr];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"DataWithNewStatus" object:nil userInfo:nil];
                 }
             } failtureResponse:^(NSError *error) {
                 NSLog(@"Error %@",error.localizedDescription);
@@ -117,7 +117,7 @@
                 
                 if ([deptListArray isKindOfClass:[NSArray class]]&&[deptListArray count]!=0) {
                     self->appDel.departmentArr = [[NSMutableArray alloc] initWithArray:deptListArray];
-                    //self->appDel.pickerDataArr =[[NSArray alloc] initWithArray: self->departmentArr];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"DataWithNewDept" object:nil userInfo:nil];
                     
                 }
             } failtureResponse:^(NSError *error) {
@@ -139,4 +139,39 @@
     });
 }
 
+-(void)getListDataForPunchIssueDropdown
+{
+    appDel = (AppDelegate *)[UIApplication sharedApplication].delegate;
+    dataCon = [[DataConnection alloc] init];
+    dispatch_queue_t backgroundQueue = dispatch_queue_create("dispatch_queue_#1", 0);
+    dispatch_async(backgroundQueue, ^{
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSString *myUrlString = [NSString stringWithFormat:@"%@Issue/GetIssueListRecord ",baseURL];
+            NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:@"IssueList",@"Item", nil];
+            [self->dataCon requestListWithUrl:myUrlString bodyDic:dict withResponseData:^(NSData *bodyData) {
+                NSArray *deptListArray = [NSJSONSerialization JSONObjectWithData:bodyData options:NSJSONReadingMutableLeaves error:nil];
+                
+                if ([deptListArray isKindOfClass:[NSArray class]]&&[deptListArray count]!=0) {
+                    self->appDel.punchIssueArr = [[NSMutableArray alloc] initWithArray:deptListArray];
+                   // [[NSNotificationCenter defaultCenter] postNotificationName:@"DataWithNewDept" object:nil userInfo:nil];
+                    
+                }
+            } failtureResponse:^(NSError *error) {
+                NSLog(@"Error %@",error.localizedDescription);
+            }checkConnectionStatus: ^(BOOL isNetwork){
+                
+               // [CommonClass showAlert:self messageString:@"No Network" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
+            }];
+            
+            
+        });
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSLog(@"got All list Data punchIssue - %ld, user - %ld, Status - %ld",self->appDel.punchIssueArr.count, self->appDel.userArr.count, self->appDel.statusArr.count);
+           // [VSProgressHud removeIndicator:self];
+            //[ self->pickerV reloadAllComponents];
+        });
+        
+    });
+}
 @end

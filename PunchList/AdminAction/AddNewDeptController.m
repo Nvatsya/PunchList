@@ -15,6 +15,7 @@
 #import "DataConnection.h"
 #import "VSProgressHud.h"
 #import "AppDelegate.h"
+#import "DropdownDataManager.h"
 
 @interface AddNewDeptController ()
 {
@@ -120,6 +121,7 @@
             NSString *myUrlString = [NSString stringWithFormat:@"%@Department/CreateNewDepartment",urlstr];
             
             dataCon = [[DataConnection alloc] initWithUrlStringFromData:myUrlString withJsonString:jsonString delegate:self];
+            [dataCon setAccessibilityLabel:@"addNew"];
             [VSProgressHud presentIndicator:self];
             NSLog(@"my logurl %@ and data %@ connection %@",myUrlString,jsonString, dataCon);
         }else{
@@ -132,51 +134,33 @@
 }
 
 -(void)dataLoadingFinished:(NSMutableData*)data{
-    NSString *responseString =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    NSLog(@"login data is...%@",responseString);
-    
-    UIView *formV = [self.view viewWithTag:5001];
-    [formV removeFromSuperview];
-    UIView *tableV = [self.view viewWithTag:1001];
-    [tableV removeFromSuperview];
-    [Form createFormWithList:self forAction:@"user" fieldsInfo:fieldsArr];
-    
-    if (![[dataCon accessibilityLabel] isEqualToString:@"fetch"]) {
-        NSString *responseString =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-//        NSDictionary *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
-//        [dataArray removeAllObjects];
-//        [dataArray addObjectsFromArray:[responseDict valueForKey:@"UserList"]];
-        
-//        for (UIView *tableV in [self.view subviews]) {
-//
-//            if ([tableV isKindOfClass:[UITableView class]]) {
-//                UITableView *listTable = (UITableView*)tableV;
-//                NSLog(@"table %@",listTable);
-//                [listTable reloadData];
-//            }
-//        }
-       // if ([responseString isEqualToString:@"Record Created successfully"]) {
-          //  [self fetchDepartmentList];
-       // }
-        
-        
-    }else{
-        NSArray *departmentArray = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
-        [dataArray removeAllObjects];
-        [dataArray addObjectsFromArray:departmentArray];
-        
-        for (UIView *tableV in [self.view subviews]) {
-            
-            if ([tableV isKindOfClass:[UITableView class]]) {
-                UITableView *listTable = (UITableView*)tableV;
-                NSLog(@"table %@",listTable);
-                [listTable reloadData];
-            }
-        }
+    if ([[dataCon accessibilityLabel] isEqualToString:@"addNew"]==YES) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadListData) name:@"DataWithNewDept" object:nil];
+        DropdownDataManager *dataManager = [[DropdownDataManager alloc] init];
+        [dataManager getListDataForDepartmentDropdown];
     }
     [VSProgressHud removeIndicator:self];
 }
-
+-(void)reloadListData
+{
+    [dataArray removeAllObjects];
+    dataArray = appDel.departmentArr;
+    UIView *formV = [self.view viewWithTag:5001];
+        [formV removeFromSuperview];
+        UIView *tableV = [self.view viewWithTag:1001];
+        [tableV removeFromSuperview];
+        [Form createFormWithList:self forAction:@"user" fieldsInfo:fieldsArr];
+        
+            
+            for (UIView *tableV in [self.view subviews]) {
+                
+                if ([tableV isKindOfClass:[UITableView class]]) {
+                    UITableView *listTable = (UITableView*)tableV;
+                    NSLog(@"table %@",listTable);
+                    [listTable reloadData];
+                }
+            }
+}
 #pragma mark - UITextField Delegate
 - (void)textFieldDidBeginEditing:(UITextField *)textField
 {

@@ -39,7 +39,7 @@
             [self.contentView addSubview:datalbl];
             
             UILabel *namelbl1 = [[UILabel alloc] init];
-            namelbl1.frame = CGRectMake(5, namelbl.frame.origin.y+namelbl.frame.size.height+10, 100, 22);
+            namelbl1.frame = CGRectMake(5, namelbl.frame.origin.y+namelbl.frame.size.height+5, 100, 22);
             namelbl1.text = [lableDict valueForKey:@"statuslbl"];
             namelbl1.textColor = [CommonClass getColorFromColorCode:lableColor];
             
@@ -52,7 +52,7 @@
             [self.contentView addSubview:datalbl1];
             
             UILabel *namelbl2 = [[UILabel alloc] init];
-            namelbl2.frame = CGRectMake(5, namelbl1.frame.origin.y+namelbl1.frame.size.height+10, 100, 22);
+            namelbl2.frame = CGRectMake(5, namelbl1.frame.origin.y+namelbl1.frame.size.height+5, 100, 22);
             namelbl2.text = [lableDict valueForKey:@"emaillbl"];
             namelbl2.textColor = [CommonClass getColorFromColorCode:lableColor];
             
@@ -157,7 +157,13 @@
         [self.contentView addSubview:datalbl1];
         
     }
-        
+//        CALayer* borderLayer = [self.contentView layer];
+//        CALayer *bottomBorder = [CALayer layer];
+//        bottomBorder.borderColor = [UIColor darkGrayColor].CGColor;
+//        bottomBorder.borderWidth = 1;
+//        bottomBorder.opacity = 0.50;
+//        bottomBorder.frame = CGRectMake(0, borderLayer.frame.size.height-1, borderLayer.frame.size.width, 1);
+//        [borderLayer addSublayer:bottomBorder];
 }
 
 -(void)createCellForPunchList :(UIViewController*)VC onTable:(UITableView*)table forList:(NSString*)listname heightOfRow:(float)height withData:(NSDictionary*)dataDict forLables:(NSDictionary *)labelDict
@@ -198,7 +204,7 @@
     namelbl3.textColor = [CommonClass getColorFromColorCode:lableColor];
     UILabel *datalbl3 = [[UILabel alloc] init];
     datalbl3.frame = CGRectMake(namelbl3.frame.size.width+10, namelbl3.frame.origin.y, table.frame.size.width-(namelbl3.frame.size.width+16), 22);
-    datalbl3.text = [NSString stringWithFormat:@"%@",[dataDict valueForKey:@"AssignedTo"]];
+    datalbl3.text = [NSString stringWithFormat:@"%@",[dataDict valueForKey:@"AssignedToUserName"]];
     datalbl3.textColor = [UIColor whiteColor];//[CommonClass getColorFromColorCode:fontColor];
     
     UILabel *namelbl4 = [[UILabel alloc] init];

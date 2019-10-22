@@ -15,6 +15,7 @@
 #import "DataConnection.h"
 #import "VSProgressHud.h"
 #import "AppDelegate.h"
+#import "DropdownDataManager.h"
 
 @interface AddNewProjController ()
 {
@@ -119,6 +120,7 @@
             NSString *myUrlString = [NSString stringWithFormat:@"%@Project/CreateNewProject",urlstr];
             
             dataCon = [[DataConnection alloc] initWithUrlStringFromData:myUrlString withJsonString:jsonString delegate:self];
+            [dataCon setAccessibilityLabel:@"addNew"];
             [VSProgressHud presentIndicator:self];
             NSLog(@"my logurl %@ and data %@ connection %@",myUrlString,jsonString, dataCon);
         }else{
@@ -130,38 +132,28 @@
 }
 
 -(void)dataLoadingFinished:(NSMutableData*)data{
-        NSString *responseString =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        NSLog(@"login data is...%@",responseString);
     
+    if ([[dataCon accessibilityLabel] isEqualToString:@"addNew"]==YES) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadListData) name:@"DataWithNewProj" object:nil];
+        DropdownDataManager *dataManager = [[DropdownDataManager alloc] init];
+        [dataManager getListDataForProjectDropdown];
+    }
+    
+    [VSProgressHud removeIndicator:self];
+    ufname=@"";
+    ulname=@"";
+    uemail=@"";
+}
+-(void)reloadListData
+{
+    [dataArray removeAllObjects];
+    dataArray = appDel.projectArr;
     UIView *formV = [self.view viewWithTag:5001];
-    [formV removeFromSuperview];
-    UIView *tableV = [self.view viewWithTag:1001];
-    [tableV removeFromSuperview];
-    [Form createFormWithList:self forAction:@"user" fieldsInfo:fieldsArr];
-    
-    if (![[dataCon accessibilityLabel] isEqualToString:@"fetch"]) {
-//        NSDictionary *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
-//
-//        if ([[responseDict valueForKey:@"UserList"] count]!=0) {
-//            [dataArray removeAllObjects];
-//            [dataArray addObjectsFromArray:[responseDict valueForKey:@"UserList"]];
-//
-//            for (UIView *tableV in [self.view subviews]) {
-//
-//                if ([tableV isKindOfClass:[UITableView class]]) {
-//                    UITableView *listTable = (UITableView*)tableV;
-//                    NSLog(@"table %@",listTable);
-//                    [listTable reloadData];
-//                }
-//            }
-//        }
-      //  [self fetchProjectList];
-    }else{
-        NSArray *projListArray = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
+        [formV removeFromSuperview];
+        UIView *tableV = [self.view viewWithTag:1001];
+        [tableV removeFromSuperview];
+        [Form createFormWithList:self forAction:@"user" fieldsInfo:fieldsArr];
         
-        if ([projListArray count]!=0) {
-            [dataArray removeAllObjects];
-            [dataArray addObjectsFromArray:projListArray];
             
             for (UIView *tableV in [self.view subviews]) {
                 
@@ -171,15 +163,7 @@
                     [listTable reloadData];
                 }
             }
-        }
-    }
-    
-    [VSProgressHud removeIndicator:self];
-    ufname=@"";
-    ulname=@"";
-    uemail=@"";
 }
-
 #pragma mark - UITextField Delegate
 - (void)textFieldDidBeginEditing:(UITextField *)textField
 {

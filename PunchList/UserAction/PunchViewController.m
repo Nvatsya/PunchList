@@ -15,6 +15,8 @@
 #import "CommonClass.h"
 #import <AssetsLibrary/AssetsLibrary.h>
 #import "Base64.h"
+#import "AppDelegate.h"
+#import "PunchImageViewController.h"
 
 
 @interface PunchViewController ()
@@ -26,6 +28,7 @@
     NSArray *pickerDataArr;
     UITapGestureRecognizer *closeTap;
     UIPickerView *pickerV;
+    UIImage *selectedImage;
     UIToolbar *toolbar;
     DataConnection *dataCon;
     UITextField *selectedTF;
@@ -34,7 +37,6 @@
     UIAlertController *actionPopup;
     NSData *imageBinaryData;
     NSString *imageBase64data;
-    UIImage *selectedImage;
     NSString *selectedImageName;
     NSString *updatedDescription;
     NSString *assignedToStr;
@@ -43,6 +45,7 @@
     NSString *selectedStatusId;
     NSString *issueName;
     BOOL isSaveNew, isLargeImage;
+    AppDelegate *appDel;
 }
 @end
 
@@ -55,9 +58,10 @@
     // Do any additional setup after loading the view.
     [InterfaceViewController createInterfaceForActions:self forScreen:[NSString stringWithFormat:@"%@",isCreateIssue?@"Create Punch":[self.detailDict valueForKey:@"IssueName"]]];
      //[self getListDataForDropdowns];
-    departmentArr = [[NSUserDefaults standardUserDefaults] valueForKey:@"departmentArr"];
-    usersArr = [[NSUserDefaults standardUserDefaults] valueForKey:@"usersArr"];
-    statusArr = [[NSUserDefaults standardUserDefaults] valueForKey:@"statusArr"];
+    appDel = (AppDelegate *)[UIApplication sharedApplication].delegate;
+    departmentArr =  appDel.departmentArr; //[[NSUserDefaults standardUserDefaults] valueForKey:@"departmentArr"];
+    usersArr = appDel.userArr; //[[NSUserDefaults standardUserDefaults] valueForKey:@"usersArr"];
+    statusArr = appDel.statusArr; //[[NSUserDefaults standardUserDefaults] valueForKey:@"statusArr"];
     punchImageArr = [[NSMutableArray alloc] initWithCapacity:0];
     imgDataArray = [[NSMutableArray alloc] initWithCapacity:0];
     pickerV = [[UIPickerView alloc] init];
@@ -72,6 +76,7 @@
     closeTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(closeIssueImage:)];
     [closeTap setNumberOfTapsRequired:1];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(getSelectedImageWithMark :) name:@"GET_MARKED_IMAGE" object:nil];
     [self createFieldsInfo];
     [Form createPunchView:self fieldsInfo:fieldsArr];
     [self createViewForIssueImage];
@@ -91,7 +96,7 @@
     NSString *departmentName = [[departmentArr objectAtIndex:0]valueForKey:@"DepartmentName"];
     updatedDeptStr = [[departmentArr objectAtIndex:0] valueForKey:@"DepartmentId"];
     NSString *assignedName = @"";
-    assignedToStr = [[usersArr objectAtIndex:selectedrow] valueForKey:@"UserId"];
+    assignedToStr = isCreateIssue? [[usersArr objectAtIndex:selectedrow] valueForKey:@"UserId"] : [self.detailDict valueForKey:@"AssignedToUserName"];
     updatedStatusStr = isCreateIssue?@"":[self.detailDict valueForKey:@"IssueStatus"];
     updatedDescription = isCreateIssue?@"":[self.detailDict valueForKey:@"IssueDescription"];
     issueName = isCreateIssue?@"":[self.detailDict valueForKey:@"IssueName"];
@@ -109,7 +114,7 @@
     for (int i=0; i<[usersArr count]; i++) {
         if ([[self.detailDict valueForKey:@"AssignedTo"] isEqualToString:[[usersArr objectAtIndex:i]valueForKey:@"UserId"] ]) {
             [[NSUserDefaults standardUserDefaults] setObject:[[usersArr objectAtIndex:i]valueForKey:@"UserName"]  forKey:@"AssignedName"];
-            assignedName = [[usersArr objectAtIndex:i]valueForKey:@"UserName"];
+            assignedName = [NSString stringWithFormat:@"%@ %@", [[usersArr objectAtIndex:i]valueForKey:@"FirstName"], [[usersArr objectAtIndex:i]valueForKey:@"LastName"]];
             assignedToStr = [[usersArr objectAtIndex:i] valueForKey:@"UserId"];
             break;
         }
@@ -163,7 +168,7 @@
     txtF.text = @"";
     imageBase64data = Nil;
     selectedImageName = @"";
-    selectedImage = Nil;
+    selectedImage= Nil;
     [imgDataArray removeAllObjects];
 }
 -(void)getListDataForDropdowns
@@ -275,13 +280,15 @@
     textfield.delegate = self;
     UIColor *color = [UIColor whiteColor];
     textfield.textColor=color;
-    textfield.attributedPlaceholder = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"Select Image"] attributes:@{NSForegroundColorAttributeName: color}];
+    textfield.attributedPlaceholder = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"Select Image"] attributes:@{NSForegroundColorAttributeName: [UIColor lightGrayColor]}];
     [imageFieldContainer addSubview:textfield];
     
+    UIView *paddingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 50, 30)];
     UIImageView *iconView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:[NSString stringWithFormat:@"uploadW.png"]]];
     iconView.bounds = CGRectInset(iconView.frame, 25, 10);
     iconView.frame = CGRectMake(0, 0, 25, 25);
-    textfield.rightView = iconView;
+    [paddingView addSubview:iconView];
+    textfield.rightView = paddingView;
     textfield.rightViewMode=UITextFieldViewModeAlways;
     
     CALayer* borderLayer = [textfield layer];
@@ -353,6 +360,14 @@
     [imageFieldContainer addSubview:actionNewBtn];
 }
 
+-(void)getSelectedImageWithMark :(NSNotification *)note
+{
+    selectedImage = [[note object] valueForKey:@"newImg"];
+    NSDictionary *imgDict = [[NSDictionary alloc] initWithObjectsAndKeys:selectedImage,@"image",selectedImageName,@"imageName", nil];
+    [punchImageArr addObject:imgDict];
+    [self getBinaryDataForImage];
+    [self drawPunchImageOnView];
+}
 #pragma mark - API calls handler
 -(void)callingAddNewPunch
 {
@@ -362,15 +377,19 @@
        // [dict setValue:[self.detailDict valueForKey:@"IssueId"] forKey:@"IssueId"];
         [dict setValue:[self.detailDict valueForKey:@"ProjectId"] forKey:@"ProjectId"];
         [dict setValue:updatedStatusStr forKey:@"IssueStatus"];
-        [dict setValue:issueName forKey:@"IssueName"];
-        [dict setValue:updatedDescription forKey:@"IssueDescription"];
+        if (issueName.length!=0) {
+            [dict setValue: issueName forKey:@"IssueName"];
+        }
+        if (updatedDescription.length!=0) {
+            [dict setValue:updatedDescription forKey:@"IssueDescription"];
+        }
         [dict setValue:assignedToStr forKey:@"AssignedTo"];
         [dict setValue:updatedDeptStr forKey:@"DepartmentId"];
         [dict setValue:[NSString stringWithFormat:@"%@",[[NSUserDefaults standardUserDefaults]valueForKey:@"UserId"]] forKey:@"CreatedBy"];
         [dict setValue:[NSString stringWithFormat:@"%@",[NSDate date]] forKey:@"CreatedOn"];
         [dict setValue:imgDataArray forKey:@"IssueImages"];
         
-        if ([dict count]<8) {
+        if ([dict count]<9) {
             [CommonClass showAlert:self messageString:@"All fields are mandatory" withTitle:@"" OKbutton:nil cancelButton:@"OK"];
             return;
         }
@@ -490,7 +509,7 @@
         return [NSString stringWithFormat:@"%@",[[pickerDataArr objectAtIndex:row] valueForKey:@"DepartmentName"]];
     }else if (selectedTF.tag==102){
         pickerDataArr = usersArr;
-        return [NSString stringWithFormat:@"%@",[[pickerDataArr objectAtIndex:row] valueForKey:@"UserName"]] ;
+        return [NSString stringWithFormat:@"%@ %@",[[pickerDataArr objectAtIndex:row] valueForKey:@"FirstName"], [[pickerDataArr objectAtIndex:row] valueForKey:@"LastName"]] ;
     }else if (selectedTF.tag==103) {
         pickerDataArr = statusArr;
         return [NSString stringWithFormat:@"%@",[[pickerDataArr objectAtIndex:row] valueForKey:@"StatusDetail"]];
@@ -512,17 +531,17 @@
     selectedItem = @"";
     selectedTF = textField;
     if (textField.tag==101) {
-        pickerDataArr =[[NSUserDefaults standardUserDefaults] valueForKey:@"departmentArr"];//[[NSArray alloc] initWithArray:departmentArr];
+        pickerDataArr = appDel.departmentArr;//[[NSUserDefaults standardUserDefaults] valueForKey:@"departmentArr"];//[[NSArray alloc] initWithArray:departmentArr];
         [pickerV reloadAllComponents];
         textField.inputView = pickerV;
         textField.inputAccessoryView = toolbar;
     }else if (textField.tag==102){
-        pickerDataArr =[[NSUserDefaults standardUserDefaults] valueForKey:@"usersArr"];//[[NSArray alloc] initWithArray:usersArr];
+        pickerDataArr = appDel.userArr;//[[NSUserDefaults standardUserDefaults] valueForKey:@"usersArr"];//[[NSArray alloc] initWithArray:usersArr];
         [pickerV reloadAllComponents];
         textField.inputView = pickerV;
         textField.inputAccessoryView = toolbar;
     }else if (textField.tag==103){
-        pickerDataArr = [[NSUserDefaults standardUserDefaults] valueForKey:@"statusArr"];//[[NSArray alloc] initWithArray:statusArr];
+        pickerDataArr = appDel.statusArr;//[[NSUserDefaults standardUserDefaults] valueForKey:@"statusArr"];//[[NSArray alloc] initWithArray:statusArr];
         [pickerV reloadAllComponents];
         textField.inputView = pickerV;
         textField.inputAccessoryView = toolbar;
@@ -711,7 +730,7 @@
             float exactMbSize=(float)representation.size/(1024 * 1024);
             NSLog(@"Size: %f", exactMbSize);
             if (exactMbSize <=3){
-                isLargeImage = NO;
+                self ->isLargeImage = NO;
                 self->selectedImageName=fileName;
                // [self getBinaryDataForImage];
             }else{
@@ -725,14 +744,14 @@
     }
     [picker dismissViewControllerAnimated:YES completion:NULL];
     if (!isLargeImage) {
-        NSDictionary *imgDict = [[NSDictionary alloc] initWithObjectsAndKeys:selectedImage,@"image",selectedImageName,@"imageName", nil];
-        [punchImageArr addObject:imgDict];
-        [self getBinaryDataForImage];
-        [self drawPunchImageOnView];
+        PunchImageViewController *canvas = [[PunchImageViewController alloc] init];
+        [canvas getImageToProcessAtCanvas:selectedImage];
+        [self.navigationController pushViewController:canvas animated:YES];
     }else{
         [CommonClass showAlert:self messageString:@"Image is too large to upload." withTitle:@"" OKbutton:nil cancelButton:@"OK"];
     }
 }
+
 -(void)drawPunchImageOnView
 {
     UIScrollView *imgScroll = [self.view viewWithTag:6001];

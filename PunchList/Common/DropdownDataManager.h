@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)getListDataForStatusDropdown;
 -(void)getListDataForUserDropdown;
 -(void)getListDataForProjectDropdown;
+-(void)getListDataForPunchIssueDropdown;
 
 @end
 

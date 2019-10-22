@@ -17,6 +17,7 @@
 @property (nonatomic, retain)NSMutableArray *userArr;
 @property (nonatomic, retain)NSMutableArray *statusArr;
 @property (nonatomic, retain)NSMutableArray *projectArr;
+@property (nonatomic, retain)NSMutableArray *punchIssueArr;
 
 @end
 

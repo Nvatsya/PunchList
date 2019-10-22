@@ -143,6 +143,8 @@
 -(void)handleLoginAction
 {
      [selectedTF resignFirstResponder];
+    username = @"dev@insigniamgmt.com";
+    password = @"2328";
     if (username.length!=0 && password.length!=0) {
         [self callLoginMethod];
     }else{
@@ -230,6 +232,7 @@
     [dataManager getListDataForStatusDropdown];
     [dataManager getListDataForDepartmentDropdown];
     [dataManager getListDataForProjectDropdown];
+    [dataManager getListDataForPunchIssueDropdown];
     
     NSString *responseString =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     NSLog(@"login data is...%@",responseString);

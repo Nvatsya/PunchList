@@ -34,6 +34,8 @@
 
 -(void)requestListWithUrl:(NSString *)urlStr bodyDic:(NSDictionary *)body withResponseData:(void  (^)(NSData* bodyData))block failtureResponse:(void (^) (NSError* error))errorBlock checkConnectionStatus: (void (^)(BOOL isNetwork))networkBlock;
 
+-(void)getProjectListWithUrl:(NSString *)urlStr bodyDic:(NSDictionary *)body withResponseData:(void  (^)(NSData* bodyData))block failtureResponse:(void (^) (NSError* error))errorBlock checkConnectionStatus: (void (^)(BOOL isNetwork))networkBlock;
+
 @end
 
 @protocol connectionProtocolDelegate
